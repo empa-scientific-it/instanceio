@@ -4,27 +4,17 @@
 package openbisio
 
 import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.Experiment as OpenbisCollection
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.fetchoptions.ExperimentFetchOptions
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.person.Person as OpenbisPerson
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.Project as OpenbisProject
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.fetchoptions.ProjectFetchOptions
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.DataType as OpenbisDataType
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.PropertyAssignment as OpenbisPropertyAssignment
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.PropertyType as OpenbisPropertyType
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.fetchoptions.PropertyTypeFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.search.PropertyTypeSearchCriteria
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.Sample as OpenbisSample
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.SampleType as OpenbisSampleType
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.fetchoptions.SampleFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.fetchoptions.SampleTypeFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.search.SampleTypeSearchCriteria
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.Space as OpenbisSpace
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.fetchoptions.SpaceFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.search.SpaceSearchCriteria
 import ch.systemsx.cisd.common.spring.HttpInvokerUtils
 import jakarta.mail.internet.InternetAddress
-import java.net.URL
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -34,39 +24,15 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
+import openbisio.models.OpenbisInstance
+import java.io.File
+import java.net.URL
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.DataType as OpenbisDataType
 
-
-@Serializable
-abstract class  OpenbisHierarcyObject{
-    abstract val code: String
-    abstract val registrator: Person?
-}
-
-
-
-
-@Serializable
-sealed class PropertyValue {
-    @Serializable class TextualValue(val value: String) : PropertyValue()
-    @Serializable class NumericValue(val value: Double) : PropertyValue()
-    @Serializable class BooleanValue(val value: Boolean) : PropertyValue()
-}
-
-@Serializable
-class OpenbisObject(override val code: String, val type: String, val properties: Map<String, String>,  override val registrator: Person?) : OpenbisHierarcyObject() {
-    constructor(o: OpenbisSample) : this(o.code, o.type.code, o.properties, Person(o.getRegistrator()))
-}
-
-@Serializable
-class Collection(override val code: String, val type: String, var objects: List<OpenbisObject>?, override val registrator: Person?) : OpenbisHierarcyObject() {
-    constructor(
-            c: OpenbisCollection
-    ) : this(c.code, c.type.code, c.samples.map { OpenbisObject(it) }, Person(c.getRegistrator()))
-}
 
 object InternetAddressAsStringSerializer : KSerializer<InternetAddress> {
     override val descriptor: SerialDescriptor =
-            PrimitiveSerialDescriptor("InternetAddress", PrimitiveKind.STRING)
+        PrimitiveSerialDescriptor("InternetAddress", PrimitiveKind.STRING)
 
     override fun serialize(encoder: Encoder, value: InternetAddress) {
         val string = value.toString()
@@ -79,97 +45,18 @@ object InternetAddressAsStringSerializer : KSerializer<InternetAddress> {
     }
 }
 
+@JvmInline
 @Serializable
-data class Person(
-        val userId: String,
-        val firstName: String?,
-        val lastName: String?,
-        @Serializable(with = InternetAddressAsStringSerializer::class) val email: InternetAddress?
-) {
-    constructor(
-            userId: String,
-            firstName: String?,
-            lastName: String,
-            email: String
-    ) : this(userId, firstName, lastName, if (email != "") InternetAddress(email) else null)
-    constructor(p: OpenbisPerson) : this(p.userId, p.firstName, p.lastName, p.email)
-}
-
-@Serializable
-class Project(
-        override val code: String,
-        var leader: Person?,
-        var collections: List<Collection>?,
-        var objects: List<OpenbisObject>?,
-        override val registrator: Person
-) :OpenbisHierarcyObject() {
-    constructor(
-            pr: OpenbisProject
-    ) : this(
-            pr.code,
-            if (pr.leader != null) Person(pr.leader) else null,
-            pr.experiments.map { Collection(it) },
-            pr.samples.map { OpenbisObject(it) },
-            Person(pr.getRegistrator())
-    )
-}
-
-@JvmInline @Serializable value class DataType(private val t: OpenbisDataType)
-
-@Serializable
-class PropertyType(
-        override val code: String,
-        val label: String,
-        val description: String,
-        val dataType: DataType,
-        override val registrator: Person?
-) : OpenbisHierarcyObject() {
-    constructor(
-            pt: OpenbisPropertyType
-    ) : this(pt.code, pt.label, pt.description, DataType(pt.dataType), Person(pt.getRegistrator()))
-}
-
-@Serializable
-class PropertyAssignment(override val code: String, val section: String?, val mandatory: Boolean, override val registrator: Person)  : OpenbisHierarcyObject(){
-    constructor(
-            pa: OpenbisPropertyAssignment
-    ) : this(pa.getPermId().getPropertyTypeId().toString(), pa.getSection(), pa.isMandatory(), Person(pa.getRegistrator()))
-}
-
-@Serializable
-class ObjectType(override val code: String, var properties: List<PropertyAssignment>, override val registrator: Person?): OpenbisHierarcyObject() {
-    constructor(
-            ot: OpenbisSampleType
-    ) : this(ot.code, ot.propertyAssignments.map { PropertyAssignment(it) }, ot.propertyAssignments.map { Person(it.getRegistrator()) }.elementAtOrNull(0))
-}
-
-@Serializable
-data class Space(val code: String, val projects: List<Project>?) {
-    constructor(sp: OpenbisSpace) : this(sp.code, sp.projects.map { Project(it) })
-}
-
-@Serializable
-data class Instance(
-        var spaces: List<Space>?,
-        var users: List<Person>?,
-        var propertyTypes: List<PropertyType>?,
-        var objectTypes: List<ObjectType>?
-) {
-    constructor(
-            sp: List<OpenbisSpace>,
-            pt: List<OpenbisPropertyType>,
-            st: List<OpenbisSampleType>
-    ) : this(sp.map { Space(it) }, null, pt.map { PropertyType(it) }, st.map { ObjectType(it) })
-}
+value class DataType(private val t: OpenbisDataType)
 
 class App {
     fun createService(path: URL): IApplicationServerApi {
         val con =
-                HttpInvokerUtils.createServiceStub(
-                        IApplicationServerApi::class.java,
-                        path.toString() + IApplicationServerApi.SERVICE_URL,
-                        10000
-                )
+            HttpInvokerUtils.createServiceStub(
+                IApplicationServerApi::class.java,
+                path.toString() + IApplicationServerApi.SERVICE_URL,
+                10000
+            )
         return con
     }
 }
@@ -205,11 +92,12 @@ fun spaceFecthConfig(): SpaceFetchOptions {
     val sfo = SpaceFetchOptions()
     sfo.withProjectsUsing(projectFetchConfig())
     sfo.withSamplesUsing(sampleFetchConfig())
-
+    sfo.withRegistrator()
     return sfo
 }
 
-fun main() {
+fun main(args: Array<String>) {
+
     val service = App().createService(URL("https://localhost:8445/openbis/openbis"))
     val token = service.login("admin", "changeit")
     println(token)
@@ -222,17 +110,19 @@ fun main() {
     val propertyTypeFecthOptions = PropertyTypeFetchOptions()
     propertyTypeFecthOptions.withRegistrator()
     val props =
-            service.searchPropertyTypes(token, propertyTypeSearchCriteria, propertyTypeFecthOptions)
-                    .objects
+        service.searchPropertyTypes(token, propertyTypeSearchCriteria, propertyTypeFecthOptions)
+            .objects
     // Get object types
     val sampleTypeSearchCriteria = SampleTypeSearchCriteria().withAndOperator()
     val sampleTypeFetchOptions = SampleTypeFetchOptions()
     sampleTypeFetchOptions.withPropertyAssignments().withRegistrator()
     val sampleTypes =
-            service.searchSampleTypes(token, sampleTypeSearchCriteria, sampleTypeFetchOptions).objects
+        service.searchSampleTypes(token, sampleTypeSearchCriteria, sampleTypeFetchOptions)
+            .objects
 
-    val spRep = Instance(spaces, props, sampleTypes)
+    val spRep = OpenbisInstance(spaces, props, sampleTypes)
+    //Output file
     val format = Json { prettyPrint = true }
-    val spJs = format.encodeToString(spRep)
-    println(spJs)
+    File(args.elementAtOrElse(0) { "./test.json" }).writeText(format.encodeToString(spRep))
+    //println(spJs)
 }
