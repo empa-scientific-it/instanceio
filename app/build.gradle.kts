@@ -7,12 +7,10 @@
  */
 
 plugins {
-    val kotlinVer = "1.7.20"
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
+    val kotlinVer = "1.7.20"
     id("org.jetbrains.kotlin.jvm") version kotlinVer
 
-    //Download plugin
-    id("de.undercouch.download") version "5.3.0"
 
     //Serialisation
     id("org.jetbrains.kotlin.plugin.serialization") version kotlinVer
@@ -21,7 +19,6 @@ plugins {
     application
 }
 
-import de.undercouch.gradle.tasks.download.Download
 
 
 repositories {
@@ -39,70 +36,40 @@ repositories {
 
 }
 
-val openbisJar by configurations.creating
-
-
 
 
 dependencies {
     // Align versions of all Kotlin components
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
-
     // Use the Kotlin JDK 8 standard library.
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation(libs.kotlinStdlib)
 
-    // This dependency is used by the application.
-    implementation("com.google.guava:guava:29.0-jre")
 
     // Use the Kotlin test library.
-    testImplementation("org.jetbrains.kotlin:kotlin-test")
+    testImplementation(libs.kotlinTest)
 
     // Use the Kotlin JUnit integration.
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
+    testImplementation(libs.kotlinTestJunit)
 
     //Openbis v3 API
-    implementation("openbis:openbis-v3-api:20.10.5-EA")
+    implementation(libs.openbis)
 
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
+    implementation(libs.kotlinxSerialization)
 
     //Jackson
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.3")
+    implementation(libs.jacksonDatabind)
 
     //Email validation
-    implementation("jakarta.mail:jakarta.mail-api:2.1.0")
+    implementation(libs.jakartaMail)
+
+    //Command line
+    implementation(libs.kotlinxCLI)
+
 
 }
 
 
 tasks {
-
-    val downloadOpenbisDistFile by registering(Download::class) {
-        overwrite(false)
-        src("https://polybox.ethz.ch/index.php/s/TnE9k60mIeA24lD/download")
-        dest(File(buildDir, "allOpenBIS.zip"))
-    }
-
-    val unzipOpenbisFile by registering(Copy::class){
-        dependsOn(downloadOpenbisDistFile)
-        from((zipTree(File(buildDir, "allOpenBIS.zip")).matching {
-            include("*API-V3*.zip")
-            rename("(openBIS-API-V3)(.*)(.zip)","$1$3")
-            }).first())
-        into(layout.buildDirectory.dir("temp"))
-    }
-
-    val unzipOpenbisAPI by registering(Copy::class){
-        dependsOn(unzipOpenbisFile)
-        from(zipTree(layout.buildDirectory.file("temp/openBIS-API-V3.zip")).matching{
-            include("openBIS-API-V3/openBIS-API*batteries*.jar")
-            eachFile {
-                relativePath = RelativePath(true, *relativePath.segments.drop(1).toTypedArray())  
-            }
-            rename("(openBIS-API-V3-batteries-included)(.*)(.jar)","$1$3")
-        }
-        )
-        into(layout.projectDirectory.dir("libs"))
-    }
 
 }
 

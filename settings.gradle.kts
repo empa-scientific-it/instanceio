@@ -7,5 +7,7 @@
  * in the user manual at https://docs.gradle.org/6.9.3/userguide/multi_project_builds.html
  */
 
+
 rootProject.name = "openbisio"
+
 include("app")
