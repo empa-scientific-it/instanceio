@@ -17,4 +17,7 @@ data class OpenbisInstance(
         st: List<SampleType>
     ) : this(sp.map { OpenbisSpace(it) }, null, pt.map { OpenbisPropertyType(it) }, st.map { OpenbisObjectType(it) })
 
+    fun updateCodes(){
+        spaces?.map{it.addAncestors()}
+    }
 }

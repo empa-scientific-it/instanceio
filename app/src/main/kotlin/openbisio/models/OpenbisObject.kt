@@ -19,7 +19,7 @@ class OpenbisObject(
     override val children: List<IOpenbisHierarchyObject>? = null,
     val properties: Map<String, String>,
     override val registrator: OpenbisPerson,
-    ) : OpenbisCreatable(), IOpenbisHierarchyObject {
+    ) : OpenbisIdentifiedObject() {
 
     constructor(
         o: Sample

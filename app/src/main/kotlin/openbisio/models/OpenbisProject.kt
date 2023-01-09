@@ -3,6 +3,8 @@ package openbisio.models
 import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import kotlinx.serialization.SerialName
+
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.Project
 
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.create.*
@@ -13,12 +15,12 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.id.ProjectIdentifier
 @Serializable
 class OpenbisProject(
     override val code: String,
-    @Transient override val ancestorsCodes: MutableList<String>? = null,
+    override val ancestorsCodes: MutableList<String>? = null,
     val description: String?,
     var leader: OpenbisPerson?,
-    override val children: List<OpenbisCollection>?,
+    @SerialName("collections") override val children: List<OpenbisCollection>?,
     override val registrator: OpenbisPerson
-) : OpenbisCreatable(), IOpenbisHierarchyObject {
+) : OpenbisIdentifiedObject() {
     constructor(
         pr: Project
     ) : this(
