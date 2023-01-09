@@ -13,9 +13,9 @@ services:
   - name: openbis/debian-openbis:20.10.5-EA
     alias: openbis
     variables:
-      - SERVER_HOST_PORT=localhost:8443
-      - GROUP_ID=1000
-      - CORE_PLUGINS=enabled-modules = dataset-uploader, dataset-file-search, xls-import, eln-lims, openbis-ng-ui, search-store, user-management-maintenance
+      SERVER_HOST_PORT: localhost:8443
+      GROUP_ID: 1000
+      CORE_PLUGINS: enabled-modules = dataset-uploader, dataset-file-search, xls-import, eln-lims, openbis-ng-ui, search-store, user-management-maintenance
 
 image: gradle:alpine
 
