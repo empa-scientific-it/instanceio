@@ -37,7 +37,7 @@ test:
   stage: test
   script: gradle run
   services:
-    - name: openbis
+    - name: openbis/debian-openbis:20.10.5-EA
   cache:
     key: "$CI_COMMIT_REF_NAME"
     policy: pull
