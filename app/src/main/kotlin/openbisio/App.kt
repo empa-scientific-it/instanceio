@@ -28,7 +28,7 @@ import openbisio.models.OpenbisInstance
 import java.io.File
 import java.net.URL
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.DataType as OpenbisDataType
-
+import kotlinx.cli.*
 
 object InternetAddressAsStringSerializer : KSerializer<InternetAddress> {
     override val descriptor: SerialDescriptor =
@@ -96,14 +96,17 @@ fun spaceFecthConfig(): SpaceFetchOptions {
     return sfo
 }
 
-fun main(args: Array<String>) {
 
-    val service = App().createService(URL("https://localhost:8445/openbis/openbis"))
-    val token = service.login("admin", "changeit")
-    println(token)
+fun main(args: Array<String>) {
+    val parser = ArgParser("example")
+    val openbisURL by (parser.argument(ArgType.String))
+    val username by parser.argument(ArgType.String)
+    val password by parser.argument(ArgType.String)
+    parser.parse(args)
+    val service = App().createService(URL(openbisURL))
+    val token = service.login(username, password)
     val spaceSearchCriteria = SpaceSearchCriteria().withAndOperator()
     val spaceFetchConf = spaceFecthConfig()
-    println(spaceFetchConf)
     val spaces = service.searchSpaces(token, spaceSearchCriteria, spaceFetchConf).objects
     // Get property types
     val propertyTypeSearchCriteria = PropertyTypeSearchCriteria().withAndOperator()
@@ -120,9 +123,10 @@ fun main(args: Array<String>) {
         service.searchSampleTypes(token, sampleTypeSearchCriteria, sampleTypeFetchOptions)
             .objects
 
-    val spRep = OpenbisInstance(spaces, props, sampleTypes)
+    val spRep = OpenbisInstance(spaces, props, sampleTypes).apply { this.updateCodes() }
     //Output file
     val format = Json { prettyPrint = true }
     File(args.elementAtOrElse(0) { "./test.json" }).writeText(format.encodeToString(spRep))
     //println(spJs)
 }
+

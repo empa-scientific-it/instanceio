@@ -35,7 +35,7 @@ build:
 
 test:
   stage: test
-  script: gradle run
+  script: gradle run --args "https://openbis:8443 admin changeit"
   services:
     - name: openbis/debian-openbis:20.10.5-EA
   cache:
