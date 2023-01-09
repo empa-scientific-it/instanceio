@@ -16,8 +16,8 @@ services:
     variables:
       SERVER_HOST_PORT: localhost:8443
       GROUP_ID: 1000
-      #CORE_PLUGINS: enabled-modules = 
-    pull_policy: if-not-present
+      #CORE_PLUGINS: enabled-modules =
+    pull_policy: always
 
 
 image: gradle:alpine
