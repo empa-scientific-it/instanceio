@@ -1,13 +1,4 @@
-# You can copy and paste this template into a new `.gitlab-ci.yml` file.
-# You should not add this template to an existing `.gitlab-ci.yml` file by using the `include:` keyword.
-# To contribute improvements to CI/CD templates, please follow the Development guide at:
-# https://docs.gitlab.com/ee/development/cicd/templates.html
-# This specific template is located at:
-# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Gradle.gitlab-ci.yml
 
-# This is the Gradle build system for JVM applications
-# https://gradle.org/
-# https://github.com/gradle/gradle
 
 services:
   - name: openbis/debian-openbis:20.10.5-EA
@@ -17,7 +8,7 @@ services:
       SERVER_HOST_PORT: localhost:8443
       GROUP_ID: 1000
       #CORE_PLUGINS: enabled-modules =
-    pull_policy: always
+    pull_policy: never
 
 
 image: gradle:alpine
@@ -25,6 +16,12 @@ image: gradle:alpine
 before_script:
   - GRADLE_USER_HOME="$(pwd)/.gradle"
   - export GRADLE_USER_HOME
+
+
+setup:
+  stage: setup
+  script: curl https://openbis:8443
+  retry: 3
 
 build:
   stage: build
