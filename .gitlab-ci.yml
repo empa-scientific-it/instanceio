@@ -1,5 +1,12 @@
 
 
+stages:
+  - setup
+  - build
+  - test
+  - deploy
+
+
 services:
   - name: openbis/debian-openbis:20.10.5-EA
     alias: openbis
@@ -8,7 +15,7 @@ services:
       SERVER_HOST_PORT: localhost:8443
       GROUP_ID: 1000
       #CORE_PLUGINS: enabled-modules =
-    pull_policy: never
+    pull_policy: always
 
 
 image: gradle:alpine
@@ -21,7 +28,7 @@ before_script:
 setup:
   stage: setup
   script: curl https://openbis:8443
-  retry: 3
+  retry: 2
 
 build:
   stage: build
