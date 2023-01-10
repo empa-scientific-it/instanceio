@@ -17,17 +17,19 @@ services:
       #CORE_PLUGINS: enabled-modules =
     pull_policy: always
 
-
-image: gradle:alpine
+default:
+  image: gradle:alpine
 
 before_script:
   - GRADLE_USER_HOME="$(pwd)/.gradle"
   - export GRADLE_USER_HOME
 
 
-setup:
+check_openbis:
   stage: setup
-  script: curl https://openbis:8443
+  image: alpine/curl
+  script: 
+    - curl https://openbis:8443
   retry: 2
 
 build:
