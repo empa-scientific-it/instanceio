@@ -10,4 +10,11 @@
 
 rootProject.name = "openbisio"
 
+pluginManagement {
+    repositories {
+        maven(url = "https://mvnrepository.com/")
+        gradlePluginPortal()
+    }
+}
+
 include("app")
