@@ -6,6 +6,9 @@ stages:
   - test
   - deploy
 
+tags:
+  - openbis
+
 
 services:
   - name: openbis/debian-openbis:20.10.5-EA
