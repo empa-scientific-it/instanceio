@@ -1,15 +1,13 @@
 package openbisio.models
 
 import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
-import kotlinx.serialization.SerialName
-
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.Project
-
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.create.*
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.fetchoptions.*
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.id.ProjectIdentifier
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.id.SpacePermId
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 
 @Serializable
@@ -35,10 +33,12 @@ class OpenbisProject(
 
     override fun createOperation(connection: IApplicationServerApi, token: String) {
         val pc = ProjectCreation().apply {
+            this.spaceId = SpacePermId(ancestorsCodes!![0])
             this.code = code
             this.description = description
         }
         connection.createProjects(token, listOf(pc))
+        println("creating ${code}")
     }
 
     override fun getFromOpenBIS(connection: IApplicationServerApi, token: String): Project? {
@@ -47,7 +47,6 @@ class OpenbisProject(
         val res = connection.getProjects(token, listOf(pi), fo)
         return res[pi]
     }
-
 
 
 }

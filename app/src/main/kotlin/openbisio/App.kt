@@ -23,6 +23,7 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import openbisio.models.OpenbisInstance
 import java.io.File
@@ -96,15 +97,12 @@ fun spaceFecthConfig(): SpaceFetchOptions {
     return sfo
 }
 
+enum class Mode {
+    dump,
+    load
+}
 
-fun main(args: Array<String>) {
-    val parser = ArgParser("example")
-    val openbisURL by (parser.argument(ArgType.String))
-    val username by parser.argument(ArgType.String)
-    val password by parser.argument(ArgType.String)
-    parser.parse(args)
-    val service = App().createService(URL(openbisURL))
-    val token = service.login(username, password)
+fun dumpInstance(service: IApplicationServerApi, token: String): String {
     val spaceSearchCriteria = SpaceSearchCriteria().withAndOperator()
     val spaceFetchConf = spaceFecthConfig()
     val spaces = service.searchSpaces(token, spaceSearchCriteria, spaceFetchConf).objects
@@ -112,21 +110,38 @@ fun main(args: Array<String>) {
     val propertyTypeSearchCriteria = PropertyTypeSearchCriteria().withAndOperator()
     val propertyTypeFecthOptions = PropertyTypeFetchOptions()
     propertyTypeFecthOptions.withRegistrator()
-    val props =
-        service.searchPropertyTypes(token, propertyTypeSearchCriteria, propertyTypeFecthOptions)
-            .objects
+    val props = service.searchPropertyTypes(token, propertyTypeSearchCriteria, propertyTypeFecthOptions).objects
     // Get object types
     val sampleTypeSearchCriteria = SampleTypeSearchCriteria().withAndOperator()
     val sampleTypeFetchOptions = SampleTypeFetchOptions()
     sampleTypeFetchOptions.withPropertyAssignments().withRegistrator()
-    val sampleTypes =
-        service.searchSampleTypes(token, sampleTypeSearchCriteria, sampleTypeFetchOptions)
-            .objects
+    val sampleTypes = service.searchSampleTypes(token, sampleTypeSearchCriteria, sampleTypeFetchOptions).objects
 
-    val spRep = OpenbisInstance(spaces, props, sampleTypes).apply { this.updateCodes() }
-    //Output file
+    val spRep = OpenbisInstance(spaces, props, sampleTypes).apply(OpenbisInstance::updateCodes)
     val format = Json { prettyPrint = true }
-    File(args.elementAtOrElse(0) { "./test.json" }).writeText(format.encodeToString(spRep))
+    return format.encodeToString(spRep)
+}
+
+
+fun main(args: Array<String>) {
+    val parser = ArgParser("example")
+    val openbisURL by (parser.argument(ArgType.String))
+    val username by parser.argument(ArgType.String)
+    val password by parser.argument(ArgType.String)
+    val mode by parser.argument(ArgType.Choice<Mode>())
+    val ioFile by parser.option(ArgType.String)
+    parser.parse(args)
+    val service = App().createService(URL(openbisURL))
+    val token = service.login(username, password)
+    val configFile = File(ioFile ?: "./test.json")
+    when(mode){
+        Mode.dump -> configFile.writeText(dumpInstance(service, token))
+        Mode.load -> {
+            val instance = Json.decodeFromString<OpenbisInstance>(configFile.readText()).create(service, token)
+            println(instance)
+        }
+    }
+
     //println(spJs)
 }
 

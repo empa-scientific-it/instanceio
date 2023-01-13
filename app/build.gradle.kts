@@ -11,6 +11,7 @@ plugins {
     val kotlinVer = "1.7.20"
     id("org.jetbrains.kotlin.jvm") version kotlinVer
 
+    alias(libs.plugins.dockerCompose)
 
     //Serialisation
     id("org.jetbrains.kotlin.plugin.serialization") version kotlinVer
@@ -66,12 +67,22 @@ dependencies {
     implementation(libs.kotlinxCLI)
 
 
+
 }
 
+
+//dockerCompose {
+//    useComposeFiles.add("src/test/resources/docker-compose.yml")
+//    isRequiredBy(tasks.test)
+//    #'/isRequiredBy(tasks.run)
+//}
 
 tasks {
 
 }
+
+
+
 
 application {
     // Define the main class for the application.

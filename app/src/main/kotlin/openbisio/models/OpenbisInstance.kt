@@ -1,5 +1,6 @@
 package openbisio.models
 
+import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.PropertyType
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.SampleType
 import kotlinx.serialization.Serializable
@@ -19,5 +20,15 @@ data class OpenbisInstance(
 
     fun updateCodes(){
         spaces?.map{it.addAncestors()}
+    }
+
+    fun create(service: IApplicationServerApi, token: String){
+
+        openbisPropertyTypes?.map { it.create(service, token) }
+        objectTypes?.map{it.create(service, token)}
+        spaces?.map {
+            it.createHierarchy(service, token)
+        }
+
     }
 }

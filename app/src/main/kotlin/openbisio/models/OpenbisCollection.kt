@@ -3,7 +3,12 @@ package openbisio.models
 import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.interfaces.IPermIdHolder
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.Experiment
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.ExperimentType
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.create.*
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.fetchoptions.ExperimentFetchOptions
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.id.IExperimentId
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.search.ExperimentSearchCriteria
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.id.ProjectIdentifier
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Transient
@@ -24,11 +29,15 @@ class OpenbisCollection(
     override fun createOperation(connection: IApplicationServerApi, token: String) {
         val ec = ExperimentCreation().apply {
             this.code = code
+            this.projectId = ProjectIdentifier(ancestorsCodes!![0], ancestorsCodes!![1])
         }
     }
 
     override fun getFromOpenBIS(connection: IApplicationServerApi, token: String): IPermIdHolder? {
-        TODO("Not yet implemented")
+        println(identifier)
+        val so = ExperimentSearchCriteria().apply { withIdentifier().thatEquals(identifier) }
+        val res = connection.searchExperiments(token, so, ExperimentFetchOptions())
+        return res.objects[0]
     }
 
 
