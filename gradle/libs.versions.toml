@@ -1,5 +1,5 @@
 [versions]
-openbis = "20.10.5-EA"
+openbis = "20.10.5"
 kotlinx-serialization = "1.4.1"
 kotlinx-cli = "0.3.5"
 
@@ -13,3 +13,6 @@ kotlinxCLI = { module = "org.jetbrains.kotlinx:kotlinx-cli", version.ref = "kotl
 jakartaMail = { module = "jakarta.mail:jakarta.mail-api", version = "latest.release" }
 jacksonDatabind = {module = "com.fasterxml.jackson.core:jackson-databind", version = "latest.release"}
 kotlinStdlib = {module="org.jetbrains.kotlin:kotlin-stdlib-jdk8"}
+
+[plugins]
+dockerCompose = { id = "com.avast.gradle.docker-compose", version = "latest.release" }
