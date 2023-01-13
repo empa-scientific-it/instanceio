@@ -6,8 +6,10 @@ stages:
   - test
   - deploy
 
-tags:
-  - openbis
+
+jobs:
+  tags:
+    - openbis
 
 
 services:
