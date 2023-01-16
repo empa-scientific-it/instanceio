@@ -39,7 +39,7 @@ check_openbis:
 
 build:
   stage: build
-  script: gradle --build-cache assemble
+  script: gradle --build-cache buildFatJar
   cache:
     key: "$CI_COMMIT_REF_NAME"
     policy: push

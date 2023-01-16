@@ -21,11 +21,21 @@ Follow these steps:
     ```shell
    sdk install kotlin
    ```
-### Build
-To build the project, use gradle:
+### Build and run
+#### Using the Kotlin Application Plugin
+To build the project, use gradle with the `installDir` task. This will create a local installation:
 ```shell
-gradle build
+gradle installDir
 ```
+The installation is in ` app/build/install/app/bin/app`
+
+#### Building a fatJar
+If you prefer, you can use the `buildFatJar` gradle task to build a *fat Jar*, this is is a java archive which bundles all dependencies in one file that you can deploy anywhere.
+To do so, use
+```shell
+gradle buildFatJar
+```
+
 
 ## How to use the tool
 Once you have built the project, you can use the tool to both import and export metadata (and data!) from an existing openBIS instance.

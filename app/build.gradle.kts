@@ -13,14 +13,15 @@ plugins {
 
     alias(libs.plugins.dockerCompose)
 
+    alias(libs.plugins.fatJar)
+
     //Serialisation
     id("org.jetbrains.kotlin.plugin.serialization") version kotlinVer
 
     // Apply the application plugin to add support for building a CLI application in Java.
     application
+
 }
-
-
 
 repositories {
     // Use Maven Central for resolving dependencies.
@@ -77,10 +78,14 @@ dependencies {
 //    #'/isRequiredBy(tasks.run)
 //}
 
-tasks {
 
+
+
+ktor {
+    fatJar {
+        archiveFileName.set("app.jar")
+    }
 }
-
 
 
 

@@ -16,3 +16,4 @@ kotlinStdlib = {module="org.jetbrains.kotlin:kotlin-stdlib-jdk8"}
 
 [plugins]
 dockerCompose = { id = "com.avast.gradle.docker-compose", version = "latest.release" }
+fatJar = {id="io.ktor.plugin", version="latest.release"}
