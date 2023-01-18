@@ -22,20 +22,22 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.search.ExperimentSear
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.Sample
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.SampleType
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.create.SampleCreation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.fetchoptions.SampleFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.fetchoptions.SampleTypeFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.search.SampleSearchCriteria
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.search.SampleTypeSearchCriteria
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 
 @Serializable
 class OpenbisObject(
     override val code: String,
     private val type: String,
-    override val ancestorsCodes: MutableList<String>?,
+    @Transient override val ancestorsCodes: MutableList<String>? = null,
     override val children: List<OpenbisObject>? = null,
     val properties: Map<String, String>,
-    override val registrator: OpenbisPerson,
+    @Transient override val registrator: OpenbisPerson? = null,
     ) : OpenbisIdentifiedObject() {
 
     constructor(
@@ -50,7 +52,9 @@ class OpenbisObject(
     }
 
     override fun getFromOpenBIS(connection: IApplicationServerApi, token: String): IPermIdHolder? {
-        val sc  = SampleSearchCriteria().apply { withCode().thatEquals(code) }.withAndOperator().apply { withProject().withCode().thatEquals(ancestorsCodes[2]) }
+        val sc  = SampleSearchCriteria().apply { withCode().thatEquals(code) }.withAndOperator().apply { withProject().withCode().thatEquals(ancestorsCodes!![2]) }
+        val res = connection.searchSamples(token, sc, SampleFetchOptions())
+        return res.objects[0]
     }
 
     override fun createOperation(connection: IApplicationServerApi, token: String) {

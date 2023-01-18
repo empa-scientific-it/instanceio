@@ -3,7 +3,7 @@ volumes:
   openbis-state:
 services:
   openbis:
-    image: openbis/debian-openbis:20.10.5-EA
+    image: openbis/debian-openbis:20.10.5
     environment:
       - SERVER_HOST_PORT=localhost:8443
       - GROUP_ID=1000

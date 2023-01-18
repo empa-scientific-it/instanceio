@@ -23,16 +23,17 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.id.ProjectIdentifier
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.id.SpacePermId
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 
 @Serializable
 class OpenbisProject(
     override val code: String,
-    override val ancestorsCodes: MutableList<String>? = null,
+    @Transient override val ancestorsCodes: MutableList<String>? = null,
     val description: String?,
     var leader: OpenbisPerson?,
     @SerialName("collections") override val children: List<OpenbisCollection>?,
-    override val registrator: OpenbisPerson
+    @Transient override val registrator: OpenbisPerson? = null
 ) : OpenbisIdentifiedObject() {
     constructor(
         pr: Project

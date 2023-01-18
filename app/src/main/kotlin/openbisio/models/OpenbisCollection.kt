@@ -31,14 +31,15 @@ import kotlinx.serialization.Transient
 @Serializable
 class OpenbisCollection(
     override val code: String,
-    override val ancestorsCodes: MutableList<String>? = null,
+    @Transient override val ancestorsCodes: MutableList<String>? = null,
     val type: String,
     @SerialName("samples") override var children: List<OpenbisObject>?,
-    override val registrator: OpenbisPerson?
+    @Transient override val registrator: OpenbisPerson? = null
 ) : OpenbisIdentifiedObject() {
     constructor(
-        c: Experiment
-    ) : this(c.code, mutableListOf(), c.type.code, c.samples.map { OpenbisObject(it) }, OpenbisPerson(c.getRegistrator()))
+        c: Experiment,
+        includeSamples: Boolean = false,
+    ) : this(c.code, mutableListOf(), c.type.code, if(includeSamples)c.samples.map { OpenbisObject(it) } else listOf(), OpenbisPerson(c.getRegistrator()))
 
 
     override fun createOperation(connection: IApplicationServerApi, token: String) {

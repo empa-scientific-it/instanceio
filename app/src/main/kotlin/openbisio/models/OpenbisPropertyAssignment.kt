@@ -19,6 +19,7 @@ import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.interfaces.IPermIdHolder
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.PropertyAssignment
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import openbisio.models.IOpenbisEntity
 
 
@@ -27,7 +28,7 @@ class OpenbisPropertyAssignment(
     override val code: String,
     val section: String?,
     val mandatory: Boolean,
-    override val registrator: OpenbisPerson
+    @Transient override val registrator: OpenbisPerson? = null
 ) : OpenbisCreatable() {
     constructor(
         pa: PropertyAssignment

@@ -29,10 +29,10 @@ import kotlinx.serialization.SerialName
 @Serializable
 data class OpenbisSpace(
     override val code: String,
-    override val ancestorsCodes: MutableList<String>? = null,
+    @Transient override val ancestorsCodes: MutableList<String>? = null,
     val description: String?,
     @SerialName("projects") override val children: List<OpenbisProject>?,
-    override val registrator: OpenbisPerson
+    @Transient override val registrator: OpenbisPerson? = null
 ) : OpenbisIdentifiedObject() {
     constructor(sp: Space) : this(
         sp.code,

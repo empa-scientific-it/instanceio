@@ -18,14 +18,15 @@ package openbisio.models
 import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.PropertyType
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.SampleType
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class OpenbisInstance(
     var spaces: List<OpenbisSpace>?,
     var users: List<OpenbisPerson>?,
-    var openbisPropertyTypes: List<OpenbisPropertyType>?,
-    var objectTypes: List<OpenbisObjectType>?
+    @SerialName("property_types")  var openbisPropertyTypes: List<OpenbisPropertyType>?,
+    @SerialName("object_types") var objectTypes: List<OpenbisObjectType>?
 ) {
     constructor(
         sp: List<ch.ethz.sis.openbis.generic.asapi.v3.dto.space.Space>,

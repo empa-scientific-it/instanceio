@@ -23,12 +23,13 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.create.SampleTypeCreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.fetchoptions.SampleTypeFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.search.SampleTypeSearchCriteria
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 @Serializable
 class OpenbisObjectType(
     override val code: String,
     var properties: List<OpenbisPropertyAssignment>,
-    override val registrator: OpenbisPerson?
+    @Transient override val registrator: OpenbisPerson? = null
 ) : OpenbisCreatable() {
     constructor(
         ot: SampleType

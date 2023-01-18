@@ -25,6 +25,7 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.fetchoptions.PropertyTy
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.id.PropertyTypePermId
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.search.PropertyTypeSearchCriteria
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import openbisio.DataType
 
 @Serializable
@@ -33,7 +34,7 @@ class OpenbisPropertyType(
     val label: String,
     val description: String,
     val dataType: DataType,
-    override val registrator: OpenbisPerson?
+    @Transient override val registrator: OpenbisPerson? = null
 ) : OpenbisCreatable() {
     constructor(
         pt: PropertyType

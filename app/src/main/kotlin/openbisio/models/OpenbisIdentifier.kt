@@ -15,24 +15,12 @@
 
 package openbisio.models
 
-import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
-import kotlinx.serialization.Transient
-
-
-abstract class OpenbisCreatable : IOpenbisEntity {
-    abstract override val code: String
-    @Transient abstract override val registrator: OpenbisPerson?
-
-    override fun exists(connection: IApplicationServerApi, token: String): Boolean {
-        return getFromOpenBIS(connection, token) != null
+class OpenbisIdentifier(val identifier: String) {
+    companion object{
+        private val pathPattern = "(?:(?:\\/)([^\\/]+))?"
     }
-
-    override fun create(connection: IApplicationServerApi, token: String) {
-        if (!exists(connection, token)) createOperation(connection, token)
+    init {
+        val matcher = Regex(pathPattern)
+        if(!matcher.matches(identifier)) throw IllegalArgumentException("Invalid identifier")
     }
-
-
-
 }
-
-
