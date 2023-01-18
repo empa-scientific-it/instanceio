@@ -68,6 +68,37 @@ This file contains the following sections (indentation indicates nesting):
 
 The file should have the following structure:
 
+```JSON
+{
+  "spaces": [
+    {
+      "code": "YOUR_SPACE_CODE",
+      "description": "Your Description",
+      "projects": [
+        {
+          "code": "YOUR_FIRST_PROJECT_CODE",
+          "description": "Your project in the space",
+          "collections": [
+            {
+              "code": "YOUR_FIRST_COLLECTION_CODE",
+              "description": "This is an example collection",
+              "type": "COLLECTION"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+#### Hierarchical Structure
+Consider the `spaces` key in the JSON above. Here we define all our spaces as a list of JSON object. 
+Each space object must have a `code` and a `description`. All projects belonging to this space go into the `projects` list of JSON objects.
+The member of this list have the following attributes: `code`, `description` and `collections`. In the `collections` attribute, you can define collections belonging to this project. 
+This is done in the same way as for the projects, but additionally you must provide a `type` attribute, which should be the  **valid** name of a collection type.
+
+#### Property Types
+The second key of the JSON is `property_types`
 
 ## Limitations
 Currently, the tool is limited in its abilities as it is still under development. If you particularly miss a certain functionality, feel free to open an issue or to contact us.  
