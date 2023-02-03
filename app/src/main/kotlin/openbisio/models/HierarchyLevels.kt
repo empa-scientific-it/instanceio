@@ -15,24 +15,10 @@
 
 package openbisio.models
 
-import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
-import kotlinx.serialization.Transient
-
-
-abstract class OpenbisCreatable : IOpenbisEntity {
-    abstract override val code: String
-    @Transient abstract override val registrator: OpenbisPerson?
-
-    override fun exists(connection: IApplicationServerApi, token: String): Boolean {
-        return getFromOpenBIS(connection, token) != null
-    }
-
-    override fun create(connection: IApplicationServerApi, token: String) {
-        if (!exists(connection, token)) createOperation(connection, token)
-    }
-
-
+enum class HierarchyLevels{
+    SPACE,
+    PROJECT,
+    COLLECTION,
+    OBJECT
 
 }
-
-

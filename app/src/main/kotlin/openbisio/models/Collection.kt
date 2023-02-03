@@ -18,10 +18,8 @@ package openbisio.models
 import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.interfaces.IPermIdHolder
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.Experiment
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.ExperimentType
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.create.*
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.fetchoptions.ExperimentFetchOptions
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.id.IExperimentId
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.search.ExperimentSearchCriteria
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.id.ProjectIdentifier
 import kotlinx.serialization.Serializable
@@ -29,17 +27,18 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Transient
 
 @Serializable
-class OpenbisCollection(
+class Collection(
     override val code: String,
     @Transient override val ancestorsCodes: MutableList<String>? = null,
     val type: String,
-    @SerialName("samples") override var children: List<OpenbisObject>?,
-    @Transient override val registrator: OpenbisPerson? = null
-) : OpenbisIdentifiedObject() {
+    @SerialName("samples") override var children: List<Object>?,
+    @Transient override val registrator: OpenbisPerson? = null,
+    override val propertyAssignment: List<PropertyAssignment>?
+) : IdentifiedObject(), IAssignmentHolder {
     constructor(
         c: Experiment,
         includeSamples: Boolean = false,
-    ) : this(c.code, mutableListOf(), c.type.code, if(includeSamples)c.samples.map { OpenbisObject(it) } else listOf(), OpenbisPerson(c.getRegistrator()))
+    ) : this(c.code, mutableListOf(), c.type.code, if(includeSamples)c.samples.map { Object(it) } else listOf(), OpenbisPerson(c.getRegistrator()), c.type.propertyAssignments?.map{it-> PropertyAssignment(it)})
 
 
     override fun createOperation(connection: IApplicationServerApi, token: String) {
@@ -51,7 +50,7 @@ class OpenbisCollection(
 
     override fun getFromOpenBIS(connection: IApplicationServerApi, token: String): IPermIdHolder? {
         println(identifier)
-        val so = ExperimentSearchCriteria().apply { withIdentifier().thatEquals(identifier) }
+        val so = ExperimentSearchCriteria().apply { withIdentifier().thatEquals(identifier.identifier) }
         val res = connection.searchExperiments(token, so, ExperimentFetchOptions())
         return res.objects[0]
     }

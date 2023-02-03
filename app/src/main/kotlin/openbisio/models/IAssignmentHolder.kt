@@ -15,18 +15,6 @@
 
 package openbisio.models
 
-import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.interfaces.IPermIdHolder
-
-/**
- * Interface representing openBIS entities
- * that can be searched and created
- */
-interface IOpenbisEntity {
-    val code: String
-    val registrator: OpenbisPerson?
-    fun getFromOpenBIS(connection: IApplicationServerApi, token: String): IPermIdHolder?
-    fun createOperation(connection: IApplicationServerApi, token: String)
-    fun exists(connection: IApplicationServerApi, token: String): Boolean
-    fun create(connection: IApplicationServerApi, token: String)
+interface IAssignmentHolder {
+    val propertyAssignment: List<PropertyAssignment>?
 }

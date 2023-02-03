@@ -24,10 +24,11 @@ import kotlinx.serialization.Transient
  * @property ancestorsCodes a list of codes of the objects ancestors
  * @property children a (possibly empty) list of children of the object in the openBIS tree
  */
-interface IOpenbisHierarchyObject : IOpenbisEntity {
+interface IHierarchyObject : ICreatable {
     @Transient
     val ancestorsCodes: MutableList<String>?
-    val children: List<IOpenbisHierarchyObject>?
+    val children: List<IHierarchyObject>?
+    val identifier: HierarchyIdentifier
 
     /**
      * When this method is called (after the openBIS tree is built), it will push the codes of the

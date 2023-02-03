@@ -31,14 +31,14 @@ import kotlinx.serialization.Transient
 
 
 @Serializable
-class OpenbisObject(
+class Object(
     override val code: String,
     private val type: String,
     @Transient override val ancestorsCodes: MutableList<String>? = null,
-    override val children: List<OpenbisObject>? = null,
+    override val children: List<Object>? = null,
     val properties: Map<String, String>,
     @Transient override val registrator: OpenbisPerson? = null,
-    ) : OpenbisIdentifiedObject() {
+    ) : IdentifiedObject() {
 
     constructor(
         o: Sample

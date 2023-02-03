@@ -27,14 +27,14 @@ import kotlinx.serialization.Transient
 
 
 @Serializable
-class OpenbisProject(
+class Project(
     override val code: String,
     @Transient override val ancestorsCodes: MutableList<String>? = null,
     val description: String?,
     var leader: OpenbisPerson?,
-    @SerialName("collections") override val children: List<OpenbisCollection>?,
+    @SerialName("collections") override val children: List<Collection>?,
     @Transient override val registrator: OpenbisPerson? = null
-) : OpenbisIdentifiedObject() {
+) : IdentifiedObject() {
     constructor(
         pr: Project
     ) : this(
@@ -42,7 +42,7 @@ class OpenbisProject(
         mutableListOf(),
         pr.description,
         if (pr.leader != null) OpenbisPerson(pr.leader) else null,
-        pr.experiments.map { OpenbisCollection(it) },
+        pr.experiments.map { Collection(it) },
         OpenbisPerson(pr.getRegistrator())
     )
 

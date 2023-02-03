@@ -17,33 +17,38 @@ package openbisio.models
 
 import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.interfaces.IPermIdHolder
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.PropertyAssignment
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.SampleType
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.create.SampleTypeCreation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.fetchoptions.SampleTypeFetchOptions
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.search.SampleTypeSearchCriteria
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import openbisio.models.IOpenbisEntity
-
 
 @Serializable
-class OpenbisPropertyAssignment(
+class ObjectType(
     override val code: String,
-    val section: String?,
-    val mandatory: Boolean,
+    var properties: List<PropertyAssignment>,
     @Transient override val registrator: OpenbisPerson? = null
-) : OpenbisCreatable() {
+) : Creatable() {
     constructor(
-        pa: PropertyAssignment
+        ot: SampleType
     ) : this(
-        pa.getPermId().getPropertyTypeId().toString(),
-        pa.getSection(),
-        pa.isMandatory(),
-        OpenbisPerson(pa.getRegistrator())
+        ot.code,
+        ot.propertyAssignments.map { PropertyAssignment(it) },
+        ot.propertyAssignments.map { OpenbisPerson(it.getRegistrator()) }.elementAtOrNull(0)
     )
 
     override fun getFromOpenBIS(connection: IApplicationServerApi, token: String): IPermIdHolder? {
-        TODO("Not yet implemented")
+        val sc = SampleTypeSearchCriteria().apply { withCode().thatEquals(code) }
+        val res = connection.searchSampleTypes(token, sc, SampleTypeFetchOptions())
+        return res.objects[0]
     }
 
     override fun createOperation(connection: IApplicationServerApi, token: String) {
-        TODO("Not yet implemented")
+        val stc=  SampleTypeCreation().apply {
+            code = code
+            properties = properties
+        }
+        connection.createSampleTypes(token, mutableListOf(stc))
     }
 }

@@ -17,8 +17,8 @@ package openbisio.models
 
 import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
 
-abstract class OpenbisIdentifiedObject : OpenbisCreatable(), IOpenbisHierarchyObject {
-    abstract override val children: List<OpenbisIdentifiedObject>?
+abstract class IdentifiedObject : ICreatable, IHierarchyObject {
+    abstract override val children: List<IdentifiedObject>?
     override fun addAncestors() {
         if (children == null) return else {
             children?.forEach { it ->
@@ -30,7 +30,7 @@ abstract class OpenbisIdentifiedObject : OpenbisCreatable(), IOpenbisHierarchyOb
         }
 
     }
-    val identifier: String get() {return "/${ancestorsCodes!!.joinToString("/")}/${code}"}
+    override val identifier: HierarchyIdentifier get() {return HierarchyIdentifier(ancestorsCodes.orEmpty() + code)}
 
     fun createHierarchy(connection: IApplicationServerApi, token: String) {
         println("creating ${identifier} with class ${this::class}")

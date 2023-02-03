@@ -17,39 +17,35 @@ package openbisio.models
 
 import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.interfaces.IPermIdHolder
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.fetchoptions.PropertyTypeFetchOptions
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.SampleType
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.create.SampleTypeCreation
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.fetchoptions.SampleTypeFetchOptions
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.search.SampleTypeSearchCriteria
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.PropertyAssignment
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import openbisio.DataType
+
 
 @Serializable
-class OpenbisObjectType(
+class PropertyAssignment(
     override val code: String,
-    var properties: List<OpenbisPropertyAssignment>,
+    val section: String?,
+    val mandatory: Boolean,
+    val type: DataType,
     @Transient override val registrator: OpenbisPerson? = null
-) : OpenbisCreatable() {
+) : ICreatable {
     constructor(
-        ot: SampleType
+        pa: PropertyAssignment
     ) : this(
-        ot.code,
-        ot.propertyAssignments.map { OpenbisPropertyAssignment(it) },
-        ot.propertyAssignments.map { OpenbisPerson(it.getRegistrator()) }.elementAtOrNull(0)
+        pa.getPermId().getPropertyTypeId().toString(),
+        pa.getSection(),
+        pa.isMandatory(),
+        type = DataType(pa.propertyType.dataType),
+        OpenbisPerson(pa.getRegistrator())
     )
 
     override fun getFromOpenBIS(connection: IApplicationServerApi, token: String): IPermIdHolder? {
-        val sc = SampleTypeSearchCriteria().apply { withCode().thatEquals(code) }
-        val res = connection.searchSampleTypes(token, sc, SampleTypeFetchOptions())
-        return res.objects[0]
+        TODO("Not yet implemented")
     }
 
     override fun createOperation(connection: IApplicationServerApi, token: String) {
-        val stc=  SampleTypeCreation().apply {
-            code = code
-            properties = properties
-        }
-        connection.createSampleTypes(token, mutableListOf(stc))
+        TODO("Not yet implemented")
     }
 }

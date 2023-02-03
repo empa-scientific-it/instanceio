@@ -21,6 +21,7 @@ package openbisio
 import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.fetchoptions.ExperimentFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.fetchoptions.ProjectFetchOptions
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.fetchoptions.PropertyAssignmentFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.fetchoptions.PropertyTypeFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.search.PropertyTypeSearchCriteria
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.fetchoptions.SampleFetchOptions
@@ -30,21 +31,22 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.fetchoptions.SpaceFetchOpt
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.search.SpaceSearchCriteria
 import ch.systemsx.cisd.common.spring.HttpInvokerUtils
 import jakarta.mail.internet.InternetAddress
+import kotlinx.cli.ArgParser
+import kotlinx.cli.ArgType
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import openbisio.models.OpenbisInstance
+import openbisio.models.Instance
 import java.io.File
 import java.net.URL
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.DataType as OpenbisDataType
-import kotlinx.cli.*
 
 object InternetAddressAsStringSerializer : KSerializer<InternetAddress> {
     override val descriptor: SerialDescriptor =
@@ -79,15 +81,23 @@ class App {
 
 fun sampleFetchConfig(): SampleFetchOptions {
     val sfo = SampleFetchOptions()
-    sfo.withType()
+    sfo.withType().withPropertyAssignmentsUsing(assignmentFetchOptions())
     sfo.withProperties()
     sfo.withRegistrator()
     return sfo
 }
 
+fun assignmentFetchOptions(): PropertyAssignmentFetchOptions{
+    val pfo = PropertyAssignmentFetchOptions().apply {
+        this.withRegistrator()
+        this.withPropertyType()
+    }
+    return pfo
+}
+
 fun collectionFetchConfig(): ExperimentFetchOptions {
     val efo = ExperimentFetchOptions()
-    efo.withType()
+    efo.withType().withPropertyAssignmentsUsing(assignmentFetchOptions())
     efo.withProperties()
     efo.withRegistrator()
 
@@ -132,7 +142,7 @@ fun dumpInstance(service: IApplicationServerApi, token: String): String {
     sampleTypeFetchOptions.withPropertyAssignments().withRegistrator()
     val sampleTypes = service.searchSampleTypes(token, sampleTypeSearchCriteria, sampleTypeFetchOptions).objects
 
-    val spRep = OpenbisInstance(spaces, props, sampleTypes).apply(OpenbisInstance::updateCodes)
+    val spRep = Instance(spaces, props, sampleTypes).apply(Instance::updateCodes)
     val format = Json { prettyPrint = true }
     return format.encodeToString(spRep)
 }
@@ -149,10 +159,10 @@ fun main(args: Array<String>) {
     val service = App().createService(URL(openbisURL))
     val token = service.login(username, password)
     val configFile = File(ioFile ?: "./test.json")
-    when(mode){
+    when (mode) {
         Mode.dump -> configFile.writeText(dumpInstance(service, token))
         Mode.load -> {
-            val instance = Json.decodeFromString<OpenbisInstance>(configFile.readText()).create(service, token)
+            val instance = Json.decodeFromString<Instance>(configFile.readText()).create(service, token)
             println(instance)
         }
     }

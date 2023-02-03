@@ -27,18 +27,18 @@ import kotlinx.serialization.SerialName
 
 
 @Serializable
-data class OpenbisSpace(
+data class Space(
     override val code: String,
     @Transient override val ancestorsCodes: MutableList<String>? = null,
     val description: String?,
-    @SerialName("projects") override val children: List<OpenbisProject>?,
+    @SerialName("projects") override val children: List<Project>?,
     @Transient override val registrator: OpenbisPerson? = null
-) : OpenbisIdentifiedObject() {
+) : IdentifiedObject() {
     constructor(sp: Space) : this(
         sp.code,
         mutableListOf(),
         sp.description,
-        sp.projects.map { OpenbisProject(it) },
+        sp.projects.map { Project(it) },
         OpenbisPerson(sp.registrator)
     )
 

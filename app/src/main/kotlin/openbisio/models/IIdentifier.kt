@@ -15,5 +15,8 @@
 
 package openbisio.models
 
-class Identifiers {
+interface IIdentifier  {
+    val identifier: String
+    fun getCode(): String
 }
+

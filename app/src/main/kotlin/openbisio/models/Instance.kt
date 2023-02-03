@@ -22,17 +22,18 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class OpenbisInstance(
-    var spaces: List<OpenbisSpace>?,
+
+data class Instance(
+    var spaces: List<Space>?,
     var users: List<OpenbisPerson>?,
-    @SerialName("property_types")  var openbisPropertyTypes: List<OpenbisPropertyType>?,
-    @SerialName("object_types") var objectTypes: List<OpenbisObjectType>?
+    @SerialName("property_types")  var openbisPropertyTypes: List<openbisio.models.PropertyType>?,
+    @SerialName("object_types") var objectTypes: List<ObjectType>?
 ) {
     constructor(
         sp: List<ch.ethz.sis.openbis.generic.asapi.v3.dto.space.Space>,
         pt: List<PropertyType>,
         st: List<SampleType>
-    ) : this(sp.map { OpenbisSpace(it) }, null, pt.map { OpenbisPropertyType(it) }, st.map { OpenbisObjectType(it) })
+    ) : this(sp.map { Space(it) }, null, pt.map { PropertyType(it) }, st.map { ObjectType(it) })
 
     fun updateCodes(){
         spaces?.map{it.addAncestors()}
