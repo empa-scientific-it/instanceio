@@ -111,3 +111,61 @@ Only the following openBIS entities/structures are supported for creation and ex
 - Property types
 ### Authentication 
 The tool only supports authentication of openBIS users that are registered with file-based or LDAP-based authentication. It does not work with users whose authentication is handled by Switch AAI / eduID.
+
+## Architecture
+
+### Motivation
+This section documents the architecture of the system  and explains the main decisions behind the its design. It follows the arc42 template for software architecture documentation.
+
+### Introduction and Goals
+The goal of this tool is to offer "power" users an easy way to import and export the schema of openBIS instances in a machine- and human-readable format. 
+The primary user for this is the openBIS app developer, who needs to set up a  test instance with a certain schema and wants to automate this process as part of their CI/CD pipeline.
+
+#### Requirements Overview
+The system is inspired by the current "master data import" function of openBIS, which uses XLSX files instead and only works for importing master data. 
+This tool complements this feature by offering more programmer-friendly features.
+
+The following functional requirements should be covered by this system:
+- Export the schema ("master data") from an existing openBIS instance in a convenient format (JSON, YML)
+- Import the schema written as JSON or YML in a new openBIS instance
+- Validate the schema file 
+#### Quality Goals
+- Invalid schemas will be detected and a meaningful message displayed.
+- Importing in a new instance is transactional: if anything fails during the process, the  openBIS instance state is left unchanged.
+- The tool should be extensible: it must be easy to add new openBIS entity types to the serialisation-deserialisation process
+#### Stakeholder
+To be defined yet.
+
+### Constraints
+The tool shall be:
+- portable: it should run on all system with a modern JRE
+- released with an open source license
+- integrate seamlessly with CI-CD pipelines, hence it should offer a command line interface
+- Be built and released using the gradle build tool and the gitlab CI/CD pipeline
+
+### Context and Scope
+#### Business Context
+The system interacts with openBIS as well as with the local filesystem. The interactions with openBIS are needed to create and retreive entities, the interactions with the filesystem to persist and retreive the entities in the configuration file.
+```plantuml
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+Person(user, "User")
+System(initialiser, "InstanceIO")
+
+System(openbis, "openBIS")
+System(filesystem, "File System")
+Rel(user, openbis, "uses")
+Rel(user, initialiser, "uses")
+Rel(initialiser, openbis, "Creates entities")
+Rel(openbis, initialiser, "Reads entities")
+Rel(initialiser, filesystem, "Writes configuration")
+Rel(filesystem, initialiser, "Reads configuration")
+@enduml
+```
+
+#### Technical Context
+Currently left blank
+
+### Solution Strategy
+- 

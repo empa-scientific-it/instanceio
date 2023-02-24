@@ -5,5 +5,29 @@ package openbisio
 
 import kotlin.test.Test
 import kotlin.test.assertNotNull
+import openbisio.readInstance
+import kotlin.io.path.Path
+import openbisio.models.ConcreteIdentifier
+import kotlin.test.assertEquals
+
+class DeserialiserTest{
+    val configFile = javaClass.getResource("/test.json").readText()
+    val instance = readInstance(configFile)
+
+    @Test
+    fun testIdentifiers(){
+        val sp = instance.getChild("YOUR_SPACE_CODE")
+        println(sp)
+    }
+}
 
 
+class IdentifierTest{
+
+    @Test
+    fun testProjectParent(){
+        val id = ConcreteIdentifier.ProjectIdentifier(listOf("/", "A", "B"))
+        val parent = id.getAncestor()
+        assert(parent?.identifier == ConcreteIdentifier.ProjectIdentifier(listOf("/", "A")).identifier)
+    }
+}

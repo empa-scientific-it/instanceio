@@ -15,16 +15,18 @@
 
 package openbisio.models
 
-class HierarchyIdentifier(members: List<String>) : IIdentifier {
-    val members: List<String> = members
-    override val identifier = members.joinToString(separator = "/")
-    fun getAncestor(): IIdentifier {
-        return HierarchyIdentifier(members.subList(0, members.size - 1))
+import kotlin.collections.Collection
+
+abstract class HierarchyIdentifier(private val members: Collection<String>, private val maxSize: Int) : IIdentifier {
+    init {
+        if(members.size != maxSize){ throw IllegalArgumentException("This identifier can only have ${maxSize} component")}
+
     }
+    override val identifier = members.joinToString(separator = "/")
+
 
     override fun getCode(): String {
         return members.last()
     }
-
 
 }

@@ -15,37 +15,55 @@
 
 package openbisio.models
 
-import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.IObjectCreation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.interfaces.IPermIdHolder
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.PropertyType
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.SampleType
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import openbisio.OpenBISService
 
 @Serializable
-
 data class Instance(
-    var spaces: List<Space>?,
-    var users: List<OpenbisPerson>?,
-    @SerialName("property_types")  var openbisPropertyTypes: List<openbisio.models.PropertyType>?,
-    @SerialName("object_types") var objectTypes: List<ObjectType>?
-) {
+    override val code: String = "/",
+    @Contextual override val ancestorCodes: ArrayDeque<String> = ArrayDeque(listOf<String>()),
+    @SerialName("spaces") override var children: MutableList<out Space>?,
+    var users: List<OpenbisPerson>? = null,
+    @SerialName("property_types")  var openbisPropertyTypes: List<openbisio.models.PropertyType>? = null,
+    @SerialName("object_types") var objectTypes: List<ObjectType>? = null
+): IHierarchyComponent {
     constructor(
         sp: List<ch.ethz.sis.openbis.generic.asapi.v3.dto.space.Space>,
         pt: List<PropertyType>,
         st: List<SampleType>
-    ) : this(sp.map { Space(it) }, null, pt.map { PropertyType(it) }, st.map { ObjectType(it) })
+    ) : this("/", ArrayDeque(listOf<String>()) , sp.map { Space(it) }.toMutableList(), null, pt.map { PropertyType(it) }, st.map { ObjectType(it) })
 
-    fun updateCodes(){
-        spaces?.map{it.addAncestors()}
+    init {
+        updateCodes()
     }
 
-    fun create(service: IApplicationServerApi, token: String){
 
-        openbisPropertyTypes?.map { it.create(service, token) }
-        objectTypes?.map{it.create(service, token)}
-        spaces?.map {
-            it.createHierarchy(service, token)
-        }
 
+    override fun getFromAS(connection: OpenBISService): IPermIdHolder? {
+        return null
+    }
+
+    override val identifier: HierarchyIdentifier
+        get() = ConcreteIdentifier.InstanceIdentifier()
+
+    override fun createOperation(connection: OpenBISService): List<IOperation> {
+        val propertyCreations = openbisPropertyTypes?.flatMap { it.create(connection) }
+        val typeCreation = objectTypes?.flatMap{it.create(connection)}
+        val spaceCreations = children?.flatMap{it.createHierarchy(connection)}.orEmpty()
+        println(spaceCreations.map { it })
+        return (propertyCreations.orEmpty() + typeCreation.orEmpty() + spaceCreations)
+    }
+
+
+
+    override fun exists(connection: OpenBISService): Boolean {
+        return false
     }
 }

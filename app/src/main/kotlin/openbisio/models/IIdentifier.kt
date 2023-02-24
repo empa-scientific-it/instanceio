@@ -18,5 +18,6 @@ package openbisio.models
 interface IIdentifier  {
     val identifier: String
     fun getCode(): String
+    fun getAncestor(): IIdentifier?
 }
 

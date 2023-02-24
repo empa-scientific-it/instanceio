@@ -15,20 +15,25 @@
 
 package openbisio.models
 
-import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.CreateObjectsOperation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.IObjectCreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.interfaces.IPermIdHolder
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.SampleType
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.create.CreateSampleTypesOperation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.create.CreateSamplesOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.create.SampleTypeCreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.fetchoptions.SampleTypeFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.search.SampleTypeSearchCriteria
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import openbisio.OpenBISService
 
 @Serializable
 class ObjectType(
     override val code: String,
     var properties: List<PropertyAssignment>,
-    @Transient override val registrator: OpenbisPerson? = null
+    @Transient val registrator: OpenbisPerson? = null
 ) : Creatable() {
     constructor(
         ot: SampleType
@@ -38,17 +43,17 @@ class ObjectType(
         ot.propertyAssignments.map { OpenbisPerson(it.getRegistrator()) }.elementAtOrNull(0)
     )
 
-    override fun getFromOpenBIS(connection: IApplicationServerApi, token: String): IPermIdHolder? {
+    override fun getFromAS(connection: OpenBISService): IPermIdHolder? {
         val sc = SampleTypeSearchCriteria().apply { withCode().thatEquals(code) }
-        val res = connection.searchSampleTypes(token, sc, SampleTypeFetchOptions())
+        val res = connection.con.searchSampleTypes(connection.token, sc, SampleTypeFetchOptions())
         return res.objects[0]
     }
 
-    override fun createOperation(connection: IApplicationServerApi, token: String) {
+    override fun createOperation(connection: OpenBISService): List<IOperation> {
         val stc=  SampleTypeCreation().apply {
             code = code
             properties = properties
         }
-        connection.createSampleTypes(token, mutableListOf(stc))
+        return listOf(CreateSampleTypesOperation(mutableListOf(stc)))
     }
 }

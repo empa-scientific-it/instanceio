@@ -21,7 +21,6 @@ import kotlinx.serialization.Transient
 
 abstract class Creatable : ICreatable {
     abstract override val code: String
-    @Transient abstract override val registrator: OpenbisPerson?
 
 }
 

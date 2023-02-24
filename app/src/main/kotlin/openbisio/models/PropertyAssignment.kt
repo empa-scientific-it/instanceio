@@ -15,12 +15,13 @@
 
 package openbisio.models
 
-import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.interfaces.IPermIdHolder
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.PropertyAssignment
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import openbisio.DataType
+import openbisio.OpenBISService
 
 
 @Serializable
@@ -30,7 +31,7 @@ class PropertyAssignment(
     val mandatory: Boolean,
     val type: DataType,
     @Transient override val registrator: OpenbisPerson? = null
-) : ICreatable {
+) : ICreatable, IRegistratorHolder {
     constructor(
         pa: PropertyAssignment
     ) : this(
@@ -41,11 +42,11 @@ class PropertyAssignment(
         OpenbisPerson(pa.getRegistrator())
     )
 
-    override fun getFromOpenBIS(connection: IApplicationServerApi, token: String): IPermIdHolder? {
+    override fun getFromAS(connection: OpenBISService): IPermIdHolder? {
         TODO("Not yet implemented")
     }
 
-    override fun createOperation(connection: IApplicationServerApi, token: String) {
-        TODO("Not yet implemented")
+    override fun createOperation(connection: OpenBISService): List<IOperation> {
+        return listOf()
     }
 }

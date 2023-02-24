@@ -15,7 +15,7 @@
 
 package openbisio.models
 
-import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.Project
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.create.*
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.fetchoptions.*
@@ -24,45 +24,55 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.id.SpacePermId
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import openbisio.OpenBISService
 
 
 @Serializable
-class Project(
+data class Project(
     override val code: String,
-    @Transient override val ancestorsCodes: MutableList<String>? = null,
-    val description: String?,
-    var leader: OpenbisPerson?,
-    @SerialName("collections") override val children: List<Collection>?,
-    @Transient override val registrator: OpenbisPerson? = null
-) : IdentifiedObject() {
+    val description: String? = null,
+    var leader: OpenbisPerson? = null,
+    @Transient override val ancestorCodes: ArrayDeque<String> = ArrayDeque(
+        listOf()),
+    @SerialName("collections") override val children: MutableList<Collection>?,
+    @Transient override val registrator: OpenbisPerson? = null,
+) : ICreatableHierarchyComponent, IRegistratorHolder {
     constructor(
         pr: Project
     ) : this(
         pr.code,
-        mutableListOf(),
         pr.description,
         if (pr.leader != null) OpenbisPerson(pr.leader) else null,
-        pr.experiments.map { Collection(it) },
-        OpenbisPerson(pr.getRegistrator())
+        ArrayDeque(listOf()),
+        pr.experiments.map { Collection(it) }.toMutableList(),
+        OpenbisPerson(pr.getRegistrator()),
     )
 
+    override val identifier: HierarchyIdentifier
+        get() = ConcreteIdentifier.ProjectIdentifier(ancestorCodes + code)
 
-    override fun createOperation(connection: IApplicationServerApi, token: String) {
+
+    override fun createOperation(connection: OpenBISService): List<IOperation> {
+        println("creating ${code}")
+
         val pc = ProjectCreation().apply {
-            this.spaceId = SpacePermId(ancestorsCodes!![0])
+            this.spaceId = SpacePermId(ancestorCodes!![0])
             this.code = code
             this.description = description
         }
-        connection.createProjects(token, listOf(pc))
-        println("creating ${code}")
+
+        val prc = CreateProjectsOperation(pc)
+        return listOf(prc)
     }
 
-    override fun getFromOpenBIS(connection: IApplicationServerApi, token: String): Project? {
+    override fun getFromAS(connection: OpenBISService): Project? {
         val fo = ProjectFetchOptions()
-        val pi = ProjectIdentifier(code, code)
-        val res = connection.getProjects(token, listOf(pi), fo)
+        val pi = ProjectIdentifier(ancestorCodes!![0], code)
+        println(pi)
+        val res = connection.con.getProjects(connection.token, listOf(pi), fo)
         return res[pi]
     }
+
 
 
 }

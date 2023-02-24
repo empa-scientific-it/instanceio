@@ -8,7 +8,8 @@ kotlinxSerialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-j
 openbis = { module = "openbis:openbis-v3-api", version.ref = "openbis" }
 kotlin-bom = { module = "org.jetbrains.kotlin:kotlin-bom" }
 kotlinTest = { module = "org.jetbrains.kotlin:kotlin-test" }
-kotlinTestJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit" }
+test = { module = "org.jetbrains.kotlin:test"}
+kotlinTestJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit5" }
 kotlinxCLI = { module = "org.jetbrains.kotlinx:kotlinx-cli", version.ref = "kotlinx-cli" }
 jakartaMail = { module = "jakarta.mail:jakarta.mail-api", version = "latest.release" }
 jacksonDatabind = {module = "com.fasterxml.jackson.core:jackson-databind", version = "latest.release"}

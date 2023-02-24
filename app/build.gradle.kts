@@ -26,14 +26,14 @@ plugins {
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
-     ivy {
-        url =   uri("https://sissource.ethz.ch/openbis/openbis-public/openbis-ivy/-/raw/main/")
-        patternLayout{
-      
+    ivy {
+        url = uri("https://sissource.ethz.ch/openbis/openbis-public/openbis-ivy/-/raw/main/")
+        patternLayout {
+
             artifact("[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]")
-             ivy("[organisation]/[module]/[revision]/ivy.xml")
+            ivy("[organisation]/[module]/[revision]/ivy.xml")
         }
-       
+
     }
 
 
@@ -47,12 +47,10 @@ dependencies {
     // Use the Kotlin JDK 8 standard library.
     implementation(libs.kotlinStdlib)
 
-
     // Use the Kotlin test library.
-    testImplementation(libs.kotlinTest)
-
+    implementation(libs.kotlinTest)
     // Use the Kotlin JUnit integration.
-    testImplementation(libs.kotlinTestJunit)
+    implementation(libs.kotlinTestJunit)
 
     //Openbis v3 API
     implementation(libs.openbis)
@@ -68,9 +66,10 @@ dependencies {
     //Command line
     implementation(libs.kotlinxCLI)
 
-
-
 }
+
+
+
 
 
 //dockerCompose {
@@ -78,8 +77,6 @@ dependencies {
 //    isRequiredBy(tasks.test)
 //    #'/isRequiredBy(tasks.run)
 //}
-
-
 
 
 ktor {
@@ -93,4 +90,38 @@ ktor {
 application {
     // Define the main class for the application.
     mainClass.set("openbisio.AppKt")
+}
+
+
+
+testing {
+    suites {
+        val test by getting(JvmTestSuite::class) {
+            useJUnit()
+            useKotlinTest()
+        }
+        val integrationTest by registering(JvmTestSuite::class) {
+            sources {
+                kotlin {
+                    setSrcDirs(listOf("src/integration/kotlin/"))
+                }
+                resources{
+                    setSrcDirs(listOf("src/integration/resources/"))
+                }
+            }
+
+            dependencies {
+                implementation(project())
+            }
+        }
+    }
+}
+
+/* Confiugre integration tests */
+val integrationTestImplementation: Configuration by configurations.getting {
+    extendsFrom(configurations.testImplementation.get())
+}
+
+tasks.named("check") {
+    dependsOn(testing.suites.named("integrationTest"))
 }

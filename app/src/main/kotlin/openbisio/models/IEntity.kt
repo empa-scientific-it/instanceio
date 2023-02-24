@@ -15,15 +15,21 @@
 
 package openbisio.models
 
-import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.interfaces.IPermIdHolder
+import openbisio.OpenBISService
 
 /**
  * Interface representing openBIS entities
- * that can be searched and created
+ * that can be taken from openBIS and have
+ * a code as identifier
+ *
  */
 interface IEntity {
     val code: String
-    val registrator: OpenbisPerson?
-    fun getFromOpenBIS(connection: IApplicationServerApi, token: String): IPermIdHolder?
+
+    /**
+     * Get the corresponding entity from an openBIS application server
+     *
+     */
+    fun getFromAS(connection: OpenBISService): IPermIdHolder?
 }

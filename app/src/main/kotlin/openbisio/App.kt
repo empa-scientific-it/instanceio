@@ -18,7 +18,6 @@
  */
 package openbisio
 
-import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.fetchoptions.ExperimentFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.fetchoptions.ProjectFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.fetchoptions.PropertyAssignmentFetchOptions
@@ -29,12 +28,10 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.fetchoptions.SampleTypeFe
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.search.SampleTypeSearchCriteria
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.fetchoptions.SpaceFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.search.SpaceSearchCriteria
-import ch.systemsx.cisd.common.spring.HttpInvokerUtils
 import jakarta.mail.internet.InternetAddress
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
@@ -46,7 +43,7 @@ import kotlinx.serialization.json.Json
 import openbisio.models.Instance
 import java.io.File
 import java.net.URL
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.DataType as OpenbisDataType
+import javax.management.InstanceNotFoundException
 
 object InternetAddressAsStringSerializer : KSerializer<InternetAddress> {
     override val descriptor: SerialDescriptor =
@@ -63,21 +60,6 @@ object InternetAddressAsStringSerializer : KSerializer<InternetAddress> {
     }
 }
 
-@JvmInline
-@Serializable
-value class DataType(private val t: OpenbisDataType)
-
-class App {
-    fun createService(path: URL): IApplicationServerApi {
-        val con =
-            HttpInvokerUtils.createServiceStub(
-                IApplicationServerApi::class.java,
-                path.toString() + IApplicationServerApi.SERVICE_URL,
-                10000
-            )
-        return con
-    }
-}
 
 fun sampleFetchConfig(): SampleFetchOptions {
     val sfo = SampleFetchOptions()
@@ -87,7 +69,7 @@ fun sampleFetchConfig(): SampleFetchOptions {
     return sfo
 }
 
-fun assignmentFetchOptions(): PropertyAssignmentFetchOptions{
+fun assignmentFetchOptions(): PropertyAssignmentFetchOptions {
     val pfo = PropertyAssignmentFetchOptions().apply {
         this.withRegistrator()
         this.withPropertyType()
@@ -122,29 +104,39 @@ fun spaceFecthConfig(): SpaceFetchOptions {
     return sfo
 }
 
+fun sampleTypeFetchConfig(): SampleTypeFetchOptions {
+    val stfo = SampleTypeFetchOptions().apply {
+        this.withPropertyAssignmentsUsing(assignmentFetchOptions())
+    }
+    return stfo
+}
+
+
 enum class Mode {
     dump,
     load
 }
 
-fun dumpInstance(service: IApplicationServerApi, token: String): String {
+fun dumpInstance(service: OpenBISService): Instance {
     val spaceSearchCriteria = SpaceSearchCriteria().withAndOperator()
     val spaceFetchConf = spaceFecthConfig()
-    val spaces = service.searchSpaces(token, spaceSearchCriteria, spaceFetchConf).objects
+    val spaces = service.con.searchSpaces(service.token, spaceSearchCriteria, spaceFetchConf).objects
     // Get property types
     val propertyTypeSearchCriteria = PropertyTypeSearchCriteria().withAndOperator()
     val propertyTypeFecthOptions = PropertyTypeFetchOptions()
     propertyTypeFecthOptions.withRegistrator()
-    val props = service.searchPropertyTypes(token, propertyTypeSearchCriteria, propertyTypeFecthOptions).objects
+    val props = service.con.searchPropertyTypes(service.token, propertyTypeSearchCriteria, propertyTypeFecthOptions).objects
     // Get object types
     val sampleTypeSearchCriteria = SampleTypeSearchCriteria().withAndOperator()
-    val sampleTypeFetchOptions = SampleTypeFetchOptions()
-    sampleTypeFetchOptions.withPropertyAssignments().withRegistrator()
-    val sampleTypes = service.searchSampleTypes(token, sampleTypeSearchCriteria, sampleTypeFetchOptions).objects
+    val sampleTypeFetchOptions = sampleTypeFetchConfig()
+    val sampleTypes = service.con.searchSampleTypes(service.token, sampleTypeSearchCriteria, sampleTypeFetchOptions).objects
 
     val spRep = Instance(spaces, props, sampleTypes).apply(Instance::updateCodes)
-    val format = Json { prettyPrint = true }
-    return format.encodeToString(spRep)
+    return spRep
+}
+
+fun readInstance(config: String): Instance {
+    return Json.decodeFromString<Instance>(config)
 }
 
 
@@ -156,17 +148,20 @@ fun main(args: Array<String>) {
     val mode by parser.argument(ArgType.Choice<Mode>())
     val ioFile by parser.option(ArgType.String)
     parser.parse(args)
-    val service = App().createService(URL(openbisURL))
-    val token = service.login(username, password)
+    val service = OpenBISService(URL(openbisURL))
+    val token = service.connect(username, password)
     val configFile = File(ioFile ?: "./test.json")
     when (mode) {
-        Mode.dump -> configFile.writeText(dumpInstance(service, token))
+        Mode.dump -> {
+            val inst = dumpInstance(service)
+            val format = Json { prettyPrint = true }
+            val res=   format.encodeToString(inst)
+            configFile.writeText(res)
+        }
         Mode.load -> {
-            val instance = Json.decodeFromString<Instance>(configFile.readText()).create(service, token)
-            println(instance)
+            val instance = readInstance(configFile.readText()).create(service)
         }
     }
 
-    //println(spJs)
 }
 

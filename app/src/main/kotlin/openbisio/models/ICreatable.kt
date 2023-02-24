@@ -15,16 +15,31 @@
 
 package openbisio.models
 
-import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.interfaces.IPermIdHolder
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.IObjectCreation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
+import openbisio.OpenBISService
 
+/**
+ * Interface representing all openBIS entities that can be created on the openBIS
+ * AS.
+ */
 interface ICreatable : IEntity {
-    fun createOperation(connection: IApplicationServerApi, token: String)
-    fun exists(connection: IApplicationServerApi, token: String): Boolean {
-        return getFromOpenBIS(connection, token) != null
+    /**
+     * This method should be implemented in order
+     * for the entity to be created.
+     * The method returns a {@link ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.IObjectCreation} object from the openBIS V3 API. In this way we implement
+     * transactional creations.
+     */
+    fun createOperation(connection: OpenBISService): List<IOperation>
+    fun exists(connection: OpenBISService): Boolean {
+        return getFromAS(connection) != null
     }
 
-    fun create(connection: IApplicationServerApi, token: String) {
-        if (!exists(connection, token)) createOperation(connection, token)
+    /**
+     * This methods wraps the {@link #createOperation} method and only returns
+     * a creation object when the object does not already exist on the openBIS AS
+     */
+    fun create(connection: OpenBISService): List<IOperation> {
+        return if (!exists(connection)) createOperation(connection) else listOf()
     }
 }

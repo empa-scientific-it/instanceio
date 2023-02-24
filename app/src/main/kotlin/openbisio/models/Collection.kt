@@ -15,8 +15,8 @@
 
 package openbisio.models
 
-import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.interfaces.IPermIdHolder
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.Experiment
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.create.*
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.fetchoptions.ExperimentFetchOptions
@@ -25,34 +25,51 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.id.ProjectIdentifier
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Transient
+import openbisio.OpenBISService
+import openbisio.models.Object as OpenBISObject
 
 @Serializable
-class Collection(
+data class Collection(
     override val code: String,
-    @Transient override val ancestorsCodes: MutableList<String>? = null,
+    @Transient override val ancestorCodes: ArrayDeque<String> = ArrayDeque(listOf()),
     val type: String,
-    @SerialName("samples") override var children: List<Object>?,
+    @SerialName("samples") override val children: MutableList<OpenBISObject>? = null,
     @Transient override val registrator: OpenbisPerson? = null,
-    override val propertyAssignment: List<PropertyAssignment>?
-) : IdentifiedObject(), IAssignmentHolder {
+    override val properties: Map<String, String>? = null,
+) : ICreatableHierarchyComponent, IPropertyHolder, IRegistratorHolder {
     constructor(
         c: Experiment,
         includeSamples: Boolean = false,
-    ) : this(c.code, mutableListOf(), c.type.code, if(includeSamples)c.samples.map { Object(it) } else listOf(), OpenbisPerson(c.getRegistrator()), c.type.propertyAssignments?.map{it-> PropertyAssignment(it)})
+    ) : this(
+        c.code,
+        ArrayDeque(listOf()),
+        c.type.code,
+        if (includeSamples) c.samples.map { OpenBISObject(it) }.toMutableList() else null,
+        OpenbisPerson(c.getRegistrator()),
+        c.properties)
 
 
-    override fun createOperation(connection: IApplicationServerApi, token: String) {
+    override val identifier: ConcreteIdentifier.CollectionIdentifier
+        get() = ConcreteIdentifier.CollectionIdentifier(ancestorCodes + code)
+
+
+    override fun createOperation(connection: OpenBISService): List<IOperation> {
         val ec = ExperimentCreation().apply {
             this.code = code
-            this.projectId = ProjectIdentifier(ancestorsCodes!![0], ancestorsCodes!![1])
+            this.projectId = ProjectIdentifier(ancestorCodes!![0], ancestorCodes!![1])
         }
+        return listOf(CreateExperimentsOperation(ec))
     }
 
-    override fun getFromOpenBIS(connection: IApplicationServerApi, token: String): IPermIdHolder? {
+    override fun getFromAS(connection: OpenBISService): IPermIdHolder? {
         println(identifier)
         val so = ExperimentSearchCriteria().apply { withIdentifier().thatEquals(identifier.identifier) }
-        val res = connection.searchExperiments(token, so, ExperimentFetchOptions())
-        return res.objects[0]
+        val res = connection.con.searchExperiments(connection.token, so, ExperimentFetchOptions())
+        return if (res.totalCount > 0) {
+            res.objects[0]
+        } else {
+            null
+        }
     }
 
 

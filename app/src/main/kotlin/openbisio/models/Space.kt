@@ -15,7 +15,7 @@
 
 package openbisio.models
 
-import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.Space
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.fetchoptions.SpaceFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.create.*
@@ -24,37 +24,43 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.id.SpacePermId
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.SerialName
+import openbisio.OpenBISService
 
 
 @Serializable
 data class Space(
     override val code: String,
-    @Transient override val ancestorsCodes: MutableList<String>? = null,
-    val description: String?,
-    @SerialName("projects") override val children: List<Project>?,
+    @Transient override var ancestorCodes: ArrayDeque<String> = ArrayDeque<String>(listOf()),
+    val description: String? = null,
+    @SerialName("projects") override val children: MutableList<Project>? = null,
     @Transient override val registrator: OpenbisPerson? = null
-) : IdentifiedObject() {
+) : ICreatableHierarchyComponent, IRegistratorHolder {
+
     constructor(sp: Space) : this(
         sp.code,
-        mutableListOf(),
+        ArrayDeque<String>(listOf()),
         sp.description,
-        sp.projects.map { Project(it) },
+        sp.projects.map { Project(it) }.toMutableList(),
         OpenbisPerson(sp.registrator)
     )
 
-    override fun createOperation(connection: IApplicationServerApi, token: String) {
+    override val identifier: HierarchyIdentifier
+        get() = ConcreteIdentifier.SpaceIdentifier(listOf(code))
+
+
+    override fun createOperation(connection: OpenBISService): List<IOperation> {
         val sc = SpaceCreation().apply {
             this.code = code
             this.description = description ?: ""
         }
-        connection.createSpaces(token, listOf(sc))
+        return listOf( CreateSpacesOperation(mutableListOf<SpaceCreation>(sc)))
     }
 
 
-    override fun getFromOpenBIS(connection: IApplicationServerApi, token: String): Space? {
+    override fun getFromAS(connection: OpenBISService): Space? {
         val sc = SpaceFetchOptions()
         val sid = SpacePermId(code)
-        val result = connection.getSpaces(token, listOf(sid), sc)
+        val result = connection.con.getSpaces(connection.token, listOf(sid), sc)
         return result[sid]
     }
 

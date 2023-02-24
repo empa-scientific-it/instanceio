@@ -17,10 +17,12 @@ package openbisio.models
 
 import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.interfaces.IPermIdHolder
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.fetchoptions.ExperimentFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.search.ExperimentSearchCriteria
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.Sample
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.SampleType
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.create.CreateSamplesOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.create.SampleCreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.fetchoptions.SampleFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.fetchoptions.SampleTypeFetchOptions
@@ -28,21 +30,22 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.search.SampleSearchCriter
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.search.SampleTypeSearchCriteria
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import openbisio.OpenBISService
 
 
 @Serializable
 class Object(
     override val code: String,
     private val type: String,
-    @Transient override val ancestorsCodes: MutableList<String>? = null,
-    override val children: List<Object>? = null,
-    val properties: Map<String, String>,
+    @Transient override val ancestorCodes:   ArrayDeque<String> = ArrayDeque(listOf()),
+    override val children: MutableList<ICreatableHierarchyComponent>? = null,
+    override val properties: Map<String, String>?,
     @Transient override val registrator: OpenbisPerson? = null,
-    ) : IdentifiedObject() {
+    ) : ICreatableHierarchyComponent, IPropertyHolder, IRegistratorHolder {
 
     constructor(
         o: Sample
-    ) : this(o.code, o.type.code, mutableListOf(), null, o.properties, OpenbisPerson(o.getRegistrator()))
+    ) : this(o.code, o.type.code, ArrayDeque(listOf()), null, o.properties, OpenbisPerson(o.getRegistrator()))
 
     fun getType(connection: IApplicationServerApi, token: String): SampleType {
         val typeResult = connection.searchSampleTypes(token, SampleTypeSearchCriteria().apply { this.withCode().thatEquals(type) },
@@ -51,17 +54,21 @@ class Object(
         return typeResult.objects[0]
     }
 
-    override fun getFromOpenBIS(connection: IApplicationServerApi, token: String): IPermIdHolder? {
-        val sc  = SampleSearchCriteria().apply { withCode().thatEquals(code) }.withAndOperator().apply { withProject().withCode().thatEquals(ancestorsCodes!![2]) }
-        val res = connection.searchSamples(token, sc, SampleFetchOptions())
+    override fun getFromAS(connection: OpenBISService): IPermIdHolder? {
+        val sc  = SampleSearchCriteria().apply { withCode().thatEquals(code) }.withAndOperator().apply { withProject().withCode().thatEquals(ancestorCodes!![2]) }
+        val res = connection.con.searchSamples(connection.token, sc, SampleFetchOptions())
         return res.objects[0]
     }
 
-    override fun createOperation(connection: IApplicationServerApi, token: String) {
-        val typeResult = connection.searchSampleTypes(token, SampleTypeSearchCriteria().apply { this.withCode().thatEquals(type) },
+
+    override val identifier: HierarchyIdentifier
+        get() = TODO("Not yet implemented")
+
+    override fun createOperation(connection: OpenBISService): List<IOperation> {
+        val typeResult = connection.con.searchSampleTypes(connection.token, SampleTypeSearchCriteria().apply { this.withCode().thatEquals(type) },
             SampleTypeFetchOptions()
         )
-        val experimentResult = connection.searchExperiments(token, ExperimentSearchCriteria().apply { this.withIdentifier().thatEquals(code) },
+        val experimentResult = connection.con.searchExperiments(connection.token, ExperimentSearchCriteria().apply { this.withIdentifier().thatEquals(code) },
             ExperimentFetchOptions()
         )
         val sc = SampleCreation().apply {
@@ -70,7 +77,7 @@ class Object(
             this.typeId = typeResult!!.objects[0].permId
             this.properties = properties
         }
-        connection.createSamples(token, listOf(sc))
+        return listOf(CreateSamplesOperation(sc))
     }
 
 

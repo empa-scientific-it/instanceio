@@ -17,15 +17,18 @@
 
 package openbisio.models
 
-import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.IObjectCreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.interfaces.IPermIdHolder
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.PropertyType
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.create.CreatePropertyTypesOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.create.PropertyTypeCreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.fetchoptions.PropertyTypeFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.search.PropertyTypeSearchCriteria
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import openbisio.DataType
+import openbisio.OpenBISService
 
 @Serializable
 class PropertyType(
@@ -33,25 +36,25 @@ class PropertyType(
     val label: String,
     val description: String,
     val dataType: DataType,
-    @Transient override val registrator: OpenbisPerson? = null
+    @Transient  val registrator: OpenbisPerson? = null
 ) : ICreatable {
     constructor(
         pt: PropertyType
     ) : this(pt.code, pt.label, pt.description, DataType(pt.dataType), OpenbisPerson(pt.getRegistrator()))
 
-    override fun getFromOpenBIS(connection: IApplicationServerApi, token: String): IPermIdHolder? {
+    override fun getFromAS(connection: OpenBISService): IPermIdHolder? {
         val sc = PropertyTypeSearchCriteria().apply {  withCode().thatEquals(code)}
-        val res=  connection.searchPropertyTypes(token, sc, PropertyTypeFetchOptions())
+        val res=  connection.con.searchPropertyTypes(connection.token, sc, PropertyTypeFetchOptions())
         return res.objects[0] ?: null
     }
 
-    override fun createOperation(connection: IApplicationServerApi, token: String) {
+    override fun createOperation(connection: OpenBISService): List<IOperation> {
         val cr = PropertyTypeCreation().apply {
             code = code
             label = label
             description = description
             dataType = dataType
         }
-        connection.createPropertyTypes(token, listOf(cr))
+        return listOf( CreatePropertyTypesOperation(listOf(cr)))
     }
 }
