@@ -15,13 +15,10 @@
 
 package openbisio.models
 
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.CreateObjectsOperation
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.IObjectCreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.interfaces.IPermIdHolder
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.SampleType
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.create.CreateSampleTypesOperation
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.create.CreateSamplesOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.create.SampleTypeCreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.fetchoptions.SampleTypeFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.search.SampleTypeSearchCriteria
@@ -40,7 +37,7 @@ class ObjectType(
     ) : this(
         ot.code,
         ot.propertyAssignments.map { PropertyAssignment(it) },
-        ot.propertyAssignments.map { OpenbisPerson(it.getRegistrator()) }.elementAtOrNull(0)
+        ot.propertyAssignments.map { OpenbisPerson(it.registrator) }.elementAtOrNull(0)
     )
 
     override fun getFromAS(connection: OpenBISService): IPermIdHolder? {
@@ -52,7 +49,6 @@ class ObjectType(
     override fun createOperation(connection: OpenBISService): List<IOperation> {
         val stc=  SampleTypeCreation().apply {
             code = code
-            properties = properties
         }
         return listOf(CreateSampleTypesOperation(mutableListOf(stc)))
     }

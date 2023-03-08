@@ -17,17 +17,42 @@ class DeserialiserTest{
     @Test
     fun testIdentifiers(){
         val sp = instance.getChild("YOUR_SPACE_CODE")
-        println(sp)
+        assert(sp?.identifier?.identifier == "/YOUR_FIRST_PROJECT_CODE/YOUR_SPACE_CODE")
+
+    }
+
+
+    @Test
+    fun testCodes(){
+        println(instance.children?.get(0)?.children?.get(0))
     }
 }
+
 
 
 class IdentifierTest{
 
     @Test
+    fun testInstanceIdentifier(){
+        val id = ConcreteIdentifier.InstanceIdentifier()
+        assert(id.identifier == "/")
+    }
+
+
+    @Test
+    fun testSpaceIdentifier(){
+        val path = "/SPACE"
+        val components = path.split("/")
+        val id = ConcreteIdentifier.SpaceIdentifier(components)
+        println(id.identifier)
+        assert(id.identifier == path)
+
+    }
+
+    @Test
     fun testProjectParent(){
         val id = ConcreteIdentifier.ProjectIdentifier(listOf("/", "A", "B"))
         val parent = id.getAncestor()
-        assert(parent?.identifier == ConcreteIdentifier.ProjectIdentifier(listOf("/", "A")).identifier)
+        assert(parent.identifier == ConcreteIdentifier.SpaceIdentifier(listOf("/", "A")).identifier)
     }
 }

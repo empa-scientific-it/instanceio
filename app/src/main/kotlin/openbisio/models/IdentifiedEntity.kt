@@ -15,8 +15,6 @@
 
 package openbisio.models
 
-import openbisio.OpenBISService
-
 /**
 * Abstract class implementing all the common methods for entities that possess
  * an identifier and belong to the openBIS hierarchy

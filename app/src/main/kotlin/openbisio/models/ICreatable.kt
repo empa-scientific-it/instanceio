@@ -15,7 +15,6 @@
 
 package openbisio.models
 
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.IObjectCreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import openbisio.OpenBISService
 

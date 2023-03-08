@@ -20,6 +20,7 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.Project
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.create.*
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.fetchoptions.*
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.id.ProjectIdentifier
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.search.ProjectSearchCriteria
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.id.SpacePermId
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -45,7 +46,7 @@ data class Project(
         if (pr.leader != null) OpenbisPerson(pr.leader) else null,
         ArrayDeque(listOf()),
         pr.experiments.map { Collection(it) }.toMutableList(),
-        OpenbisPerson(pr.getRegistrator()),
+        OpenbisPerson(pr.registrator),
     )
 
     override val identifier: HierarchyIdentifier
@@ -53,24 +54,22 @@ data class Project(
 
 
     override fun createOperation(connection: OpenBISService): List<IOperation> {
-        println("creating ${code}")
 
-        val pc = ProjectCreation().apply {
-            this.spaceId = SpacePermId(ancestorCodes!![0])
-            this.code = code
-            this.description = description
+        val pc = ProjectCreation().also {
+            it.spaceId = SpacePermId(identifier.getAncestor()!!.identifier)
+            it.code = code
+            it.description = description
         }
-
         val prc = CreateProjectsOperation(pc)
         return listOf(prc)
     }
 
     override fun getFromAS(connection: OpenBISService): Project? {
         val fo = ProjectFetchOptions()
-        val pi = ProjectIdentifier(ancestorCodes!![0], code)
-        println(pi)
-        val res = connection.con.getProjects(connection.token, listOf(pi), fo)
-        return res[pi]
+        val ps = ProjectSearchCriteria().withAndOperator().apply {  withId().thatEquals(ProjectIdentifier(identifier.identifier)) }
+        val res = connection.con.searchProjects(connection.token, ps, fo)
+        println(res)
+        return if(res.objects.size > 0) res.objects[0] else null
     }
 
 

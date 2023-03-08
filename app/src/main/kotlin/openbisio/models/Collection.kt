@@ -17,13 +17,14 @@ package openbisio.models
 
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.interfaces.IPermIdHolder
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.entitytype.id.EntityTypePermId
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.Experiment
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.create.*
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.fetchoptions.ExperimentFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.search.ExperimentSearchCriteria
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.id.ProjectIdentifier
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import openbisio.OpenBISService
 import openbisio.models.Object as OpenBISObject
@@ -45,7 +46,7 @@ data class Collection(
         ArrayDeque(listOf()),
         c.type.code,
         if (includeSamples) c.samples.map { OpenBISObject(it) }.toMutableList() else null,
-        OpenbisPerson(c.getRegistrator()),
+        OpenbisPerson(c.registrator),
         c.properties)
 
 
@@ -54,15 +55,15 @@ data class Collection(
 
 
     override fun createOperation(connection: OpenBISService): List<IOperation> {
-        val ec = ExperimentCreation().apply {
-            this.code = code
-            this.projectId = ProjectIdentifier(ancestorCodes!![0], ancestorCodes!![1])
+        val ec = ExperimentCreation().also {
+            it.code = code
+            it.projectId = ProjectIdentifier(identifier.getAncestor().identifier)
+            it.typeId = EntityTypePermId(type)
         }
         return listOf(CreateExperimentsOperation(ec))
     }
 
     override fun getFromAS(connection: OpenBISService): IPermIdHolder? {
-        println(identifier)
         val so = ExperimentSearchCriteria().apply { withIdentifier().thatEquals(identifier.identifier) }
         val res = connection.con.searchExperiments(connection.token, so, ExperimentFetchOptions())
         return if (res.totalCount > 0) {

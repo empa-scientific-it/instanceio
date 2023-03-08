@@ -10,6 +10,9 @@ import openbisio.dumpInstance
 import openbisio.models.Instance
 
 
+
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.plugin.create.PluginCreation
+
 class OpenBISServiceTest {
     val serviceURL = "https://localhost:8443/openbis/openbis"
     val userName = "admin"

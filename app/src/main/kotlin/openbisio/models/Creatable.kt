@@ -15,9 +15,6 @@
 
 package openbisio.models
 
-import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
-import kotlinx.serialization.Transient
-
 
 abstract class Creatable : ICreatable {
     abstract override val code: String

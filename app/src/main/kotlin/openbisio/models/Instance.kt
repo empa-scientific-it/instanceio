@@ -15,7 +15,6 @@
 
 package openbisio.models
 
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.IObjectCreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.interfaces.IPermIdHolder
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.PropertyType
@@ -38,7 +37,7 @@ data class Instance(
         sp: List<ch.ethz.sis.openbis.generic.asapi.v3.dto.space.Space>,
         pt: List<PropertyType>,
         st: List<SampleType>
-    ) : this("/", ArrayDeque(listOf<String>()) , sp.map { Space(it) }.toMutableList(), null, pt.map { PropertyType(it) }, st.map { ObjectType(it) })
+    ) : this("", ArrayDeque(listOf<String>()) , sp.map { Space(it) }.toMutableList(), null, pt.map { PropertyType(it) }, st.map { ObjectType(it) })
 
     init {
         updateCodes()
@@ -57,7 +56,7 @@ data class Instance(
         val propertyCreations = openbisPropertyTypes?.flatMap { it.create(connection) }
         val typeCreation = objectTypes?.flatMap{it.create(connection)}
         val spaceCreations = children?.flatMap{it.createHierarchy(connection)}.orEmpty()
-        println(spaceCreations.map { it })
+        println(spaceCreations)
         return (propertyCreations.orEmpty() + typeCreation.orEmpty() + spaceCreations)
     }
 

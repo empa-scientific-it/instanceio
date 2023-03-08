@@ -1,6 +1,9 @@
 version: '3'
 volumes:
   openbis-state:
+networks:
+  local:
+    driver: bridge
 services:
   openbis:
     image: openbis/debian-openbis:20.10.5
@@ -12,6 +15,8 @@ services:
       - openbis-state:/home/openbis/openbis_state/
     ports:
       - 8443:443
+    networks:
+      - local
     hostname: openbis
     healthcheck:
       test: ["CMD", "curl", "-k", "https://openbis:443"]

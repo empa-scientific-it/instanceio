@@ -17,13 +17,12 @@ package openbisio.models
 
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.Space
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.fetchoptions.SpaceFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.create.*
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.id.SpacePermId
-
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.fetchoptions.SpaceFetchOptions
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.search.SpaceSearchCriteria
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import kotlinx.serialization.SerialName
 import openbisio.OpenBISService
 
 
@@ -49,9 +48,9 @@ data class Space(
 
 
     override fun createOperation(connection: OpenBISService): List<IOperation> {
-        val sc = SpaceCreation().apply {
-            this.code = code
-            this.description = description ?: ""
+        val sc = SpaceCreation().also {
+            it.code = code
+            it.description = description ?: ""
         }
         return listOf( CreateSpacesOperation(mutableListOf<SpaceCreation>(sc)))
     }
@@ -59,9 +58,11 @@ data class Space(
 
     override fun getFromAS(connection: OpenBISService): Space? {
         val sc = SpaceFetchOptions()
-        val sid = SpacePermId(code)
-        val result = connection.con.getSpaces(connection.token, listOf(sid), sc)
-        return result[sid]
+        val sid = SpaceSearchCriteria().withAndOperator().apply {
+            withCode().thatEquals(code)
+        }
+        val result = connection.con.searchSpaces(connection.token, sid, sc)
+        return if(result.objects.size > 0)  result.objects[0] else null
     }
 
 

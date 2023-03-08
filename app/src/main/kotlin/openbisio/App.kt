@@ -43,7 +43,6 @@ import kotlinx.serialization.json.Json
 import openbisio.models.Instance
 import java.io.File
 import java.net.URL
-import javax.management.InstanceNotFoundException
 
 object InternetAddressAsStringSerializer : KSerializer<InternetAddress> {
     override val descriptor: SerialDescriptor =

@@ -35,11 +35,11 @@ class PropertyAssignment(
     constructor(
         pa: PropertyAssignment
     ) : this(
-        pa.getPermId().getPropertyTypeId().toString(),
-        pa.getSection(),
-        pa.isMandatory(),
+        pa.permId.propertyTypeId.toString(),
+        pa.section,
+        pa.isMandatory,
         type = DataType(pa.propertyType.dataType),
-        OpenbisPerson(pa.getRegistrator())
+        OpenbisPerson(pa.registrator)
     )
 
     override fun getFromAS(connection: OpenBISService): IPermIdHolder? {

@@ -28,6 +28,7 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.fetchoptions.SampleFetchO
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.fetchoptions.SampleTypeFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.search.SampleSearchCriteria
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.search.SampleTypeSearchCriteria
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.id.SpacePermId
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import openbisio.OpenBISService
@@ -37,25 +38,27 @@ import openbisio.OpenBISService
 class Object(
     override val code: String,
     private val type: String,
-    @Transient override val ancestorCodes:   ArrayDeque<String> = ArrayDeque(listOf()),
+    @Transient override val ancestorCodes: ArrayDeque<String> = ArrayDeque(listOf()),
     override val children: MutableList<ICreatableHierarchyComponent>? = null,
     override val properties: Map<String, String>?,
     @Transient override val registrator: OpenbisPerson? = null,
-    ) : ICreatableHierarchyComponent, IPropertyHolder, IRegistratorHolder {
+) : ICreatableHierarchyComponent, IPropertyHolder, IRegistratorHolder {
 
     constructor(
         o: Sample
-    ) : this(o.code, o.type.code, ArrayDeque(listOf()), null, o.properties, OpenbisPerson(o.getRegistrator()))
+    ) : this(o.code, o.type.code, ArrayDeque(listOf()), null, o.properties, OpenbisPerson(o.registrator))
 
     fun getType(connection: IApplicationServerApi, token: String): SampleType {
-        val typeResult = connection.searchSampleTypes(token, SampleTypeSearchCriteria().apply { this.withCode().thatEquals(type) },
+        val typeResult = connection.searchSampleTypes(
+            token, SampleTypeSearchCriteria().apply { this.withCode().thatEquals(type) },
             SampleTypeFetchOptions()
         )
         return typeResult.objects[0]
     }
 
     override fun getFromAS(connection: OpenBISService): IPermIdHolder? {
-        val sc  = SampleSearchCriteria().apply { withCode().thatEquals(code) }.withAndOperator().apply { withProject().withCode().thatEquals(ancestorCodes!![2]) }
+        val sc = SampleSearchCriteria().apply { withCode().thatEquals(code) }.withAndOperator()
+            .apply { withProject().withCode().thatEquals(ancestorCodes[2]) }
         val res = connection.con.searchSamples(connection.token, sc, SampleFetchOptions())
         return res.objects[0]
     }
@@ -65,10 +68,12 @@ class Object(
         get() = TODO("Not yet implemented")
 
     override fun createOperation(connection: OpenBISService): List<IOperation> {
-        val typeResult = connection.con.searchSampleTypes(connection.token, SampleTypeSearchCriteria().apply { this.withCode().thatEquals(type) },
+        val typeResult = connection.con.searchSampleTypes(
+            connection.token, SampleTypeSearchCriteria().apply { this.withCode().thatEquals(type) },
             SampleTypeFetchOptions()
         )
-        val experimentResult = connection.con.searchExperiments(connection.token, ExperimentSearchCriteria().apply { this.withIdentifier().thatEquals(code) },
+        val experimentResult = connection.con.searchExperiments(
+            connection.token, ExperimentSearchCriteria().apply { this.withIdentifier().thatEquals(code) },
             ExperimentFetchOptions()
         )
         val sc = SampleCreation().apply {
@@ -76,6 +81,7 @@ class Object(
             this.experimentId = experimentResult!!.objects[0].permId
             this.typeId = typeResult!!.objects[0].permId
             this.properties = properties
+            this.spaceId = SpacePermId(identifier.getAncestor()!!.getAncestor()!!.identifier )
         }
         return listOf(CreateSamplesOperation(sc))
     }

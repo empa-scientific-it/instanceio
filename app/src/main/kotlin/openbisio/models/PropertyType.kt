@@ -17,7 +17,6 @@
 
 package openbisio.models
 
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.IObjectCreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.interfaces.IPermIdHolder
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.PropertyType
@@ -40,7 +39,7 @@ class PropertyType(
 ) : ICreatable {
     constructor(
         pt: PropertyType
-    ) : this(pt.code, pt.label, pt.description, DataType(pt.dataType), OpenbisPerson(pt.getRegistrator()))
+    ) : this(pt.code, pt.label, pt.description, DataType(pt.dataType), OpenbisPerson(pt.registrator))
 
     override fun getFromAS(connection: OpenBISService): IPermIdHolder? {
         val sc = PropertyTypeSearchCriteria().apply {  withCode().thatEquals(code)}

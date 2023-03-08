@@ -6,8 +6,11 @@ import openbisio.models.Instance
 class InstanceCreator(val instance: Instance) {
     fun create(service: OpenBISService){
         val creations = instance.createOperation(service)
-        println(creations.map { println(it) })
+        if (creations.isNotEmpty()) {
+            val res = service.con.executeOperations(service.token, creations.toList(), SynchronousOperationExecutionOptions()
+                .apply { this.isExecuteInOrder = true })
 
-        val res = service.con.executeOperations(service.token, creations.toMutableList(), SynchronousOperationExecutionOptions().apply { this.isExecuteInOrder = true })
+        }
+
     }
 }
