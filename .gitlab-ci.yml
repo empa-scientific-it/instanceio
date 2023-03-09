@@ -27,13 +27,15 @@ image: gradle:alpine
 before_script:
   - GRADLE_USER_HOME="$(pwd)/.gradle"
   - export GRADLE_USER_HOME
+  - OPENBIS="https://openbis:443"
+  - export OPENBIS
 
 
 check_openbis:
   stage: setup
   image: alpine/curl
   script:
-    - curl https://openbis:8443
+    - curl ${OPENBIS}
   retry: 2
 
 build:
@@ -48,7 +50,7 @@ build:
 
 test:
   stage: test
-  script: gradle run --args "https://openbis:443 admin changeit"
+  script: gradle run --args "${OPENBIS} admin changeit"
   services:
     - name: openbis/debian-openbis:20.10.5-EA
   cache:
