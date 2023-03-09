@@ -72,12 +72,6 @@ dependencies {
 
 
 
-//dockerCompose {
-//    useComposeFiles.add("src/test/resources/docker-compose.yml")
-//    isRequiredBy(tasks.test)
-//    #'/isRequiredBy(tasks.run)
-//}
-
 
 ktor {
     fatJar {
@@ -117,6 +111,10 @@ testing {
     }
 }
 
+
+
+
+
 /* Confiugre integration tests */
 val integrationTestImplementation: Configuration by configurations.getting {
     extendsFrom(configurations.testImplementation.get())
@@ -124,4 +122,13 @@ val integrationTestImplementation: Configuration by configurations.getting {
 
 tasks.named("check") {
     dependsOn(testing.suites.named("integrationTest"))
+}
+
+
+dockerCompose {
+    useComposeFiles.add("src/test/resources/docker-compose.yml")
+    isRequiredBy(tasks.test)
+    isRequiredBy(tasks.run)
+    isRequiredBy(tasks.getByName("integrationTest"))
+    stopContainers.set(false)
 }
