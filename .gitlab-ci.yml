@@ -16,7 +16,7 @@ services:
   - name: openbis/debian-openbis:20.10.5-EA
     alias: openbis
     variables:
-      SERVER_HOST_PORT: openbis:8443
+      SERVER_HOST_PORT: openbis:443
       GROUP_ID: 1000
       #CORE_PLUGINS: enabled-modules =
     pull_policy: if-not-present
@@ -48,7 +48,7 @@ build:
 
 test:
   stage: test
-  script: gradle run --args "https://openbis:8443 admin changeit"
+  script: gradle run --args "https://openbis:443 admin changeit"
   services:
     - name: openbis/debian-openbis:20.10.5-EA
   cache:
