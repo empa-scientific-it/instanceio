@@ -35,7 +35,7 @@ check_openbis:
   stage: setup
   image: alpine/curl
   script:
-    - curl ${OPENBIS}
+    - curl -k ${OPENBIS}
   retry: 2
 
 build:
