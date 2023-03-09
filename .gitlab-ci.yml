@@ -34,7 +34,7 @@ check_openbis:
   image: alpine/curl
   script:
     - curl https://openbis:8443
-  retry: 4
+  retry: 2
 
 build:
   stage: build
