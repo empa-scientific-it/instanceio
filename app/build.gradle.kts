@@ -8,19 +8,19 @@
 
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
-    val kotlinVer = "1.7.20"
-    id("org.jetbrains.kotlin.jvm") version kotlinVer
+    alias(libs.plugins.kotlin)
 
     alias(libs.plugins.dockerCompose)
 
     alias(libs.plugins.fatJar)
 
     //Serialisation
-    id("org.jetbrains.kotlin.plugin.serialization") version kotlinVer
+    alias(libs.plugins.kotlin.serialization)
 
     // Apply the application plugin to add support for building a CLI application in Java.
     application
 
+    id("maven-publish")
 }
 
 repositories {
@@ -35,6 +35,20 @@ repositories {
         }
 
     }
+    // Gitlab Package registry
+    maven {
+        val gitLabPrivateToken: String? by project
+        val ciToken: String? = System.getenv("CI_JOB_TOKEN")
+        url = uri("https://gitlab.empa.ch/api/v4/groups/openbis-tools/packages/maven")
+        name = "Empa Gitlab"
+        credentials(HttpHeaderCredentials::class) {
+            name = "Private-Token"
+            value = gitLabPrivateToken ?: ciToken
+        }
+        authentication {
+            create<HttpHeaderAuthentication>("header")
+        }
+    }
 
 
 }
@@ -43,28 +57,28 @@ repositories {
 
 dependencies {
     // Align versions of all Kotlin components
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
+    implementation(libs.kotlin.bom)
     // Use the Kotlin JDK 8 standard library.
-    implementation(libs.kotlinStdlib)
+    implementation(libs.kotlin.stdlib)
 
     // Use the Kotlin test library.
-    implementation(libs.kotlinTest)
+    implementation(libs.kotlin.test)
     // Use the Kotlin JUnit integration.
-    implementation(libs.kotlinTestJunit)
+    implementation(libs.kotlin.test.junit)
 
     //Openbis v3 API
     implementation(libs.openbis)
 
-    implementation(libs.kotlinxSerialization)
+    implementation(libs.kotlinx.serialization)
 
     //Jackson
-    implementation(libs.jacksonDatabind)
+    implementation(libs.jackson.databind)
 
     //Email validation
-    implementation(libs.jakartaMail)
+    implementation(libs.jakarta.mail)
 
     //Command line
-    implementation(libs.kotlinxCLI)
+    implementation(libs.kotlinx.cli)
 
 }
 
@@ -75,7 +89,6 @@ dependencies {
 
 ktor {
     fatJar {
-        archiveFileName.set("app.jar")
     }
 }
 
@@ -99,7 +112,7 @@ testing {
                 kotlin {
                     setSrcDirs(listOf("src/integration/kotlin/"))
                 }
-                resources{
+                resources {
                     setSrcDirs(listOf("src/integration/resources/"))
                 }
             }
@@ -112,7 +125,29 @@ testing {
 }
 
 
-
+publishing {
+    repositories {
+        maven {
+            val gitLabPrivateToken: String? by project
+            val ciToken: String? = System.getenv("CI_JOB_TOKEN")
+            println(gitLabPrivateToken)
+            url = uri("https://gitlab.empa.ch/api/v4/projects/1644/packages/maven/")
+            name = "EmpaGitlab"
+            credentials(HttpHeaderCredentials::class) {
+                name = "Private-Token"
+                value = gitLabPrivateToken
+            }
+            authentication {
+                create<HttpHeaderAuthentication>("header")
+            }
+        }
+    }
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+        }
+    }
+}
 
 
 /* Confiugre integration tests */
@@ -125,10 +160,15 @@ tasks.named("check") {
 }
 
 
-dockerCompose {
-    useComposeFiles.add("src/test/resources/docker-compose.yml")
-    isRequiredBy(tasks.test)
-    isRequiredBy(tasks.run)
-    isRequiredBy(tasks.getByName("integrationTest"))
-    stopContainers.set(false)
+// Only use the docker compose task for local builds. For CI/CD builds, use the services provided
+// by Gitlab CI
+val localBuild: Boolean = (System.getenv("LOCAL_BUILD")?.toInt() == 0) ?: true
+if (localBuild) {
+    dockerCompose {
+        useComposeFiles.add("src/test/resources/docker-compose.yml")
+        isRequiredBy(tasks.run)
+        isRequiredBy(tasks.getByName("integrationTest"))
+        stopContainers.set(false)
+    }
 }
+
