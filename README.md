@@ -15,7 +15,7 @@ Follow these steps:
    ```
 3. Install Gradle:
    ```shell
-   sdk install gradle 7.6
+   sdk install gradle 8.0
    ```
 4. Install Kotlin:  
     ```shell
@@ -23,19 +23,19 @@ Follow these steps:
    ```
 ### Build and run
 #### Using the Kotlin Application Plugin
-To build the project, use gradle with the `installDir` task. This will create a local installation:
+To build the project, use gradle with the `installDist` task. This will create a local installation:
 ```shell
-gradle installDir
+gradle installDist
 ```
 The installation is in ` app/build/install/app/bin/app`
 
 #### Building a fatJar
-If you prefer, you can use the `buildFatJar` gradle task to build a *fat Jar*, this is a java archive which bundles all dependencies in one file that you can deploy anywhere.
+If you prefer, you can use the `jar` gradle task to build a *fat Jar*, this is a java archive which bundles all dependencies in one file that you can deploy anywhere.
 To do so, use
 ```shell
-gradle buildFatJar
+gradle jar
 ```
-
+The result is in `app/build/libs/app.jar`
 
 
 
@@ -146,7 +146,7 @@ The tool shall be:
 ### Context and Scope
 #### Business Context
 The system interacts with openBIS as well as with the local filesystem. The interactions with openBIS are needed to create and retreive entities, the interactions with the filesystem to persist and retreive the entities in the configuration file.
-```plantuml
+```puml
 @startuml
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
 
