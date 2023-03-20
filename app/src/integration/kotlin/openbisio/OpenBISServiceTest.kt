@@ -5,13 +5,7 @@ import java.net.URL
 import kotlin.reflect.typeOf
 import kotlin.test.Test
 import kotlin.test.assertContains
-import kotlin.test.asserter
-import openbisio.dumpInstance
-import openbisio.models.Instance
 
-
-
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.plugin.create.PluginCreation
 
 class OpenBISServiceTest {
     val serviceURL = "https://localhost:8443/openbis/openbis"
@@ -27,13 +21,13 @@ class OpenBISServiceTest {
 
     @Test
     fun testDeserialise(){
-        val inst = dumpInstance(service)
+        val inst = ch.empa.openbisio.dumpInstance(service)
         assertContains( inst.children?.map{it.code}.orEmpty(), "ELN_SETTINGS")
     }
 
     @Test
     fun testCreation(){
-        val instance = readInstance(configFile)
+        val instance = ch.empa.openbisio.readInstance(configFile)
         InstanceCreator(instance).create(service)
     }
 

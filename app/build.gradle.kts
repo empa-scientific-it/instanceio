@@ -126,27 +126,29 @@ testing {
 
 
 publishing {
-    repositories {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["kotlin"])
+        }
+    }
+    repositories{
         maven {
             val gitLabPrivateToken: String? by project
             val ciToken: String? = System.getenv("CI_JOB_TOKEN")
+            val token = gitLabPrivateToken ?: ciToken
             println(gitLabPrivateToken)
-            url = uri("https://gitlab.empa.ch/api/v4/projects/1644/packages/maven/")
-            name = "EmpaGitlab"
+            url = uri("https://gitlab.empa.ch/api/v4/projects/1644/packages/maven")
+            name = "Gitlab"
             credentials(HttpHeaderCredentials::class) {
                 name = "Private-Token"
-                value = gitLabPrivateToken
+                value = token
             }
             authentication {
                 create<HttpHeaderAuthentication>("header")
             }
         }
     }
-    publications {
-        create<MavenPublication>("maven") {
-            from(components["java"])
-        }
-    }
+
 }
 
 

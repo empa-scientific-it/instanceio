@@ -7,6 +7,9 @@ stages:
   - deploy
 
 
+variables:
+  - LOCAL_BUILD=0
+
 default:
   tags:
     - openbis
