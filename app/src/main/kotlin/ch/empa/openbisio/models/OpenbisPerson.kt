@@ -18,7 +18,6 @@ package ch.empa.openbisio.models
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.person.Person
 import jakarta.mail.internet.InternetAddress
 import kotlinx.serialization.Serializable
-import ch.empa.openbisio.InternetAddressAsStringSerializer
 
 @Serializable
 data class OpenbisPerson(

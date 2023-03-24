@@ -1,8 +1,6 @@
 package openbisio
 import openbisio.OpenBISService
-import openbisio.models.Space
 import java.net.URL
-import kotlin.reflect.typeOf
 import kotlin.test.Test
 import kotlin.test.assertContains
 

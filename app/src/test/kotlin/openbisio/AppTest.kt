@@ -4,11 +4,7 @@
 package openbisio
 
 import kotlin.test.Test
-import kotlin.test.assertNotNull
-import ch.empa.openbisio.readInstance
-import kotlin.io.path.Path
 import openbisio.models.ConcreteIdentifier
-import kotlin.test.assertEquals
 
 class DeserialiserTest{
     val configFile = javaClass.getResource("/test.json").readText()
