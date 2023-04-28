@@ -21,7 +21,6 @@ plugins {
     application
 
     id("maven-publish")
-    id("ivy-publish")
 }
 
 repositories {
@@ -127,38 +126,27 @@ testing {
 
 
 publishing {
-    publications {
-        create<MavenPublication>("as") {
-            from(components["kotlin"])
-            groupId = "ch.empa.openbisio"
-            artifactId = "app"
-            version = "0.1-SNAPSHOT"
-            pom{
-                name.set("a")
-            }
-        }
-
-    }
-    repositories{
-
+    repositories {
         maven {
             val gitLabPrivateToken: String? by project
             val ciToken: String? = System.getenv("CI_JOB_TOKEN")
-            val token = gitLabPrivateToken ?: ciToken
-            url = uri("https://gitlab.empa.ch/api/v4/projects/1644/packages/maven")
-            name = "Gitlab"
-
+            println(gitLabPrivateToken)
+            url = uri("https://gitlab.empa.ch/api/v4/projects/1644/packages/maven/")
+            name = "EmpaGitlab"
             credentials(HttpHeaderCredentials::class) {
                 name = "Private-Token"
-                value = token
-
+                value = gitLabPrivateToken
             }
             authentication {
                 create<HttpHeaderAuthentication>("header")
             }
         }
     }
-
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+        }
+    }
 }
 
 
