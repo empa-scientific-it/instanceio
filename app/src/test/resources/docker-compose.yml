@@ -4,9 +4,15 @@ volumes:
 networks:
   local:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
+          ip_range: 172.28.5.0/24
+          gateway: 172.28.5.254
 services:
   openbis:
-    image: openbis/debian-openbis:20.10.5
+    build:
+      context: .
     environment:
       - SERVER_HOST_PORT=localhost:8443
       - GROUP_ID=1000
@@ -18,8 +24,4 @@ services:
     networks:
       - local
     hostname: openbis
-    healthcheck:
-      test: ["CMD", "curl", "-k", "https://openbis:443"]
-      interval:  30s
-      timeout: 30s
-      retries: 5
+
