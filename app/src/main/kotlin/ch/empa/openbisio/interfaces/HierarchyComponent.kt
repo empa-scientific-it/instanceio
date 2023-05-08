@@ -7,17 +7,6 @@ interface HierarchyComponent : ICreatable {
 
 
 
-//    fun add(el: IHierarchyComponent) {
-//        children?.add(el)
-//    }
-//
-//    fun remove(el: IHierarchyComponent) {
-//        children?.remove(el)
-//    }
-
-
-
-
     fun getChild(code: String): HierarchyComponent? {
         return children?.find { it.code  == code}
     }

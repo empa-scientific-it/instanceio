@@ -13,18 +13,18 @@
  * limitations under the License.
  */
 
-package ch.empa.openbisio.interfaces
+package ch.empa.openbisio.property
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class OpenbisPropertyValue {
+sealed class PropertyValue {
     @Serializable
-    class TextualValueOpenbis(val value: String) : OpenbisPropertyValue()
+    class TextualValue(val value: String) : PropertyValue()
 
     @Serializable
-    class NumericValueOpenbis(val value: Double) : OpenbisPropertyValue()
+    class NumericValue(val value: Double) : PropertyValue()
 
     @Serializable
-    class BooleanValueOpenbis(val value: Boolean) : OpenbisPropertyValue()
+    class BooleanValue(val value: Boolean) : PropertyValue()
 }

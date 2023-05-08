@@ -2,7 +2,7 @@ package ch.empa.openbisio.objectype
 
 import ch.empa.openbisio.interfaces.Creatable
 import ch.empa.openbisio.person.Person
-import ch.empa.openbisio.interfaces.PropertyAssignment
+import ch.empa.openbisio.propertyassignment.PropertyAssignment
 import ch.empa.openbisio.openbis.OpenBISService
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.interfaces.IPermIdHolder
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation

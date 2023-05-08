@@ -1,5 +1,6 @@
 package ch.empa.openbisio.collection
 
+import ch.empa.openbisio.identifier.ConcreteIdentifier
 import ch.empa.openbisio.interfaces.*
 import ch.empa.openbisio.`object`.Object
 import ch.empa.openbisio.openbis.OpenBISService

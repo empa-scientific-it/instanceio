@@ -1,6 +1,6 @@
 package ch.empa.openbisio.propertytype
 
-import ch.empa.openbisio.DataType
+import ch.empa.openbisio.datatype.DataType
 import ch.empa.openbisio.interfaces.ICreatable
 import ch.empa.openbisio.person.Person
 import ch.empa.openbisio.openbis.OpenBISService

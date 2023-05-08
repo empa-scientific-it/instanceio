@@ -15,6 +15,7 @@
 
 package ch.empa.openbisio.instance
 
+import ch.empa.openbisio.identifier.ConcreteIdentifier
 import ch.empa.openbisio.interfaces.*
 import ch.empa.openbisio.objectype.ObjectType
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.interfaces.IPermIdHolder

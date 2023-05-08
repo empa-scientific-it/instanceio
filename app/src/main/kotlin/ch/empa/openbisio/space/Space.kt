@@ -1,5 +1,6 @@
 package ch.empa.openbisio.space
 
+import ch.empa.openbisio.identifier.ConcreteIdentifier
 import ch.empa.openbisio.interfaces.*
 import ch.empa.openbisio.openbis.OpenBISService
 import ch.empa.openbisio.person.Person

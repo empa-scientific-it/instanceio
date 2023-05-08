@@ -8,7 +8,7 @@
  */
 
 
-rootProject.name = "openbisio"
+rootProject.name = "ch.empa.openbisio"
 
 pluginManagement {
     repositories {

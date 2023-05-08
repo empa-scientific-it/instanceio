@@ -1,4 +1,4 @@
-package ch.empa.openbisio
+package ch.empa.openbisio.datatype
 
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.DataType
 import kotlinx.serialization.Serializable

@@ -9,7 +9,7 @@ data class Person(
     val userId: String,
     val firstName: String?,
     val lastName: String?,
-    @Serializable(with = ch.empa.openbisio.InternetAddressAsStringSerializer::class) val email: InternetAddress?
+    @Serializable(with = InternetAddressAsStringSerializer::class) val email: InternetAddress?
 ) {
     constructor(
         userId: String,

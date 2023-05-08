@@ -15,6 +15,9 @@
 
 package ch.empa.openbisio.interfaces
 
+import ch.empa.openbisio.propertyassignment.PropertyAssignment
+import ch.empa.openbisio.propertyassignment.PropertyAssignmentDTO
+
 interface AssignmentHolder {
-    val propertyAssignment: List<PropertyAssignment>?
+    val propertyAssignment: List<PropertyAssignmentDTO>?
 }

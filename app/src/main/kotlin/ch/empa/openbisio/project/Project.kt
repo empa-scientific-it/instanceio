@@ -1,6 +1,7 @@
 package ch.empa.openbisio.project
 
 import ch.empa.openbisio.collection.Collection
+import ch.empa.openbisio.identifier.ConcreteIdentifier
 import ch.empa.openbisio.interfaces.*
 import ch.empa.openbisio.openbis.OpenBISService
 import ch.empa.openbisio.person.Person

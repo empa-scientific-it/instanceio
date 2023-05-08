@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.cli.common.arguments.preprocessCommandLineArguments
+import org.jetbrains.kotlin.cli.common.arguments.validateArguments
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 /*
@@ -97,10 +99,11 @@ ktor {
 
 
 application {
-    // Define the main class for the application.
-    mainClass.set("openbisio.AppKt")
-}
+    mainClass.set("ch.empa.openbisio.AppKt")
+    run {
 
+    }
+}
 
 
 testing {
@@ -174,4 +177,5 @@ if (localBuild) {
         stopContainers.set(false)
     }
 }
+
 

@@ -1,5 +1,6 @@
 package ch.empa.openbisio
 import ch.empa.openbisio.instance.Instance
+import ch.empa.openbisio.instance.InstanceCreator
 import ch.empa.openbisio.space.Space
 import ch.empa.openbisio.openbis.OpenBISService
 import java.net.URL
