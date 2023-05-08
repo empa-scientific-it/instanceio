@@ -40,7 +40,8 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
-import ch.empa.openbisio.models.Instance
+import ch.empa.openbisio.instance.Instance
+import ch.empa.openbisio.openbis.OpenBISService
 import java.io.File
 import java.net.URL
 
@@ -62,7 +63,7 @@ object InternetAddressAsStringSerializer : KSerializer<InternetAddress> {
 
 fun sampleFetchConfig(): SampleFetchOptions {
     val sfo = SampleFetchOptions()
-    sfo.withType().withPropertyAssignmentsUsing(ch.empa.openbisio.assignmentFetchOptions())
+    sfo.withType().withPropertyAssignmentsUsing(assignmentFetchOptions())
     sfo.withProperties()
     sfo.withRegistrator()
     return sfo
@@ -78,11 +79,11 @@ fun assignmentFetchOptions(): PropertyAssignmentFetchOptions {
 
 fun collectionFetchConfig(): ExperimentFetchOptions {
     val efo = ExperimentFetchOptions()
-    efo.withType().withPropertyAssignmentsUsing(ch.empa.openbisio.assignmentFetchOptions())
+    efo.withType().withPropertyAssignmentsUsing(assignmentFetchOptions())
     efo.withProperties()
     efo.withRegistrator()
 
-    efo.withSamplesUsing(ch.empa.openbisio.sampleFetchConfig())
+    efo.withSamplesUsing(sampleFetchConfig())
     return efo
 }
 
@@ -90,22 +91,22 @@ fun projectFetchConfig(): ProjectFetchOptions {
     val pfo = ProjectFetchOptions()
     pfo.withLeader()
     pfo.withRegistrator()
-    pfo.withExperimentsUsing(ch.empa.openbisio.collectionFetchConfig())
-    pfo.withSamplesUsing(ch.empa.openbisio.sampleFetchConfig())
+    pfo.withExperimentsUsing(collectionFetchConfig())
+    pfo.withSamplesUsing(sampleFetchConfig())
     return pfo
 }
 
 fun spaceFecthConfig(): SpaceFetchOptions {
     val sfo = SpaceFetchOptions()
-    sfo.withProjectsUsing(ch.empa.openbisio.projectFetchConfig())
-    sfo.withSamplesUsing(ch.empa.openbisio.sampleFetchConfig())
+    sfo.withProjectsUsing(projectFetchConfig())
+    sfo.withSamplesUsing(sampleFetchConfig())
     sfo.withRegistrator()
     return sfo
 }
 
 fun sampleTypeFetchConfig(): SampleTypeFetchOptions {
     val stfo = SampleTypeFetchOptions().apply {
-        this.withPropertyAssignmentsUsing(ch.empa.openbisio.assignmentFetchOptions())
+        this.withPropertyAssignmentsUsing(assignmentFetchOptions())
     }
     return stfo
 }
@@ -116,9 +117,9 @@ enum class Mode {
     load
 }
 
-fun dumpInstance(service: ch.empa.openbisio.OpenBISService): Instance {
+fun dumpInstance(service: OpenBISService): Instance {
     val spaceSearchCriteria = SpaceSearchCriteria().withAndOperator()
-    val spaceFetchConf = ch.empa.openbisio.spaceFecthConfig()
+    val spaceFetchConf = spaceFecthConfig()
     val spaces = service.con.searchSpaces(service.token, spaceSearchCriteria, spaceFetchConf).objects
     // Get property types
     val propertyTypeSearchCriteria = PropertyTypeSearchCriteria().withAndOperator()
@@ -127,7 +128,7 @@ fun dumpInstance(service: ch.empa.openbisio.OpenBISService): Instance {
     val props = service.con.searchPropertyTypes(service.token, propertyTypeSearchCriteria, propertyTypeFecthOptions).objects
     // Get object types
     val sampleTypeSearchCriteria = SampleTypeSearchCriteria().withAndOperator()
-    val sampleTypeFetchOptions = ch.empa.openbisio.sampleTypeFetchConfig()
+    val sampleTypeFetchOptions = sampleTypeFetchConfig()
     val sampleTypes = service.con.searchSampleTypes(service.token, sampleTypeSearchCriteria, sampleTypeFetchOptions).objects
 
     val spRep = Instance(spaces, props, sampleTypes).apply(Instance::updateCodes)
@@ -144,21 +145,21 @@ fun main(args: Array<String>) {
     val openbisURL by (parser.argument(ArgType.String))
     val username by parser.argument(ArgType.String)
     val password by parser.argument(ArgType.String)
-    val mode by parser.argument(ArgType.Choice<ch.empa.openbisio.Mode>())
+    val mode by parser.argument(ArgType.Choice<Mode>())
     val ioFile by parser.option(ArgType.String)
     parser.parse(args)
-    val service = ch.empa.openbisio.OpenBISService(URL(openbisURL))
+    val service = OpenBISService(URL(openbisURL))
     val token = service.connect(username, password)
     val configFile = File(ioFile ?: "./test.json")
     when (mode) {
-        ch.empa.openbisio.Mode.dump -> {
-            val inst = ch.empa.openbisio.dumpInstance(service)
+        Mode.dump -> {
+            val inst = dumpInstance(service)
             val format = Json { prettyPrint = true }
             val res=   format.encodeToString(inst)
             configFile.writeText(res)
         }
-        ch.empa.openbisio.Mode.load -> {
-            val instance = ch.empa.openbisio.readInstance(configFile.readText()).create(service)
+        Mode.load -> {
+            val instance = readInstance(configFile.readText()).create(service)
         }
     }
 

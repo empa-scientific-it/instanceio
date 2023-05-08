@@ -1,7 +1,8 @@
 package ch.empa.openbisio
 
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.operation.SynchronousOperationExecutionOptions
-import ch.empa.openbisio.models.Instance
+import ch.empa.openbisio.instance.Instance
+import ch.empa.openbisio.openbis.OpenBISService
 
 class InstanceCreator(val instance: Instance) {
     fun create(service: OpenBISService){
