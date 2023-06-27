@@ -1,11 +1,14 @@
 [versions]
-openbis = "20.10.5"
+openbis = "20.10.6"
+openbis-common = "r20230123"
 kotlinx-serialization = "1.4.1"
 kotlinx-cli = "0.3.5"
 kotlin = "1.7.20"
+modelmapper = "3.0.0"
 [libraries]
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 openbis = { module = "openbis:openbis-v3-api", version.ref = "openbis" }
+openbis-common = { module = "openbis:common", version.ref = "openbis-common" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test" }
 test = { module = "org.jetbrains.kotlin:test"}
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit5" }
@@ -14,6 +17,8 @@ jakarta-mail = { module = "jakarta.mail:jakarta.mail-api", version = "latest.rel
 jackson-databind = {module = "com.fasterxml.jackson.core:jackson-databind", version = "latest.release"}
 kotlin-stdlib = {module="org.jetbrains.kotlin:kotlin-stdlib-jdk8"}
 kotlin-bom = {module="org.jetbrains.kotlin:kotlin-bom", version="latest.release"}
+junit = {module="junit:junit", version="4.13"}
+modelmapper = {module="org.modelmapper:modelmapper", version.ref="modelmapper"}
 [plugins]
 kotlin = {id = "org.jetbrains.kotlin.jvm", version.ref="kotlin"}
 kotlin-serialization = {id = "org.jetbrains.kotlin.plugin.serialization", version.ref="kotlin"}

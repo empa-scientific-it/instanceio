@@ -15,10 +15,9 @@
  *
  */
 
-package ch.empa.openbisio.interfaces
+package ch.empa.openbisio.vocabulary
 
-import org.aspectj.apache.bcel.classfile.Code
+import kotlinx.serialization.Serializable
 
-interface ChildrenHolder: CodeHolder {
-    fun getChildren(code: String): ChildrenHolder?
-}
+@Serializable
+data class VocabularyTermDTO(val code: String, val label: String)

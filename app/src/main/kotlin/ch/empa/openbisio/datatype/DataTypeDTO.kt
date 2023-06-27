@@ -15,10 +15,11 @@
  *
  */
 
-package ch.empa.openbisio.interfaces
+package ch.empa.openbisio.datatype
 
-import org.aspectj.apache.bcel.classfile.Code
+import ch.empa.openbisio.interfaces.AssignmentHolder
+import ch.empa.openbisio.interfaces.DTO
+import ch.empa.openbisio.propertyassignment.PropertyAssignmentDTO
 
-interface ChildrenHolder: CodeHolder {
-    fun getChildren(code: String): ChildrenHolder?
-}
+data class DataTypeDTO(override val code: String, override val propertyAssignment: List<PropertyAssignmentDTO>?): AssignmentHolder,
+    DTO

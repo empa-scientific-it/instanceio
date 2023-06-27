@@ -30,16 +30,15 @@ import ch.empa.openbisio.person.Person
 import ch.empa.openbisio.space.Space
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.vocabulary.Vocabulary
 
-@Serializable
-data class Instance(
+class Instance(
     override val code: String = "/",
-    @Contextual override val ancestorCodes: ArrayDeque<String> = ArrayDeque(listOf<String>()),
-    @SerialName("spaces") override var children: MutableList<out Space>?,
+    override val ancestorCodes: ArrayDeque<String> = ArrayDeque(listOf<String>()),
+    override var children: MutableList<out Space>?,
     var users: List<Person>? = null,
-    @SerialName("property_types")  var openbisPropertyTypes: List<ch.empa.openbisio.propertytype.PropertyType>? = null,
-    @SerialName("object_types") var objectTypes: List<ObjectType>? = null,
-    //@SerialName("vocabularies") var vocabularies: List<Vocabulary> = null
-): HierarchyComponent {
+    var openbisPropertyTypes: List<ch.empa.openbisio.propertytype.PropertyType>? = null,
+    var objectTypes: List<ObjectType>? = null,
+    var vocabularies: List<Vocabulary>? = null
+): HierarchyComponent, DomainObject {
     constructor(
         sp: List<ch.ethz.sis.openbis.generic.asapi.v3.dto.space.Space>,
         pt: List<PropertyType>,

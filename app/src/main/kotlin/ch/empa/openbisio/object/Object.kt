@@ -3,7 +3,9 @@ package ch.empa.openbisio.`object`
 import ch.empa.openbisio.interfaces.*
 import ch.empa.openbisio.openbis.OpenBISService
 import ch.empa.openbisio.person.Person
+import ch.ethz.sis.openbis.generic.OpenBIS
 import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.ICreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.interfaces.IPermIdHolder
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.fetchoptions.ExperimentFetchOptions
@@ -24,11 +26,11 @@ import kotlinx.serialization.Transient
 class Object(
     override val code: String,
     private val type: String,
-    @Transient override val ancestorCodes: ArrayDeque<String> = ArrayDeque(listOf()),
+    override val ancestorCodes: ArrayDeque<String> = ArrayDeque(listOf()),
     override val children: MutableList<CreatableHierarchyComponent>? = null,
     override val properties: Map<String, String>?,
-    @Transient override val registrator: Person? = null,
-) : CreatableHierarchyComponent, PropertyHolder, RegistratorHolder {
+    override val registrator: Person? = null,
+) : CreatableHierarchyComponent, PropertyHolder, RegistratorHolder, DomainObject {
 
     constructor(
         o: Sample
@@ -70,6 +72,18 @@ class Object(
             this.spaceId = SpacePermId(identifier.getAncestor()!!.getAncestor()!!.identifier)
         }
         return listOf(CreateSamplesOperation(sc))
+    }
+
+    override fun toDTO(): DTO {
+        TODO("Not yet implemented")
+    }
+
+    override fun create(ob: OpenBIS): List<ICreation> {
+        TODO("Not yet implemented")
+    }
+
+    override fun exists(ob: OpenBIS): Boolean {
+        TODO("Not yet implemented")
     }
 
 

@@ -21,6 +21,7 @@ plugins {
     //Serialisation
     alias(libs.plugins.kotlin.serialization)
 
+
     // Apply the application plugin to add support for building a CLI application in Java.
     application
 
@@ -84,7 +85,14 @@ dependencies {
     //Command line
     implementation(libs.kotlinx.cli)
 
+    //Junit
+    implementation(libs.junit)
+
+
+    //Mapstruct for mapping
+    implementation(libs.modelmapper)
 }
+
 
 
 
@@ -116,6 +124,10 @@ testing {
             sources {
                 kotlin {
                     setSrcDirs(listOf("src/integration/kotlin/"))
+                }
+                java {
+                    setSrcDirs(listOf("src/integration/java/"))
+
                 }
                 resources {
                     setSrcDirs(listOf("src/integration/resources/"))

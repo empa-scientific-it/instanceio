@@ -17,8 +17,14 @@
 
 package ch.empa.openbisio.interfaces
 
-import org.aspectj.apache.bcel.classfile.Code
+import ch.ethz.sis.openbis.generic.OpenBIS
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.ICreation
 
-interface ChildrenHolder: CodeHolder {
-    fun getChildren(code: String): ChildrenHolder?
+interface DomainObject {
+
+    fun toDTO(): DTO
+
+    fun create(ob: OpenBIS): List<ICreation>
+
+    fun exists(ob: OpenBIS): Boolean
 }

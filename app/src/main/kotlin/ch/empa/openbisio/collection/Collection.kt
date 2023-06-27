@@ -2,7 +2,6 @@ package ch.empa.openbisio.collection
 
 import ch.empa.openbisio.identifier.ConcreteIdentifier
 import ch.empa.openbisio.interfaces.*
-import ch.empa.openbisio.`object`.Object
 import ch.empa.openbisio.openbis.OpenBISService
 import ch.empa.openbisio.person.Person
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.interfaces.IPermIdHolder
@@ -17,13 +16,14 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.id.ProjectIdentifier
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import ch.empa.openbisio.`object`.Object as Object1
 
 @Serializable
 data class Collection(
     override val code: String,
     @Transient override val ancestorCodes: ArrayDeque<String> = ArrayDeque(listOf()),
     val type: String,
-    @SerialName("samples") override val children: MutableList<Object>? = null,
+    @SerialName("samples") override val children: MutableList<Object1>? = null,
     @Transient override val registrator: Person? = null,
     override val properties: Map<String, String>? = null,
 ) : CreatableHierarchyComponent, PropertyHolder, RegistratorHolder {
@@ -34,7 +34,7 @@ data class Collection(
         c.code,
         ArrayDeque(listOf()),
         c.type.code,
-        if (includeSamples) c.samples.map { Object(it) }.toMutableList() else null,
+        if (includeSamples) c.samples.map { Object1(it) }.toMutableList() else null,
         Person(c.registrator),
         c.properties)
 

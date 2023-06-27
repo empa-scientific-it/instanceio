@@ -1,15 +1,13 @@
 package ch.empa.openbisio.`object`
 
-import ch.empa.openbisio.interfaces.ChildrenHolder
-import ch.empa.openbisio.interfaces.CodeHolder
-import ch.empa.openbisio.interfaces.Identifier
-import ch.empa.openbisio.interfaces.RelationshipHolder
+import ch.empa.openbisio.interfaces.*
 import ch.empa.openbisio.property.PropertyValue
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ObjectDTO(override val code: String, val properties: Map<String, PropertyValue>, override val children: List<Identifier>? = null,
-                     override val parents: List<Identifier>? = null): RelationshipHolder, CodeHolder, ChildrenHolder {
+data class ObjectDTO(override val code: String, val type: String, val properties: Map<String, PropertyValue>, override val children: List<Identifier>? = null,
+                     override val parents: List<Identifier>? = null): RelationshipHolder, DTO, ChildrenHolder
+     {
     override fun getChild(name: String): CodeHolder? {
         TODO("Not yet implemented")
     }
@@ -22,6 +20,10 @@ data class ObjectDTO(override val code: String, val properties: Map<String, Prop
         return null
     }
 
-}
+         override fun asDomainObject(): DomainObject {
+             Object(code, type, )
+         }
+
+     }
 
 

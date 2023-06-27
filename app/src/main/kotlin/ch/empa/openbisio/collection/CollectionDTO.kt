@@ -19,12 +19,19 @@ package ch.empa.openbisio.collection
 
 import ch.empa.openbisio.interfaces.ChildrenHolder
 import ch.empa.openbisio.interfaces.CodeHolder
+import ch.empa.openbisio.interfaces.DTO
+import ch.empa.openbisio.interfaces.DomainObject
 import ch.empa.openbisio.`object`.ObjectDTO
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class CollectionDTO(override val code: String, val objects: List<ObjectDTO>? = null, val type: String) : ChildrenHolder {
+data class CollectionDTO(override val code: String, val objects: List<ObjectDTO>? = null, val type: String) : ChildrenHolder,
+    DTO {
     override fun getChildren(code: String): ChildrenHolder? {
         return objects?.find { it.code == code }
+    }
+
+    override fun asDomainObject(): DomainObject {
+        Collection(code, null, type, objects.map{it.toDomainObject()})
     }
 }

@@ -21,11 +21,14 @@ package ch.empa.openbisio
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
 import ch.empa.openbisio.openbis.OpenBISService
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.service.CustomASService
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.service.CustomASServiceExecutionOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.service.fetchoptions.CustomASServiceFetchOptions
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.service.id.CustomASServiceCode
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.service.id.ICustomASServiceId
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.service.search.CustomASServiceSearchCriteria
 import java.io.File
 import java.net.URL
-
 //
 //
 //fun sampleFetchConfig(): SampleFetchOptions {
@@ -144,9 +147,15 @@ fun main(args: Array<String>) {
     val configFile = File(ioFile ?: "./test.json")
     when (mode) {
         Mode.dump -> {
-//            val props = CustomASServiceExecutionOptions().withParameter("xls", "f")
+           val props = CustomASServiceExecutionOptions()
+               .withParameter("xls", "f")
+               .withParameter("method", "export")
+               .withParameter("ids", listOf(mapOf("exportable_kind" to "SPACE"), mapOf("permid" to "/")))
+               .withParameter("export_referred_master_data", "true")
+               .withParameter("text_formatting", "PLAIN")
 //
-//            service.con.executeReportingService(service.token, CustomASService("xls-export-api")
+                val serviceResult = service.con.executeCustomASService(service.token, CustomASServiceCode("excel-export" ), props)
+            println(serviceResult)
 //            val format = Json { prettyPrint = true }
 //            val res=   format.encodeToString(inst)
 //            configFile.writeText(res)
