@@ -19,39 +19,82 @@ package ch.empa.openbisio.interfaces
 
 import kotlin.collections.Collection
 
+typealias Algebra<T, R> = (T, List<R>) -> R
+interface Tree<T> {
+    fun value(): T
+    fun hasChildren(): Boolean
+    fun children(): Collection<Tree<T>>
 
+    fun <R> map(transformer: (T) -> R): Tree<R>
 
-
-
-
-data class Tree<T>(private val value: T, private val children: List<Tree<T>>){
-
-    fun value(): T = value
-    fun hasChildren(): Boolean = children.isNotEmpty()
-
-    fun <R> map(transformer: (T) -> R): Tree<R> {
-        val mapped = children.map { it.map(transformer) }
-        return Tree(transformer(value), mapped)
+    fun <R> cata(transformer: Algebra<T, R>): R {
+        return when (hasChildren()) {
+            true -> transformer(value(), emptyList())
+            false -> {
+                val mapped = children().map { it.cata(transformer) }
+                transformer(value(), mapped)
+            }
+        }
     }
 
-    fun <R> cata(transformer: (T, List<R>) -> R): R {
-        val mapped = children.map { it.cata(transformer) }
-        return transformer(value, mapped)
+}
+
+class ListTree<T>(val value: T, val children: List<ListTree<T>>): Tree<T> {
+
+    override fun value(): T = value
+    override fun hasChildren(): Boolean = children.isNotEmpty()
+    override fun children(): Collection<ListTree<T>> = children
+
+
+    override fun <R> map(transformer: (T) -> R): ListTree<R> {
+        return when (hasChildren()) {
+            true -> ListTree(transformer(value), listOf())
+            false -> ListTree(transformer(value), children().map { it.map(transformer) })
+        }
     }
+
+    override fun toString(): String {
+        fun helper(tree: Tree<T>, indent: Int): String {
+            val spaces = " ".repeat(indent)
+            when (tree.hasChildren()) {
+                true -> return spaces + tree.value().toString()
+                false -> return spaces + tree.value().toString() + "\n" + tree.children()
+                    .joinToString("\n") { helper(it, indent + 2) }
+            }
+        }
+        return helper(this, 0)
+    }
+
 
 }
 
 
 
 
-
-fun main(){
-    val tr = Tree<Int>(1, listOf(Tree(2, listOf(Tree(3, listOf(Tree(4, listOf())))))))
-    val res = tr.map { it + 1 }
-    val transformer = { value: Int, children: List<Int> ->  value + children.sum()}
-    val res1 = tr.cata(transformer)
-    println(res1)
+fun <T, R> iterateWithParentHelper(tree: ListTree<T>, parent: ListTree<R>, transformer: (T, ListTree<R>) -> R): ListTree<R> {
+    return when (tree.hasChildren()) {
+        false -> {
+            val mapped = transformer(tree.value(), parent)
+            ListTree(mapped, listOf())
+        }
+        true -> {
+            val mapped = ListTree(transformer(tree.value(), parent), listOf())
+            val updatedChildren = tree.children().map { iterateWithParentHelper(it, mapped, transformer) }
+            ListTree(mapped.value(), updatedChildren)
+        }
+    }
 }
 
-main()
+fun <R, T> iterateWithParent(tree: ListTree<T>, transformer: (T, ListTree<R>) -> R, seed: R): ListTree<R> {
+    return iterateWithParentHelper(tree, ListTree(seed, emptyList()), transformer)
+}
+
+fun updateIdentifiers(tree: ListTree<Entity>): ListTree<Entity> {
+    return iterateWithParent(tree, { entity, parent -> entity.copy(identifier = parent.value().identifier + entity.code) }, tree.value())
+}
+
+
+
+
+
 
