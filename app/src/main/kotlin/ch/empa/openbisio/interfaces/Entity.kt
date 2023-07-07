@@ -15,8 +15,13 @@
 
 package ch.empa.openbisio.interfaces
 
+import ch.empa.openbisio.identifier.ConcreteIdentifier
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.interfaces.IPermIdHolder
 import ch.empa.openbisio.openbis.OpenBISService
+import ch.ethz.sis.openbis.generic.OpenBIS
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.ICreation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id
 
 /**
  * Interface representing openBIS entities
@@ -25,11 +30,23 @@ import ch.empa.openbisio.openbis.OpenBISService
  *
  */
 interface Entity {
-    val code: String
+    val dto: DTO
+    val identifier: List<String>
 
     /**
      * Get the corresponding entity from an openBIS application server
      *
      */
-    fun getFromAS(connection: OpenBISService): IPermIdHolder?
+    fun get(connection: OpenBIS): IPermIdHolder?
+
+    /**
+     * Returns an operation object
+     */
+    fun persist(): ICreation
+
+    /**
+     * Return an identifier object
+     *
+     */
+    fun openBISIdentifier(): Identifier
 }

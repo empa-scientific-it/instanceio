@@ -1,14 +1,10 @@
 package ch.empa.openbisio
 
-import ch.empa.openbisio.instance.Instance
-import ch.empa.openbisio.instance.InstanceCreator
-import ch.empa.openbisio.space.Space
 import ch.empa.openbisio.openbis.OpenBISService
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.service.CustomASServiceExecutionOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.service.id.CustomASServiceCode
 import java.net.URL
 import kotlin.test.Test
-import kotlin.test.assertContains
 
 
 class ExcelExportTest {

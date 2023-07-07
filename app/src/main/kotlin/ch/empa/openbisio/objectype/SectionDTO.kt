@@ -15,13 +15,9 @@
  *
  */
 
-package ch.empa.openbisio.interfaces
+package ch.empa.openbisio.objectype
 
-import ch.ethz.sis.openbis.generic.OpenBIS
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.ICreation
+import kotlinx.serialization.Serializable
 
-abstract class HierarchicalDomainObject: DomainObject, ChildrenHolder {
-    fun create(ob: OpenBIS): List<ICreation>{
-
-    }
-}
+@Serializable
+data class SectionDTO(val section: String, val properties: Map<String, String>)

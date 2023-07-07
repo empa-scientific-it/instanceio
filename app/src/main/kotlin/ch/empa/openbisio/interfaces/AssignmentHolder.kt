@@ -15,7 +15,6 @@
 
 package ch.empa.openbisio.interfaces
 
-import ch.empa.openbisio.propertyassignment.PropertyAssignment
 import ch.empa.openbisio.propertyassignment.PropertyAssignmentDTO
 
 interface AssignmentHolder {

@@ -22,7 +22,7 @@ import ch.empa.openbisio.openbis.OpenBISService
  * Interface representing all openBIS entities that can be created on the openBIS
  * AS.
  */
-interface ICreatable : Entity {
+interface ICreatable  {
     /**
      * This method should be implemented in order
      * for the entity to be created.
@@ -31,7 +31,7 @@ interface ICreatable : Entity {
      */
     fun createOperation(connection: OpenBISService): List<IOperation>
     fun exists(connection: OpenBISService): Boolean {
-        return getFromAS(connection) != null
+        return true
     }
 
     /**

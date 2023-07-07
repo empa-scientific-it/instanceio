@@ -24,7 +24,11 @@
             ]
         }
     ],
-    "object_types": []
+    "object_types": [{
+        "code": "YOUR_OBJECT_TYPE_CODE",
+        "description": "YOUR_OBJECT_TYPE_DESCRIPTION",
+        "prefix": "YOUR_OBJECT_TYPE_PREFIX",
+        "properties": [{"section":"a", "properties": {"a": "a"} }]}]
 }
 
 

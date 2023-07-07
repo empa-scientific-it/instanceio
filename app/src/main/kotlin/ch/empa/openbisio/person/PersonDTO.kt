@@ -15,32 +15,15 @@
  *
  */
 
-package ch.empa.openbisio.collection
+package ch.empa.openbisio.person
 
-import ch.empa.openbisio.interfaces.*
-import ch.empa.openbisio.`object`.ObjectDTO
+import ch.empa.openbisio.interfaces.DTO
+import ch.empa.openbisio.interfaces.Entity
 import kotlinx.serialization.Serializable
-import kotlin.collections.Collection
 
 @Serializable
-data class CollectionDTO(override val code: String, val objects: List<ObjectDTO> = listOf(), val type: String, val properties: Map<String, String> = mapOf<String, String>()) :
-    DTO, Tree<DTO> {
-
-
-    override fun value(): DTO {
-       return this
-    }
-
-    override fun hasChildren(): Boolean {
-        return objects.isNotEmpty()
-    }
-
-    override fun children(): Collection<Tree<DTO>> {
-        return objects
-    }
-
+class PersonDTO(override val code: String, val space: String, val email: String, val firstName: String, val lastName: String): DTO {
     override fun toEntity(): Entity {
-        return CollectionEntity(this, listOf())
+        TODO("Not yet implemented")
     }
-
 }

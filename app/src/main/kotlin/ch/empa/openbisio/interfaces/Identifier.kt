@@ -19,5 +19,9 @@ interface Identifier  {
     val identifier: String
     fun getCode(): String
     fun getAncestor(): Identifier?
+    fun space(): Identifier?
+    fun project(): Identifier?
+    fun collection(): Identifier?
+    fun sample(): Identifier?
 }
 

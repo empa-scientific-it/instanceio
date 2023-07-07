@@ -27,4 +27,5 @@ sealed class PropertyValue {
 
     @Serializable
     class BooleanValue(val value: Boolean) : PropertyValue()
+
 }

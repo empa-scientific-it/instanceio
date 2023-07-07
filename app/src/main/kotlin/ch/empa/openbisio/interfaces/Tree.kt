@@ -25,19 +25,42 @@ interface Tree<T> {
     fun hasChildren(): Boolean
     fun children(): Collection<Tree<T>>
 
-    fun <R> map(transformer: (T) -> R): Tree<R>
 
     fun <R> cata(transformer: Algebra<T, R>): R {
         return when (hasChildren()) {
-            true -> transformer(value(), emptyList())
-            false -> {
+            false -> transformer(value(), emptyList())
+            true -> {
                 val mapped = children().map { it.cata(transformer) }
                 transformer(value(), mapped)
             }
         }
     }
 
+    fun pprint(): String {
+        fun helper(tree: Tree<T>, indent: Int): String {
+            val spaces = " ".repeat(indent)
+            when (tree.hasChildren()) {
+                false -> return spaces + tree.value().toString()
+                true -> return spaces + tree.value().toString() + "\n" + tree.children()
+                    .joinToString("\n") { helper(it, indent + 2) }
+            }
+        }
+        return helper(this, 0)
+    }
+
+    fun <R> flatMap(transform: (T) -> R): List<R> {
+        return when (hasChildren()) {
+            false -> listOf(transform(value()))
+            true -> listOf(transform(value())) + children().flatMap { it.flatMap(transform) }
+        }
+    }
+
+
 }
+
+
+
+
 
 class ListTree<T>(val value: T, val children: List<ListTree<T>>): Tree<T> {
 
@@ -46,53 +69,58 @@ class ListTree<T>(val value: T, val children: List<ListTree<T>>): Tree<T> {
     override fun children(): Collection<ListTree<T>> = children
 
 
-    override fun <R> map(transformer: (T) -> R): ListTree<R> {
+    fun <R> map(transformer: (T) -> R): ListTree<R> {
         return when (hasChildren()) {
-            true -> ListTree(transformer(value), listOf())
-            false -> ListTree(transformer(value), children().map { it.map(transformer) })
+            false -> ListTree(transformer(value), listOf())
+            true -> ListTree(transformer(value), children().map { it.map(transformer) })
+        }
+    }
+
+
+    fun iterator() = object: Iterator<T> {
+        private var elements = flatMap { it }
+        private var iterator = elements.iterator()
+
+
+        override fun hasNext(): Boolean {
+            return iterator.hasNext()
+        }
+
+        override fun next(): T {
+            return iterator.next()
         }
     }
 
     override fun toString(): String {
-        fun helper(tree: Tree<T>, indent: Int): String {
-            val spaces = " ".repeat(indent)
-            when (tree.hasChildren()) {
-                true -> return spaces + tree.value().toString()
-                false -> return spaces + tree.value().toString() + "\n" + tree.children()
-                    .joinToString("\n") { helper(it, indent + 2) }
-            }
-        }
-        return helper(this, 0)
+        return pprint()
     }
+
 
 
 }
 
 
 
-
-fun <T, R> iterateWithParentHelper(tree: ListTree<T>, parent: ListTree<R>, transformer: (T, ListTree<R>) -> R): ListTree<R> {
+fun <T, R, U: Tree<R>, V: Tree<T>> iterateWithParentHelper(tree: V, parent: U, transformer: (T, U) -> R, builder: (R, List<U>) -> U): U {
     return when (tree.hasChildren()) {
         false -> {
             val mapped = transformer(tree.value(), parent)
-            ListTree(mapped, listOf())
+            builder(mapped, listOf())
         }
         true -> {
-            val mapped = ListTree(transformer(tree.value(), parent), listOf())
-            val updatedChildren = tree.children().map { iterateWithParentHelper(it, mapped, transformer) }
-            ListTree(mapped.value(), updatedChildren)
+            val mapped = builder(transformer(tree.value(), parent), listOf())
+            val updatedChildren = tree.children().map { iterateWithParentHelper(it, mapped, transformer, builder) }
+            builder(mapped.value(), updatedChildren)
         }
     }
 }
 
-fun <R, T> iterateWithParent(tree: ListTree<T>, transformer: (T, ListTree<R>) -> R, seed: R): ListTree<R> {
-    return iterateWithParentHelper(tree, ListTree(seed, emptyList()), transformer)
-}
 
-fun updateIdentifiers(tree: ListTree<Entity>): ListTree<Entity> {
-    return iterateWithParent(tree, { entity, parent -> entity.copy(identifier = parent.value().identifier + entity.code) }, tree.value())
-}
 
+
+fun <T, R, U: Tree<R>, V: Tree<T>> iterateWithParent(tree: V, transformer: (T, U) -> R, builder: (R, List<U>) -> U, seed: R): U {
+    return iterateWithParentHelper(tree, builder(seed, listOf()), transformer, builder)
+}
 
 
 

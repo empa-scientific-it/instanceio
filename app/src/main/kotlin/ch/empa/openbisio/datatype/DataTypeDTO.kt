@@ -20,6 +20,18 @@ package ch.empa.openbisio.datatype
 import ch.empa.openbisio.interfaces.AssignmentHolder
 import ch.empa.openbisio.interfaces.DTO
 import ch.empa.openbisio.propertyassignment.PropertyAssignmentDTO
+import kotlinx.serialization.Serializable
 
-data class DataTypeDTO(override val code: String, override val propertyAssignment: List<PropertyAssignmentDTO>?): AssignmentHolder,
-    DTO
+@Serializable
+enum class DataTypeDTO {
+    BOOLEAN,
+    INTEGER,
+    REAL,
+    DATE,
+    TIMESTAMP,
+    OBJECT,
+    VARCHAR,
+    MULTILINE_VARCHAR,
+    HYPERLINK,
+    XML
+}
