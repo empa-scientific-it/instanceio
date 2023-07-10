@@ -17,9 +17,8 @@
 
 package ch.empa.openbisio.interfaces
 
-import kotlin.collections.Collection
-
 typealias Algebra<T, R> = (T, List<R>) -> R
+
 interface Tree<T> {
     fun value(): T
     fun hasChildren(): Boolean
@@ -59,14 +58,20 @@ interface Tree<T> {
 }
 
 
-
-
-
-class ListTree<T>(val value: T, val children: List<ListTree<T>>): Tree<T> {
+class ListTree<T>(val value: T, val children: List<ListTree<T>>) : Tree<T> {
 
     override fun value(): T = value
     override fun hasChildren(): Boolean = children.isNotEmpty()
     override fun children(): Collection<ListTree<T>> = children
+    fun filter(predicate: (T) -> Boolean): ListTree<T> {
+        return when (hasChildren()) {
+            false -> if (predicate(value)) this else ListTree(value, listOf())
+            true -> {
+                val filteredChildren = children().map { it.filter(predicate) }.filter { it.hasChildren() }
+                if (predicate(value)) ListTree(value, filteredChildren) else ListTree(value, filteredChildren)
+            }
+        }
+    }
 
 
     fun <R> map(transformer: (T) -> R): ListTree<R> {
@@ -77,7 +82,7 @@ class ListTree<T>(val value: T, val children: List<ListTree<T>>): Tree<T> {
     }
 
 
-    fun iterator() = object: Iterator<T> {
+    fun iterator() = object : Iterator<T> {
         private var elements = flatMap { it }
         private var iterator = elements.iterator()
 
@@ -96,17 +101,21 @@ class ListTree<T>(val value: T, val children: List<ListTree<T>>): Tree<T> {
     }
 
 
-
 }
 
 
-
-fun <T, R, U: Tree<R>, V: Tree<T>> iterateWithParentHelper(tree: V, parent: U, transformer: (T, U) -> R, builder: (R, List<U>) -> U): U {
+fun <T, R, U : Tree<R>, V : Tree<T>> iterateWithParentHelper(
+    tree: V,
+    parent: U,
+    transformer: (T, U) -> R,
+    builder: (R, List<U>) -> U
+): U {
     return when (tree.hasChildren()) {
         false -> {
             val mapped = transformer(tree.value(), parent)
             builder(mapped, listOf())
         }
+
         true -> {
             val mapped = builder(transformer(tree.value(), parent), listOf())
             val updatedChildren = tree.children().map { iterateWithParentHelper(it, mapped, transformer, builder) }
@@ -116,9 +125,12 @@ fun <T, R, U: Tree<R>, V: Tree<T>> iterateWithParentHelper(tree: V, parent: U, t
 }
 
 
-
-
-fun <T, R, U: Tree<R>, V: Tree<T>> iterateWithParent(tree: V, transformer: (T, U) -> R, builder: (R, List<U>) -> U, seed: R): U {
+fun <T, R, U : Tree<R>, V : Tree<T>> iterateWithParent(
+    tree: V,
+    transformer: (T, U) -> R,
+    builder: (R, List<U>) -> U,
+    seed: R
+): U {
     return iterateWithParentHelper(tree, builder(seed, listOf()), transformer, builder)
 }
 

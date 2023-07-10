@@ -15,9 +15,11 @@
  *
  */
 
-package ch.empa.openbisio.objectype
+package ch.empa.openbisio.propertyassignment
 
-import kotlinx.serialization.Serializable
+import ch.empa.openbisio.interfaces.Entity
 
-@Serializable
-data class SectionDTO(val section: String, val properties: Map<String, String>)
+class PropertyAssignmentEntity(override val dto: PropertyAssignmentDTO) : Entity
+
+
+

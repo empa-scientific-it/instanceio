@@ -18,13 +18,8 @@
 package ch.empa.openbisio
 
 import ch.empa.openbisio.datatype.DataTypeDTO
-import ch.empa.openbisio.objectype.ObjectTypeAdapter
 import ch.empa.openbisio.objectype.ObjectTypeDTO
-import ch.empa.openbisio.objectype.SectionDTO
-import ch.empa.openbisio.propertyassignment.PropertyAssignmentDTO
-import ch.empa.openbisio.propertyassignment.PropertyAssignmentVariants
 import ch.empa.openbisio.propertytype.PropertyTypeDTO
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -33,12 +28,12 @@ import kotlin.test.Test
 class ObjectTypeTest {
 
     @Test
-    fun testSerialize(){
+    fun testSerialize() {
         val DT = PropertyTypeDTO("TEST", "A", "D", DataTypeDTO.BOOLEAN)
-        val OT = ObjectTypeDTO("TEST", "A", "A", listOf(SectionDTO("A", mapOf("A" to "B", "B" to "TEST"))))
+        val OT = ObjectTypeDTO("TEST", "A", "A", listOf())
         val encoded = Json.encodeToString(OT)
         val decoded = Json.decodeFromString<ObjectTypeDTO>(encoded)
-        assert(OT==decoded)
+        assert(OT == decoded)
     }
 
 

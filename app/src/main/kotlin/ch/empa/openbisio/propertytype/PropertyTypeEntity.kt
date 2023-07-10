@@ -15,27 +15,23 @@
  *
  */
 
-package ch.empa.openbisio.project
+package ch.empa.openbisio.propertytype
 
-import ch.empa.openbisio.identifier.ConcreteIdentifier
 import ch.empa.openbisio.interfaces.CreatableEntity
+import ch.empa.openbisio.interfaces.Identifier
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.ICreation
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.person.id.PersonPermId
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.create.ProjectCreation
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.id.SpacePermId
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.create.PropertyTypeCreation
 
-class ProjectEntity(override val dto: ProjectDTO, override val identifier: ConcreteIdentifier.ProjectIdentifier) :
-    CreatableEntity {
+class PropertyTypeEntity(override val dto: PropertyTypeDTO) : CreatableEntity {
+    override val identifier: Identifier = PropertyTypeIdentifier(dto.code)
 
     override fun persist(): ICreation {
-        val pc = ProjectCreation().apply {
+        val propertyTypeCreation = PropertyTypeCreation().apply {
             this.code = dto.code
+            this.label = dto.label
             this.description = dto.description
-            this.spaceId = SpacePermId(identifier.space().identifier)
-            this.leaderId = PersonPermId(dto.leader?.code)
+            this.dataType = dto.dataType.toOpenBISDataType()
         }
-        return pc
+        return propertyTypeCreation
     }
-
-
 }

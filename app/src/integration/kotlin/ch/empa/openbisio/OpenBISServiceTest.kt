@@ -1,4 +1,5 @@
 package ch.empa.openbisio
+
 import ch.empa.openbisio.openbis.OpenBISService
 import java.net.URL
 import kotlin.test.Test
@@ -10,17 +11,18 @@ class OpenBISServiceTest {
     private val password = "changeit"
     private val service = OpenBISService(URL(serviceURL)).apply { connect(userName, password) }
     private val configFile = javaClass.getResource("/test.json").readText()
+
     @Test
     fun testConnect() = assert(service.token != null)
 
     @Test
-    fun testDeserialize(){
+    fun testDeserialize() {
         //val inst = dumpInstance(service)
         //assertContains(inst.children?.map{it.code}.orEmpty(), "ELN_SETTINGS")
     }
 
     @Test
-    fun testSpaceCreation(){
+    fun testSpaceCreation() {
         val instance = Instance(children = mutableListOf(Space("TEST")))
         InstanceCreator(instance).create(service)
         //val inst = dumpInstance(service)

@@ -18,18 +18,12 @@
 package ch.empa.openbisio.space
 
 import ch.empa.openbisio.identifier.ConcreteIdentifier
-import ch.empa.openbisio.interfaces.DTO
-import ch.empa.openbisio.interfaces.Entity
-import ch.empa.openbisio.interfaces.Identifier
-import ch.ethz.sis.openbis.generic.OpenBIS
+import ch.empa.openbisio.interfaces.CreatableEntity
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.ICreation
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.interfaces.IPermIdHolder
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.create.SpaceCreation
 
-class SpaceEntity(override val dto: SpaceDTO, override val identifier: List<String>) : Entity {
-    override fun get(connection: OpenBIS): IPermIdHolder? {
-        TODO("Not yet implemented")
-    }
+class SpaceEntity(override val dto: SpaceDTO) : CreatableEntity {
+    override val identifier: ConcreteIdentifier.SpaceIdentifier = ConcreteIdentifier.SpaceIdentifier(listOf(dto.code))
 
     override fun persist(): ICreation {
         val sc = SpaceCreation().apply {
@@ -39,7 +33,4 @@ class SpaceEntity(override val dto: SpaceDTO, override val identifier: List<Stri
         return sc
     }
 
-    override fun openBISIdentifier(): Identifier {
-        return ConcreteIdentifier.SpaceIdentifier(identifier)
-    }
 }

@@ -23,14 +23,14 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.service.id.CustomASServiceCode
 import ch.systemsx.cisd.common.spring.HttpInvokerUtils
 import java.util.List
 import java.util.Map
-import org.python.core.PyDictionary
 import kotlin.test.Test
 
 
 class TestExcelService {
-    private  val serviceURL = "https://localhost:8443/openbis/openbis"
-    private  val userName = "admin"
-    private  val password = "changeit"
+    private val serviceURL = "https://localhost:8443/openbis/openbis"
+    private val userName = "admin"
+    private val password = "changeit"
+
     @Test
     fun testExport() {
         val service = HttpInvokerUtils.createServiceStub(

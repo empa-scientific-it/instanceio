@@ -18,13 +18,13 @@
 package ch.empa.openbisio.objectype
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonContentPolymorphicSerializer
-import kotlinx.serialization.json.JsonElement
 
 @Serializable
-sealed class ObjectTypeAdapter{
-    @Serializable class OT(val ot: ObjectTypeDTO): ObjectTypeAdapter()
-    @Serializable class OS(val ot: String): ObjectTypeAdapter()
+sealed class ObjectTypeAdapter {
+    @Serializable
+    class OT(val ot: ObjectTypeDTO) : ObjectTypeAdapter()
+    @Serializable
+    class OS(val ot: String) : ObjectTypeAdapter()
 
 }
 

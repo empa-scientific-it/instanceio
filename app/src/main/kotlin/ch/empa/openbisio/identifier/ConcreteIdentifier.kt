@@ -17,31 +17,30 @@
 
 package ch.empa.openbisio.identifier
 
+import ch.empa.openbisio.interfaces.HierarchicalIdentifier
 import ch.empa.openbisio.interfaces.HierarchyIdentifier
-import ch.empa.openbisio.interfaces.Identifier
-import kotlinx.serialization.Serializable
-import kotlin.collections.Collection
 
 
-sealed class ConcreteIdentifier(members: Collection<String>,  maxSize: Int) : HierarchyIdentifier(members, maxSize) {
+sealed class ConcreteIdentifier(members: Collection<String>, maxSize: Int) : HierarchyIdentifier(members, maxSize),
+    HierarchicalIdentifier {
     class InstanceIdentifier : ConcreteIdentifier(members = listOf("/"), 1) {
-        override fun getAncestor(): Identifier? {
+        override fun getAncestor(): InstanceIdentifier? {
             return null
         }
 
-        override fun space(): Identifier? {
+        override fun space(): SpaceIdentifier? {
             return null
         }
 
-        override fun project(): Identifier? {
+        override fun project(): ProjectIdentifier? {
             return null
         }
 
-        override fun collection(): Identifier? {
+        override fun collection(): CollectionIdentifier? {
             return null
         }
 
-        override fun sample(): Identifier? {
+        override fun sample(): SampleIdentifier? {
             return null
         }
 
@@ -54,19 +53,19 @@ sealed class ConcreteIdentifier(members: Collection<String>,  maxSize: Int) : Hi
             return InstanceIdentifier()
         }
 
-        override fun space(): Identifier? {
-            return InstanceIdentifier()
+        override fun space(): SpaceIdentifier {
+            return this
         }
 
-        override fun project(): Identifier? {
+        override fun project(): ProjectIdentifier? {
             return null
         }
 
-        override fun collection(): Identifier? {
+        override fun collection(): CollectionIdentifier? {
             return null
         }
 
-        override fun sample(): Identifier? {
+        override fun sample(): SampleIdentifier? {
             return null
         }
     }
@@ -76,19 +75,19 @@ sealed class ConcreteIdentifier(members: Collection<String>,  maxSize: Int) : Hi
             return SpaceIdentifier(members.take(maxSize - 1))
         }
 
-        override fun space(): Identifier? {
+        override fun space(): SpaceIdentifier {
             return getAncestor()
         }
 
-        override fun project(): Identifier? {
+        override fun project(): ProjectIdentifier {
             return this
         }
 
-        override fun collection(): Identifier? {
+        override fun collection(): CollectionIdentifier? {
             return null
         }
 
-        override fun sample(): Identifier? {
+        override fun sample(): SampleIdentifier? {
             return null
         }
     }
@@ -98,43 +97,44 @@ sealed class ConcreteIdentifier(members: Collection<String>,  maxSize: Int) : Hi
             return ProjectIdentifier(members.take(maxSize - 1))
         }
 
-        override fun space(): Identifier? {
-            return project()?.space()
+        override fun space(): SpaceIdentifier? {
+            return project().space()
         }
 
-        override fun project(): Identifier? {
+        override fun project(): ProjectIdentifier {
             return getAncestor()
         }
 
-        override fun collection(): Identifier? {
+        override fun collection(): CollectionIdentifier {
             return this
         }
 
-        override fun sample(): Identifier? {
+        override fun sample(): SampleIdentifier? {
             return null
         }
     }
 
     class SampleIdentifier(private val members: Collection<String>) : HierarchyIdentifier(members, 4) {
-        override fun getAncestor(): Identifier? {
+        override fun getAncestor(): CollectionIdentifier {
             return CollectionIdentifier(members.take(maxSize - 1))
         }
 
-        override fun space(): Identifier? {
+        override fun space(): SpaceIdentifier? {
             return project()?.space()
         }
 
-        override fun project(): Identifier? {
+        override fun project(): ProjectIdentifier? {
+            return getAncestor().getAncestor()
+        }
+
+        override fun collection(): CollectionIdentifier {
             return getAncestor()
         }
 
-        override fun collection(): Identifier? {
-            return getAncestor()
-        }
-
-        override fun sample(): Identifier? {
-           return this
+        override fun sample(): SampleIdentifier {
+            return this
         }
     }
+
 
 }

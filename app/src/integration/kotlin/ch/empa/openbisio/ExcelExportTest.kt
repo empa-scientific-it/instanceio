@@ -22,9 +22,12 @@ class ExcelExportTest {
         val props = CustomASServiceExecutionOptions()
             .withParameter("method", "export")
             .withParameter("file_name", "metadata")
-            .withParameter("ids",
-                arrayOf(CustomASServiceExecutionOptions().withParameter("exportable_kind", "SPACE")
-                    .withParameter("perm_id", "DEFAULT").withParameter("type_perm_id", "SPACE ").parameters)
+            .withParameter(
+                "ids",
+                arrayOf(
+                    CustomASServiceExecutionOptions().withParameter("exportable_kind", "SPACE")
+                        .withParameter("perm_id", "DEFAULT").withParameter("type_perm_id", "SPACE ").parameters
+                )
             )
             .withParameter("export_properties", CustomASServiceExecutionOptions().parameters)
             .withParameter("export_referred_master_data", true)

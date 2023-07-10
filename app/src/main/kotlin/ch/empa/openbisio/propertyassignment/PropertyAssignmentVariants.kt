@@ -17,17 +17,15 @@
 
 package ch.empa.openbisio.propertyassignment
 
-import ch.empa.openbisio.objectype.ObjectTypeAdapter
 import ch.empa.openbisio.propertytype.PropertyTypeDTO
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonContentPolymorphicSerializer
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.jsonObject
 
 @Serializable
-sealed class PropertyAssignmentVariants{
-    @Serializable data class NominalAssignment(val name: String): PropertyAssignmentVariants()
-    @Serializable data class LocalAssignment(val propertyType: PropertyTypeDTO): PropertyAssignmentVariants()
+sealed class PropertyAssignmentVariants {
+    @Serializable
+    data class NominalAssignment(val name: String) : PropertyAssignmentVariants()
+    @Serializable
+    data class LocalAssignment(val propertyType: PropertyTypeDTO) : PropertyAssignmentVariants()
 }
 
 //object PropertyAssignmentVariantsDeserializer : JsonContentPolymorphicSerializer<Payment>(Payment::class) {

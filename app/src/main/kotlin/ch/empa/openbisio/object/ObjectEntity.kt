@@ -18,40 +18,27 @@
 package ch.empa.openbisio.`object`
 
 import ch.empa.openbisio.identifier.ConcreteIdentifier
-import ch.empa.openbisio.interfaces.DTO
 import ch.empa.openbisio.interfaces.Entity
-import ch.empa.openbisio.interfaces.Identifier
-import ch.empa.openbisio.objectype.ObjectTypeAdapter
-import ch.ethz.sis.openbis.generic.OpenBIS
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.ICreation
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.interfaces.IPermIdHolder
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.entitytype.id.EntityTypePermId
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.event.EntityType
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.id.ExperimentIdentifier
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.id.ExperimentPermId
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.create.SampleCreation
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.id.SpacePermId
 
-class ObjectEntity(override val dto: ObjectDTO, override val identifier: List<String>) : Entity{
-    override fun get(connection: OpenBIS): IPermIdHolder? {
-        TODO("Not yet implemented")
-    }
-
+class ObjectEntity(override val dto: ObjectDTO, override val identifier: List<String>) : Entity {
 
 
     override fun persist(): ICreation {
         val sc = SampleCreation().apply {
             code = dto.code
-            experimentId = ExperimentIdentifier(openBISIdentifier().getAncestor()!!.getCode())
+            experimentId = ExperimentIdentifier(openBISIdentifier().getAncestor().getCode())
             typeId = EntityTypePermId(dto.type)
             properties = dto.properties.mapValues { it.toString() }
-            }
+        }
         return sc
     }
 
-    override fun  openBISIdentifier(): ConcreteIdentifier.SampleIdentifier {
-       return ConcreteIdentifier.SampleIdentifier(identifier)
+    override fun openBISIdentifier(): ConcreteIdentifier.SampleIdentifier {
+        return ConcreteIdentifier.SampleIdentifier(identifier)
     }
 
 }

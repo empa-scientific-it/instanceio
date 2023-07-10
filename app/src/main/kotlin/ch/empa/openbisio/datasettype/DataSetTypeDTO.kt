@@ -15,16 +15,22 @@
  *
  */
 
-package ch.empa.openbisio.interfaces
+package ch.empa.openbisio.datasettype
 
-import ch.ethz.sis.openbis.generic.OpenBIS
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.ICreation
+import ch.empa.openbisio.interfaces.CodeHolder
+import ch.empa.openbisio.interfaces.DTO
+import ch.empa.openbisio.interfaces.Entity
+import ch.empa.openbisio.propertyassignment.PropertyAssignmentDTO
+import kotlinx.serialization.Serializable
 
-interface DomainObject {
-
-    fun toDTO(): DTO
-
-    fun create(ob: OpenBIS): List<ICreation>
-
-    fun exists(ob: OpenBIS): Boolean
+@Serializable
+class DataSetTypeDTO(
+    override val code: String,
+    val description: String?,
+    val propertyAssignments: List<PropertyAssignmentDTO>
+) :
+    DTO, CodeHolder {
+    override fun toEntity(): Entity {
+        TODO("Not yet implemented")
+    }
 }

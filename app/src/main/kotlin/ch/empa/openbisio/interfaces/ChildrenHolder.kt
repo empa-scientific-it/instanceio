@@ -17,8 +17,6 @@
 
 package ch.empa.openbisio.interfaces
 
-import org.aspectj.apache.bcel.classfile.Code
-
-interface ChildrenHolder: CodeHolder {
+interface ChildrenHolder : CodeHolder {
     fun getChildren(code: String): ChildrenHolder?
 }

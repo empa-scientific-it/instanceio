@@ -1,34 +1,44 @@
 {
-    "spaces": [
+  "spaces": [
+    {
+      "code": "YOUR_SPACE_CODE",
+      "projects": [
         {
-            "code": "YOUR_SPACE_CODE",
-            "projects": [
-                {
-                    "code": "YOUR_FIRST_PROJECT_CODE",
-                    "collections": [
-                        {
-                            "code": "YOUR_FIRST_COLLECTION_CODE",
-                            "type": "COLLECTION"
-                        }
-                    ]
-                },
-                {
-                    "code": "YOUR_SECOND_PROJECT_CODE",
-                    "collections": [
-                        {
-                            "code": "YOUR_SECOND_COLLECTION_CODE",
-                            "type": "COLLECTION"
-                        }
-                    ]
-                }
-            ]
+          "code": "YOUR_FIRST_PROJECT_CODE",
+          "collections": [
+            {
+              "code": "YOUR_FIRST_COLLECTION_CODE",
+              "type": "COLLECTION"
+            }
+          ]
+        },
+        {
+          "code": "YOUR_SECOND_PROJECT_CODE",
+          "collections": [
+            {
+              "code": "YOUR_SECOND_COLLECTION_CODE",
+              "type": "COLLECTION"
+            }
+          ]
         }
-    ],
-    "object_types": [{
-        "code": "YOUR_OBJECT_TYPE_CODE",
-        "description": "YOUR_OBJECT_TYPE_DESCRIPTION",
-        "prefix": "YOUR_OBJECT_TYPE_PREFIX",
-        "properties": [{"section":"a", "properties": {"a": "a"} }]}]
+      ]
+    }
+  ],
+  "object_types": [
+    {
+      "code": "YOUR_OBJECT_TYPE_CODE",
+      "description": "YOUR_OBJECT_TYPE_DESCRIPTION",
+      "prefix": "YOUR_OBJECT_TYPE_PREFIX",
+      "properties": [
+        {
+          "section": "a",
+          "properties": {
+            "a": "a"
+          }
+        }
+      ]
+    }
+  ]
 }
 
 

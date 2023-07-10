@@ -17,6 +17,6 @@
 
 package ch.empa.openbisio.interfaces
 
-interface DTO: CodeHolder {
+interface DTO {
     fun toEntity(): Entity
 }

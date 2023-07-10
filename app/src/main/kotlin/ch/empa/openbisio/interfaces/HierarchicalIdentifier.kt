@@ -15,20 +15,13 @@
  *
  */
 
-package ch.empa.openbisio.vocabulary
+package ch.empa.openbisio.interfaces
 
-import ch.empa.openbisio.interfaces.CodeHolder
-import ch.empa.openbisio.interfaces.DTO
-import kotlinx.serialization.Serializable
-
-@Serializable
-data class VocabularyTermDTO(
-    override val code: String,
-    val label: String,
-    val description: String,
-    val isOfficial: Boolean
-) : DTO, CodeHolder {
-    override fun toEntity(): VocabularyTermEntity {
-        return VocabularyTermEntity(this)
-    }
+interface HierarchicalIdentifier : Identifier {
+    fun getCode(): String
+    fun getAncestor(): HierarchicalIdentifier?
+    fun space(): HierarchicalIdentifier?
+    fun project(): HierarchicalIdentifier?
+    fun collection(): HierarchicalIdentifier?
+    fun sample(): HierarchicalIdentifier?
 }

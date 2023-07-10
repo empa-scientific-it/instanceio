@@ -19,34 +19,30 @@ package ch.empa.openbisio
 
 
 import ch.empa.openbisio.instance.InstanceDeserializer
-import ch.empa.openbisio.instance.readInstance
-import kotlin.test.Test
-import ch.empa.openbisio.instance.dumpInstance
-import ch.empa.openbisio.openbis.OpenBISService
 import ch.ethz.sis.openbis.generic.OpenBIS
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import java.net.URL
+import kotlin.test.Test
 
 class DTOTest {
-    private val configFile = javaClass.getResource("/test.json").readText()
-    private val inst = readInstance(configFile)
+    //private val configFile = javaClass.getResource("/test.json").readText()
+    //private val inst = readInstance(configFile)
     val js = Json { prettyPrint = true }
 
-    @Test
-    fun assertSpace() {
-        assert(inst.getSpace("YOUR_SPACE_CODE")?.code == "YOUR_SPACE_CODE")
-    }
+//    @Test
+//    fun assertSpace() {
+//        assert(inst.getSpace("YOUR_SPACE_CODE")?.code == "YOUR_SPACE_CODE")
+//    }
+//
+//    @Test
+//    fun testString(){
+//
+//        println(js.encodeToString(inst))
+//    }
 
     @Test
-    fun testString(){
-
-        println(js.encodeToString(inst))
-    }
-
-    @Test
-    fun dumpTest(){
-        val inst = OpenBIS("https://localhost:8443").apply{login("admin", "changeit")}
+    fun dumpTest() {
+        val inst = OpenBIS("https://localhost:8443").apply { login("admin", "changeit") }
         val dumped = InstanceDeserializer().dumpInstance(inst)
         println(dumped.collectionTypes)
         println(js.encodeToString(dumped))

@@ -17,18 +17,20 @@
 
 package ch.empa.openbisio.vocabulary
 
-import ch.empa.openbisio.interfaces.CodeHolder
-import ch.empa.openbisio.interfaces.DTO
-import kotlinx.serialization.Serializable
+import ch.empa.openbisio.interfaces.CreatableEntity
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.vocabulary.create.VocabularyCreation
 
-@Serializable
-data class VocabularyTermDTO(
-    override val code: String,
-    val label: String,
-    val description: String,
-    val isOfficial: Boolean
-) : DTO, CodeHolder {
-    override fun toEntity(): VocabularyTermEntity {
-        return VocabularyTermEntity(this)
+class VocabularyEntity(override val dto: VocabularyDTO) : CreatableEntity {
+    override val identifier: VocabularyIdentifier = VocabularyIdentifier(dto.code)
+
+    override fun persist(): VocabularyCreation {
+        val vc = VocabularyCreation().apply {
+            this.code = dto.code
+            this.description = dto.description
+            this.terms = dto.terms.map { it.toEntity().persist() }
+        }
+        return vc
     }
+
+
 }

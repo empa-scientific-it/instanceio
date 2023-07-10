@@ -16,14 +16,14 @@
  */
 
 package ch.empa.openbisio
+
 import ch.empa.openbisio.interfaces.ListTree
 import ch.empa.openbisio.interfaces.iterateWithParent
-import org.aspectj.apache.bcel.classfile.Code
 import kotlin.test.Test
 
 data class CodeEntity(val name: String, val path: List<String>)
 
-fun TreeFactory(): ListTree<CodeEntity>{
+fun TreeFactory(): ListTree<CodeEntity> {
     return ListTree(
         CodeEntity("root", listOf()), listOf(
             ListTree(
@@ -50,29 +50,33 @@ fun TreeFactory(): ListTree<CodeEntity>{
     )
 }
 
-class TraversalTest{
+class TraversalTest {
     val testTree = TreeFactory()
+
     @Test
-    fun testDepthFirst(){
+    fun testDepthFirst() {
         val trav = testTree.iterator().asSequence().toList()
-        assert(trav == listOf(
-            CodeEntity("root", listOf()),
-            CodeEntity("a", listOf()),
-            CodeEntity("b", listOf()),
-            CodeEntity("c", listOf()),
-            CodeEntity("d", listOf()),
-            CodeEntity("e", listOf()),
-            CodeEntity("f", listOf()),
-            CodeEntity("g", listOf()),
-            CodeEntity("h", listOf())
-        ))
+        assert(
+            trav == listOf(
+                CodeEntity("root", listOf()),
+                CodeEntity("a", listOf()),
+                CodeEntity("b", listOf()),
+                CodeEntity("c", listOf()),
+                CodeEntity("d", listOf()),
+                CodeEntity("e", listOf()),
+                CodeEntity("f", listOf()),
+                CodeEntity("g", listOf()),
+                CodeEntity("h", listOf())
+            )
+        )
     }
 }
 
-class PathTest{
+class PathTest {
     val testTree = TreeFactory()
+
     @Test
-    fun testPath(){
+    fun testPath() {
         val tr1 = iterateWithParent(
             testTree,
             { entity: CodeEntity, parent: ListTree<CodeEntity> ->

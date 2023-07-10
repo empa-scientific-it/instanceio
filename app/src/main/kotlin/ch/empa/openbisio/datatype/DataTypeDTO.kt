@@ -17,9 +17,7 @@
 
 package ch.empa.openbisio.datatype
 
-import ch.empa.openbisio.interfaces.AssignmentHolder
-import ch.empa.openbisio.interfaces.DTO
-import ch.empa.openbisio.propertyassignment.PropertyAssignmentDTO
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.DataType
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -33,5 +31,23 @@ enum class DataTypeDTO {
     VARCHAR,
     MULTILINE_VARCHAR,
     HYPERLINK,
-    XML
+    XML,
+    CONTROLLEDVOCABULARY;
+
+    fun toOpenBISDataType(): DataType {
+        val res = when (this) {
+            BOOLEAN -> DataType.BOOLEAN
+            INTEGER -> DataType.INTEGER
+            REAL -> DataType.REAL
+            DATE -> DataType.DATE
+            TIMESTAMP -> DataType.TIMESTAMP
+            OBJECT -> DataType.SAMPLE
+            VARCHAR -> DataType.VARCHAR
+            MULTILINE_VARCHAR -> DataType.MULTILINE_VARCHAR
+            HYPERLINK -> DataType.HYPERLINK
+            XML -> DataType.XML
+            CONTROLLEDVOCABULARY -> DataType.CONTROLLEDVOCABULARY
+        }
+        return res
+    }
 }

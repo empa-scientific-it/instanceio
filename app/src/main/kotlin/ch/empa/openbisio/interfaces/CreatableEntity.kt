@@ -15,20 +15,16 @@
  *
  */
 
-package ch.empa.openbisio.vocabulary
+package ch.empa.openbisio.interfaces
 
-import ch.empa.openbisio.interfaces.CodeHolder
-import ch.empa.openbisio.interfaces.DTO
-import kotlinx.serialization.Serializable
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.ICreation
 
-@Serializable
-data class VocabularyTermDTO(
-    override val code: String,
-    val label: String,
-    val description: String,
-    val isOfficial: Boolean
-) : DTO, CodeHolder {
-    override fun toEntity(): VocabularyTermEntity {
-        return VocabularyTermEntity(this)
-    }
+interface CreatableEntity : Entity {
+    val identifier: Identifier
+
+    /**
+     * Returns a Creation object that can be used
+     * to create the openbis entity
+     */
+    fun persist(): ICreation
 }

@@ -1,16 +1,18 @@
 /*
- * Copyright (c) 2023. Simone Baffelli
+ * Copyright 2023 Simone Baffelli
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 /*
@@ -18,17 +20,16 @@
  */
 package ch.empa.openbisio
 
-import kotlinx.cli.ArgParser
-import kotlinx.cli.ArgType
 import ch.empa.openbisio.openbis.OpenBISService
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.service.CustomASService
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.service.CustomASServiceExecutionOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.service.fetchoptions.CustomASServiceFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.service.id.CustomASServiceCode
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.service.id.ICustomASServiceId
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.service.search.CustomASServiceSearchCriteria
+import kotlinx.cli.ArgParser
+import kotlinx.cli.ArgType
 import java.io.File
 import java.net.URL
+
 //
 //
 //fun sampleFetchConfig(): SampleFetchOptions {
@@ -133,7 +134,6 @@ enum class Mode {
 //}
 
 
-
 fun main(args: Array<String>) {
     val parser = ArgParser("example")
     val openbisURL by (parser.argument(ArgType.String))
@@ -147,14 +147,15 @@ fun main(args: Array<String>) {
     val configFile = File(ioFile ?: "./test.json")
     when (mode) {
         Mode.dump -> {
-           val props = CustomASServiceExecutionOptions()
-               .withParameter("xls", "f")
-               .withParameter("method", "export")
-               .withParameter("ids", listOf(mapOf("exportable_kind" to "SPACE"), mapOf("permid" to "/")))
-               .withParameter("export_referred_master_data", "true")
-               .withParameter("text_formatting", "PLAIN")
+            val props = CustomASServiceExecutionOptions()
+                .withParameter("xls", "f")
+                .withParameter("method", "export")
+                .withParameter("ids", listOf(mapOf("exportable_kind" to "SPACE"), mapOf("permid" to "/")))
+                .withParameter("export_referred_master_data", "true")
+                .withParameter("text_formatting", "PLAIN")
 //
-                val serviceResult = service.con.executeCustomASService(service.token, CustomASServiceCode("excel-export" ), props)
+            val serviceResult =
+                service.con.executeCustomASService(service.token, CustomASServiceCode("excel-export"), props)
             println(serviceResult)
 //            val format = Json { prettyPrint = true }
 //            val res=   format.encodeToString(inst)
@@ -166,12 +167,13 @@ fun main(args: Array<String>) {
             )
             println(res.objects)
         }
+
         Mode.load -> {
             print("Not implem,ented")
-            }
-            //val instance = readInstance(configFile.readText()).create(service)
         }
+        //val instance = readInstance(configFile.readText()).create(service)
     }
+}
 
 
 

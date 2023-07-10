@@ -20,15 +20,19 @@ package ch.empa.openbisio.collection
 import ch.empa.openbisio.interfaces.*
 import ch.empa.openbisio.`object`.ObjectDTO
 import kotlinx.serialization.Serializable
-import kotlin.collections.Collection
 
 @Serializable
-data class CollectionDTO(override val code: String, val objects: List<ObjectDTO> = listOf(), val type: String, val properties: Map<String, String> = mapOf<String, String>()) :
-    DTO, Tree<DTO> {
+data class CollectionDTO(
+    override val code: String,
+    val objects: List<ObjectDTO> = listOf(),
+    val type: String,
+    override val properties: Map<String, String> = mapOf<String, String>()
+) :
+    DTO, Tree<DTO>, CodeHolder, PropertyHolder {
 
 
     override fun value(): DTO {
-       return this
+        return this
     }
 
     override fun hasChildren(): Boolean {

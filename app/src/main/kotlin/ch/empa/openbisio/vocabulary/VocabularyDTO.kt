@@ -17,7 +17,15 @@
 
 package ch.empa.openbisio.vocabulary
 
+import ch.empa.openbisio.interfaces.CodeHolder
+import ch.empa.openbisio.interfaces.DTO
+import ch.empa.openbisio.interfaces.Entity
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class VocabularyDTO(val code: String, val description: String, val terms: List<VocabularyTermDTO>)
+data class VocabularyDTO(override val code: String, val description: String, val terms: List<VocabularyTermDTO>) : DTO,
+    CodeHolder {
+    override fun toEntity(): Entity {
+        return VocabularyEntity(this, listOf(code))
+    }
+}
