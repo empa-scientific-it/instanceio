@@ -8,7 +8,7 @@ stages:
 
 
 variables:
-  - LOCAL_BUILD=0
+  - LOCAL_BUILD: 0
 
 default:
   tags:
@@ -16,7 +16,7 @@ default:
 
 
 services:
-  - name: openbis/debian-openbis:20.10.5-EA
+  - name: openbis/debian-openbis:20.10.7
     alias: openbis
     variables:
       SERVER_HOST_PORT: openbis:443

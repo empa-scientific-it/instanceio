@@ -15,23 +15,10 @@
  *
  */
 
-package ch.empa.openbisio.propertyassignment
+package ch.empa.openbisio.objectype
 
-import ch.empa.openbisio.interfaces.DTO
-import ch.empa.openbisio.interfaces.Entity
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import ch.empa.openbisio.interfaces.Identifier
 
-
-@Serializable
-data class PropertyAssignmentDTO(
-    val section: String?,
-    val mandatory: Boolean,
-    @SerialName("property_type") val propertyTypeCode: String
-) : DTO {
-    override fun toEntity(): PropertyAssignmentEntity {
-        return PropertyAssignmentEntity(this)
-    }
-
-}
+@JvmInline
+value class ObjectTypeIdentifier(override val identifier: String): Identifier
 
