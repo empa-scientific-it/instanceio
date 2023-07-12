@@ -27,7 +27,7 @@ class CollectionTypeEntity(override val dto: CollectionTypeDTO) : CreatableEntit
     override val identifier: Identifier
         get() = TODO("Not yet implemented")
 
-    override fun persist(): ICreation {
+    override fun persist(): ExperimentTypeCreation {
         val experimentTypeCreation = ExperimentTypeCreation().apply {
             this.code = dto.code
             this.description = dto.description

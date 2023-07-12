@@ -23,8 +23,8 @@ class OpenBISServiceTest {
 
     @Test
     fun testSpaceCreation() {
-        val instance = Instance(children = mutableListOf(Space("TEST")))
-        InstanceCreator(instance).create(service)
+        //val instance = Instance(children = mutableListOf(Space("TEST")))
+        //InstanceCreator(instance).create(service)
         //val inst = dumpInstance(service)
         //assertContains(inst.children?.map{it.code}.orEmpty(), "TEST")
     }

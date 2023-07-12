@@ -17,26 +17,19 @@
 
 package ch.empa.openbisio.person
 
-import ch.empa.openbisio.interfaces.Entity
-import ch.empa.openbisio.interfaces.Identifier
+import ch.empa.openbisio.interfaces.CreatableEntity
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.ICreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.person.create.PersonCreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.id.SpacePermId
-import kotlinx.serialization.Serializable
 
-@Serializable
-class PersonEntity(override val dto: PersonDTO, override val identifier: List<String>) : Entity {
+class PersonEntity(override val dto: PersonDTO) : CreatableEntity {
+    override val identifier: PersonIdentifier = PersonIdentifier(dto.code)
 
-    override fun persist(): ICreation {
+    override fun persist(): PersonCreation {
         val pc = PersonCreation().apply {
             this.userId = dto.code
             this.spaceId = SpacePermId(dto.space)
         }
         return pc
     }
-
-    override fun openBISIdentifier(): Identifier {
-        TODO("Not yet implemented")
-    }
-
 }
