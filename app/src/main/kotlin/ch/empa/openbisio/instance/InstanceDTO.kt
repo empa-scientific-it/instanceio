@@ -17,12 +17,14 @@
 
 package ch.empa.openbisio.instance
 
+import ch.empa.openbisio.collection.CollectionDTO
 import ch.empa.openbisio.collectiontype.CollectionTypeDTO
 import ch.empa.openbisio.datasettype.DataSetTypeDTO
-import ch.empa.openbisio.interfaces.CodeHolder
-import ch.empa.openbisio.interfaces.DTO
-import ch.empa.openbisio.interfaces.Entity
+import ch.empa.openbisio.hierarchy.HierarchicalDTO
+import ch.empa.openbisio.interfaces.*
+import ch.empa.openbisio.`object`.ObjectDTO
 import ch.empa.openbisio.objectype.ObjectTypeDTO
+import ch.empa.openbisio.project.ProjectDTO
 import ch.empa.openbisio.propertytype.PropertyTypeDTO
 import ch.empa.openbisio.space.SpaceDTO
 import ch.empa.openbisio.vocabulary.VocabularyDTO
@@ -37,14 +39,18 @@ data class InstanceDTO(
     @SerialName("collection_types") val collectionTypes: List<CollectionTypeDTO>? = null,
     val vocabularies: List<VocabularyDTO>? = null,
     val dataSetTypes: List<DataSetTypeDTO>? = null
-) : DTO, CodeHolder {
+) : HierarchicalDTO, Tree<HierarchicalDTO> {
 
     fun getSpace(code: String): SpaceDTO? {
         return spaces?.find { it.code == code }
     }
 
-    override fun toEntity(): Entity {
-        TODO("Not yet implemented")
+    override fun updateCode(code: String): HierarchicalDTO {
+        return this.copy()
+    }
+
+    override fun toEntity(): CreatableEntity {
+        return InstanceEntity(this)
     }
 
     override val code: String
@@ -59,6 +65,47 @@ data class InstanceDTO(
             collectionTypes = collectionTypes?.filter(pred),
             vocabularies = vocabularies?.filter(pred)
         )
+    }
+
+    override fun value(): HierarchicalDTO {
+        return this
+    }
+
+    override fun hasChildren(): Boolean {
+        return spaces?.isNotEmpty() ?: false
+    }
+
+    override fun children(): Collection<Tree<HierarchicalDTO>> {
+        return spaces ?: listOf()
+    }
+
+
+
+    fun updateCodes(): InstanceDTO{
+
+        fun  builder(entity: HierarchicalDTO, children: List<HierarchicalDTO>): HierarchicalDTO {
+
+            val res = when(entity){
+                is SpaceDTO ->  entity.copy(projects=children.map { it as ProjectDTO })
+                is ProjectDTO ->  entity.copy(collections = children.map { it as CollectionDTO })
+                is CollectionDTO ->  entity.copy(objects=children.map { it as ObjectDTO })
+                is InstanceDTO -> entity.copy(spaces=children.map { it as SpaceDTO })
+                else -> entity
+            }
+            return res
+        }
+
+        val newCode = iterateWithParent(
+            this.copy(),
+            { entity: HierarchicalDTO, parent: HierarchicalDTO -> entity.updateCode(parent.code + "/" + entity.code)},
+            { entity: HierarchicalDTO, children: List<HierarchicalDTO> ->  builder(entity, children)},
+            this.copy(spaces = listOf())
+        )
+        return newCode as InstanceDTO
+    }
+
+    fun toEntityWithCodes(): InstanceEntity {
+        return InstanceEntity(this.updateCodes())
     }
 
 

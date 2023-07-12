@@ -18,18 +18,19 @@
 package ch.empa.openbisio.vocabulary
 
 import ch.empa.openbisio.interfaces.CreatableEntity
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.ICreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.vocabulary.create.VocabularyCreation
 
 class VocabularyEntity(override val dto: VocabularyDTO) : CreatableEntity {
     override val identifier: VocabularyIdentifier = VocabularyIdentifier(dto.code)
 
-    override fun persist(): VocabularyCreation {
+    override fun persist(): List<ICreation> {
         val vc = VocabularyCreation().apply {
             this.code = dto.code
             this.description = dto.description
-            this.terms = dto.terms.map { it.toEntity().persist() }
+            this.terms = dto.terms.flatMap  { it.toEntity().persist() }
         }
-        return vc
+        return listOf(vc)
     }
 
 

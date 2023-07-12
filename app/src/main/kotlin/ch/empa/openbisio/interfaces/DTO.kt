@@ -18,5 +18,5 @@
 package ch.empa.openbisio.interfaces
 
 interface DTO {
-    fun toEntity(): Entity
+    fun toEntity(): CreatableEntity
 }

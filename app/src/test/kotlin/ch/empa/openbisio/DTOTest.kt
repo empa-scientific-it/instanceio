@@ -20,7 +20,6 @@ package ch.empa.openbisio
 
 import ch.empa.openbisio.instance.InstanceDeserializer
 import ch.ethz.sis.openbis.generic.OpenBIS
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
 
@@ -44,7 +43,9 @@ class DTOTest {
     fun dumpTest() {
         val inst = OpenBIS("https://localhost:8443").apply { login("admin", "changeit") }
         val dumped = InstanceDeserializer().dumpInstance(inst)
-        println(dumped.collectionTypes)
-        println(js.encodeToString(dumped))
+        val instanceEntity = dumped.toEntityWithCodes()
+        println(instanceEntity.persist())
+        //println(dumped.collectionTypes)
+        //println(js.encodeToString(updatedCodes))
     }
 }

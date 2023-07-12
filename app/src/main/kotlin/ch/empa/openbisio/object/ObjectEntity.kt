@@ -19,7 +19,6 @@ package ch.empa.openbisio.`object`
 
 import ch.empa.openbisio.identifier.ConcreteIdentifier
 import ch.empa.openbisio.interfaces.CreatableEntity
-import ch.empa.openbisio.interfaces.Entity
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.ICreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.entitytype.id.EntityTypePermId
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.id.ExperimentIdentifier
@@ -30,7 +29,7 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.id.SpacePermId
 class ObjectEntity(override val dto: ObjectDTO, override val identifier: ConcreteIdentifier.SampleIdentifier) : CreatableEntity {
 
 
-    override fun persist(): ICreation {
+    override fun persist(): List<ICreation> {
         val sc = SampleCreation().apply {
             code = dto.code
             experimentId = ExperimentIdentifier(identifier.getAncestor().getCode())
@@ -39,7 +38,7 @@ class ObjectEntity(override val dto: ObjectDTO, override val identifier: Concret
             typeId = EntityTypePermId(dto.type)
             properties = dto.properties.mapValues { it.toString() }
         }
-        return sc
+        return listOf(sc)
     }
 
 

@@ -17,10 +17,8 @@
 
 package ch.empa.openbisio.space
 
-import ch.empa.openbisio.interfaces.CodeHolder
-import ch.empa.openbisio.interfaces.DTO
-import ch.empa.openbisio.interfaces.Entity
-import ch.empa.openbisio.interfaces.Tree
+import ch.empa.openbisio.hierarchy.HierarchicalDTO
+import ch.empa.openbisio.interfaces.*
 import ch.empa.openbisio.project.ProjectDTO
 import kotlinx.serialization.Serializable
 
@@ -30,10 +28,10 @@ data class SpaceDTO(
     val projects: List<ProjectDTO> = listOf(),
     val description: String = ""
 ) :
-    DTO, Tree<DTO>, CodeHolder {
+    HierarchicalDTO, Tree<HierarchicalDTO>, CodeHolder {
 
 
-    override fun value(): DTO {
+    override fun value(): HierarchicalDTO {
         return this
     }
 
@@ -41,13 +39,19 @@ data class SpaceDTO(
         return projects.isNotEmpty()
     }
 
-    override fun children(): Collection<Tree<DTO>> {
+    override fun children(): Collection<Tree<HierarchicalDTO>> {
         return projects
     }
 
-    override fun toEntity(): Entity {
-        TODO("Not yet implemented")
+    override fun updateCode(code: String): HierarchicalDTO {
+        return this.copy(code = code)
     }
+
+    override fun toEntity(): SpaceEntity {
+        return SpaceEntity(this)
+    }
+
+
 
 
 }

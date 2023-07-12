@@ -17,4 +17,3 @@
 
 package ch.empa.openbisio.instance
 
-class InstaceEntity(val dto: InstanceDTO)

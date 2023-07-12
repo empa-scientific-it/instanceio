@@ -22,7 +22,9 @@ typealias Algebra<T, R> = (T, List<R>) -> R
 interface Tree<T> {
     fun value(): T
     fun hasChildren(): Boolean
-    fun children(): Collection<Tree<T>>
+    fun   children(): Collection<Tree<T>>
+
+    //fun <R> map(transformer: (T) -> R): Tree<R>
 
 
     fun <R> cata(transformer: Algebra<T, R>): R {
@@ -62,7 +64,7 @@ class ListTree<T>(val value: T, val children: List<ListTree<T>>) : Tree<T> {
 
     override fun value(): T = value
     override fun hasChildren(): Boolean = children.isNotEmpty()
-    override fun children(): Collection<ListTree<T>> = children
+    override fun  children(): Collection<ListTree<T>> = children
     fun filter(predicate: (T) -> Boolean): ListTree<T> {
         return when (hasChildren()) {
             false -> if (predicate(value)) this else ListTree(value, listOf())
@@ -122,6 +124,11 @@ fun <T, R, U : Tree<R>, V : Tree<T>> iterateWithParentHelper(
             builder(mapped.value(), updatedChildren)
         }
     }
+}
+
+
+fun <R: Tree<T>, T> toListTreee(input: R): ListTree<T> {
+    return ListTree(input.value(), input.children().map { toListTreee(it) })
 }
 
 

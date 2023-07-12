@@ -25,11 +25,11 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.id.SpacePermId
 class PersonEntity(override val dto: PersonDTO) : CreatableEntity {
     override val identifier: PersonIdentifier = PersonIdentifier(dto.code)
 
-    override fun persist(): PersonCreation {
+    override fun persist(): List<ICreation> {
         val pc = PersonCreation().apply {
             this.userId = dto.code
             this.spaceId = SpacePermId(dto.space)
         }
-        return pc
+        return listOf(pc)
     }
 }

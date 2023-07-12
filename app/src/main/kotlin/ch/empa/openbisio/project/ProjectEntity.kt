@@ -24,17 +24,18 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.person.id.PersonPermId
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.create.ProjectCreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.id.SpacePermId
 
-class ProjectEntity(override val dto: ProjectDTO, override val identifier: ConcreteIdentifier.ProjectIdentifier) :
+class ProjectEntity(override val dto: ProjectDTO) :
     CreatableEntity {
+    override val identifier: ConcreteIdentifier.ProjectIdentifier = ConcreteIdentifier.ProjectIdentifier(listOf(dto.code))
 
-    override fun persist(): ICreation {
+    override fun persist(): List<ICreation> {
         val pc = ProjectCreation().apply {
             this.code = dto.code
             this.description = dto.description
             this.spaceId = SpacePermId(identifier.space().identifier)
             this.leaderId = PersonPermId(dto.leader?.code)
         }
-        return pc
+        return listOf(pc)
     }
 
 

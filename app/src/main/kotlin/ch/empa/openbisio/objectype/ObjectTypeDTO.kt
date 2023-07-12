@@ -18,6 +18,7 @@
 package ch.empa.openbisio.objectype
 
 import ch.empa.openbisio.interfaces.CodeHolder
+import ch.empa.openbisio.interfaces.CreatableEntity
 import ch.empa.openbisio.interfaces.DTO
 import ch.empa.openbisio.interfaces.Entity
 import ch.empa.openbisio.propertyassignment.PropertyAssignmentDTO
@@ -31,7 +32,7 @@ data class ObjectTypeDTO(
     @SerialName("prefix") val generatedCodePrefix: String,
     @SerialName("properties") val propertyAssignments: List<PropertyAssignmentDTO>
 ) : DTO, CodeHolder {
-    override fun toEntity(): Entity {
-        TODO("Not yet implemented")
+    override fun toEntity(): ObjectTypeEntity {
+        return ObjectTypeEntity(this)
     }
 }

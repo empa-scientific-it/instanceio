@@ -18,22 +18,25 @@
 package ch.empa.openbisio.collection
 
 import ch.empa.openbisio.identifier.ConcreteIdentifier
-import ch.empa.openbisio.interfaces.CreatableEntity
-import ch.empa.openbisio.interfaces.Entity
+import ch.empa.openbisio.interfaces.*
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.ICreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.create.ExperimentCreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.id.ProjectPermId
 
-class CollectionEntity(override val dto: CollectionDTO, override val identifier: ConcreteIdentifier.CollectionIdentifier) : CreatableEntity {
+class CollectionEntity(override val dto: CollectionDTO) : CreatableEntity{
 
+    override val identifier: ConcreteIdentifier.CollectionIdentifier =
+        ConcreteIdentifier.CollectionIdentifier(listOf(dto.code))
+    val properties = dto.properties
+    //val children = dto.children()?.map { it.toEntity() }
 
-    override fun persist(): ICreation {
+    override fun persist(): List<ICreation> {
         val cr = ExperimentCreation().apply {
             this.code = dto.code
             this.projectId = ProjectPermId(identifier.project().identifier)
             this.properties = dto.properties
         }
-        return cr
+        return listOf(cr)
     }
 
 }

@@ -18,9 +18,7 @@
 package ch.empa.openbisio.propertyassignment
 
 import ch.empa.openbisio.interfaces.CreatableEntity
-import ch.empa.openbisio.interfaces.Entity
 import ch.empa.openbisio.interfaces.Identifier
-import ch.empa.openbisio.propertytype.PropertyTypeIdentifier
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.ICreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.create.PropertyAssignmentCreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.id.PropertyTypePermId
@@ -31,13 +29,13 @@ class PropertyAssignmentEntity(override val dto: PropertyAssignmentDTO) : Creata
     override val identifier: Identifier
         get() = TODO("Not yet implemented")
 
-    override fun persist(): PropertyAssignmentCreation {
+    override fun persist(): List<PropertyAssignmentCreation> {
         val assignmentCreation = PropertyAssignmentCreation().apply {
             this.propertyTypeId = PropertyTypePermId(dto.propertyTypeCode)
             this.isMandatory = dto.mandatory
             this.section = dto.section
         }
-        return assignmentCreation
+        return listOf(assignmentCreation)
     }
 }
 

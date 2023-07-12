@@ -15,18 +15,33 @@
  *
  */
 
-package ch.empa.openbisio.vocabulary
+package ch.empa.openbisio.hierarchy
 
 import ch.empa.openbisio.interfaces.CodeHolder
 import ch.empa.openbisio.interfaces.CreatableEntity
 import ch.empa.openbisio.interfaces.DTO
-import ch.empa.openbisio.interfaces.Entity
-import kotlinx.serialization.Serializable
+import ch.empa.openbisio.interfaces.Tree
 
-@Serializable
-data class VocabularyDTO(override val code: String, val description: String, val terms: List<VocabularyTermDTO>) : DTO,
-    CodeHolder {
-    override fun toEntity(): VocabularyEntity {
-        return VocabularyEntity(this)
+interface HierarchicalDTO: DTO, CodeHolder, Tree<HierarchicalDTO> {
+    fun updateCode(code: String): HierarchicalDTO
+    override val code: String
+        get() = TODO("Not yet implemented")
+
+    override fun toEntity(): CreatableEntity {
+        TODO("Not yet implemented")
     }
+
+    override fun value(): HierarchicalDTO {
+        TODO("Not yet implemented")
+    }
+
+    override fun hasChildren(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun children(): Collection<Tree<HierarchicalDTO>> {
+        TODO("Not yet implemented")
+    }
+
+
 }

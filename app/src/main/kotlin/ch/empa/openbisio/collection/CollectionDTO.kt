@@ -17,9 +17,12 @@
 
 package ch.empa.openbisio.collection
 
+import ch.empa.openbisio.hierarchy.HierarchicalDTO
 import ch.empa.openbisio.interfaces.*
 import ch.empa.openbisio.`object`.ObjectDTO
 import kotlinx.serialization.Serializable
+
+
 
 @Serializable
 data class CollectionDTO(
@@ -28,10 +31,10 @@ data class CollectionDTO(
     val type: String,
     override val properties: Map<String, String> = mapOf<String, String>()
 ) :
-    DTO, Tree<DTO>, CodeHolder, PropertyHolder {
+    HierarchicalDTO, Tree<HierarchicalDTO>, CodeHolder, PropertyHolder {
 
 
-    override fun value(): DTO {
+    override fun value(): HierarchicalDTO {
         return this
     }
 
@@ -39,12 +42,16 @@ data class CollectionDTO(
         return objects.isNotEmpty()
     }
 
-    override fun children(): Collection<Tree<DTO>> {
+    override fun children(): Collection<Tree<HierarchicalDTO>> {
         return objects
     }
 
-    override fun toEntity(): Entity {
-        return CollectionEntity(this, listOf())
+    override fun updateCode(code: String): HierarchicalDTO {
+        return this.copy(code = code)
+    }
+
+    override fun toEntity(): CreatableEntity {
+        return CollectionEntity(this)
     }
 
 }

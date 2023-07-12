@@ -25,13 +25,13 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.create.PropertyTypeCrea
 class PropertyTypeEntity(override val dto: PropertyTypeDTO) : CreatableEntity {
     override val identifier: Identifier = PropertyTypeIdentifier(dto.code)
 
-    override fun persist(): ICreation {
+    override fun persist(): List<ICreation> {
         val propertyTypeCreation = PropertyTypeCreation().apply {
             this.code = dto.code
             this.label = dto.label
             this.description = dto.description
             this.dataType = dto.dataType.toOpenBISDataType()
         }
-        return propertyTypeCreation
+        return listOf(propertyTypeCreation)
     }
 }

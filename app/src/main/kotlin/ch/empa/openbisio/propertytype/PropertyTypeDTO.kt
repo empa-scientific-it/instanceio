@@ -19,6 +19,7 @@ package ch.empa.openbisio.propertytype
 
 import ch.empa.openbisio.datatype.DataTypeDTO
 import ch.empa.openbisio.interfaces.CodeHolder
+import ch.empa.openbisio.interfaces.CreatableEntity
 import ch.empa.openbisio.interfaces.DTO
 import ch.empa.openbisio.interfaces.Entity
 import kotlinx.serialization.Serializable
@@ -30,7 +31,7 @@ data class PropertyTypeDTO(
     val description: String,
     val dataType: DataTypeDTO
 ) : DTO, CodeHolder {
-    override fun toEntity(): Entity {
-        TODO("Not yet implemented")
+    override fun toEntity(): PropertyTypeEntity {
+        return PropertyTypeEntity(this)
     }
 }

@@ -18,10 +18,8 @@
 package ch.empa.openbisio.project
 
 import ch.empa.openbisio.collection.CollectionDTO
-import ch.empa.openbisio.interfaces.CodeHolder
-import ch.empa.openbisio.interfaces.DTO
-import ch.empa.openbisio.interfaces.Entity
-import ch.empa.openbisio.interfaces.Tree
+import ch.empa.openbisio.hierarchy.HierarchicalDTO
+import ch.empa.openbisio.interfaces.*
 import ch.empa.openbisio.person.PersonDTO
 import kotlinx.serialization.Serializable
 
@@ -31,8 +29,8 @@ data class ProjectDTO(
     val collections: List<CollectionDTO> = listOf(),
     val description: String = "",
     val leader: PersonDTO? = null
-) : Tree<DTO>, DTO, CodeHolder {
-    override fun value(): DTO {
+) : Tree<HierarchicalDTO>, HierarchicalDTO, CodeHolder {
+    override fun value(): HierarchicalDTO {
         return this
     }
 
@@ -40,12 +38,16 @@ data class ProjectDTO(
         return collections.isNotEmpty()
     }
 
-    override fun children(): Collection<Tree<DTO>> {
+    override fun children(): Collection<Tree<HierarchicalDTO>> {
         return collections
     }
 
-    override fun toEntity(): Entity {
-        TODO("Not yet implemented")
+    override fun updateCode(code: String): HierarchicalDTO {
+        return this.copy(code = code)
+    }
+
+    override fun toEntity(): ProjectEntity {
+        return ProjectEntity(this)
     }
 
 }

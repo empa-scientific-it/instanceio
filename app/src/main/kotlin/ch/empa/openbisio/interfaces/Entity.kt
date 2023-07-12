@@ -25,5 +25,4 @@ package ch.empa.openbisio.interfaces
  */
 interface Entity {
     val dto: DTO
-
 }

@@ -18,6 +18,7 @@
 package ch.empa.openbisio.datasettype
 
 import ch.empa.openbisio.interfaces.CodeHolder
+import ch.empa.openbisio.interfaces.CreatableEntity
 import ch.empa.openbisio.interfaces.DTO
 import ch.empa.openbisio.interfaces.Entity
 import ch.empa.openbisio.propertyassignment.PropertyAssignmentDTO
@@ -30,7 +31,7 @@ class DataSetTypeDTO(
     val propertyAssignments: List<PropertyAssignmentDTO>
 ) :
     DTO, CodeHolder {
-    override fun toEntity(): Entity {
-        TODO("Not yet implemented")
+    override fun toEntity(): DataSetTypeEntity {
+        return DataSetTypeEntity(this)
     }
 }

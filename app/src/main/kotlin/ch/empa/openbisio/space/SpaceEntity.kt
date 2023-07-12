@@ -23,14 +23,14 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.ICreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.create.SpaceCreation
 
 class SpaceEntity(override val dto: SpaceDTO) : CreatableEntity {
-    override val identifier: ConcreteIdentifier.SpaceIdentifier = ConcreteIdentifier.SpaceIdentifier(listOf(dto.code))
+    override val identifier: ConcreteIdentifier.SpaceIdentifier = ConcreteIdentifier.SpaceIdentifier(listOf( dto.code))
 
-    override fun persist(): ICreation {
+    override fun persist(): List<SpaceCreation> {
         val sc = SpaceCreation().apply {
             this.code = dto.code
             this.description = dto.description
         }
-        return sc
+        return listOf(sc)
     }
 
 }

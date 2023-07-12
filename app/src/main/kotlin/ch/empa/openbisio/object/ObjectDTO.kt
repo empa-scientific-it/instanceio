@@ -17,6 +17,8 @@
 
 package ch.empa.openbisio.`object`
 
+import ch.empa.openbisio.hierarchy.HierarchicalDTO
+import ch.empa.openbisio.identifier.ConcreteIdentifier
 import ch.empa.openbisio.interfaces.*
 import kotlinx.serialization.Serializable
 
@@ -27,7 +29,7 @@ data class ObjectDTO(
     val properties: Map<String, String>,
     override val children: List<Identifier>? = null,
     override val parents: List<Identifier>? = null
-) : RelationshipHolder, DTO, Tree<DTO>, CodeHolder {
+) : RelationshipHolder, HierarchicalDTO, Tree<HierarchicalDTO>, CodeHolder {
     override fun getChild(name: String): CodeHolder? {
         TODO("Not yet implemented")
     }
@@ -36,7 +38,7 @@ data class ObjectDTO(
         TODO("Not yet implemented")
     }
 
-    override fun value(): DTO {
+    override fun value(): ObjectDTO {
         return this
     }
 
@@ -44,12 +46,17 @@ data class ObjectDTO(
         return false
     }
 
-    override fun children(): Collection<Tree<DTO>> {
+    override fun children(): Collection<Tree<HierarchicalDTO>> {
         return listOf()
     }
 
-    override fun toEntity(): Entity {
-        return ObjectEntity(this, listOf())
+    override fun updateCode(code: String): ObjectDTO {
+        return this.copy(code = code)
+    }
+
+
+    override fun toEntity(): ObjectEntity {
+        return ObjectEntity(this, ConcreteIdentifier.SampleIdentifier(listOf(this.code)))
     }
 
 
