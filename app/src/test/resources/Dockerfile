@@ -1,4 +1,4 @@
-FROM openbis/debian-openbis:latest
+FROM openbis/debian-openbis:20.10.6
 
 COPY check_health.sh .
 RUN chmod +x check_health.sh
