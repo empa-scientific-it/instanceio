@@ -33,7 +33,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class InstanceDTO(
-    val spaces: List<SpaceDTO>?,
+    val spaces: List<SpaceDTO>? = listOf(),
     @SerialName("property_types") val propertyTypes: List<PropertyTypeDTO>? = null,
     @SerialName("object_types") val objectTypes: List<ObjectTypeDTO>? = null,
     @SerialName("collection_types") val collectionTypes: List<CollectionTypeDTO>? = null,
@@ -43,6 +43,10 @@ data class InstanceDTO(
 
     fun getSpace(code: String): SpaceDTO? {
         return spaces?.find { it.code == code }
+    }
+
+    fun withSpace(space: SpaceDTO): InstanceDTO {
+        return this.copy(spaces = spaces?.plus(space))
     }
 
     override fun updateCode(code: String): HierarchicalDTO {

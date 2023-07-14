@@ -52,6 +52,7 @@ data class SpaceDTO(
     }
 
 
-
-
+    fun withProject(projects: ProjectDTO): SpaceDTO {
+        return this.copy(projects = this.projects + projects)
+    }
 }

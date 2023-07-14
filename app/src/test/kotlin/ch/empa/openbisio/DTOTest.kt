@@ -44,6 +44,7 @@ class DTOTest {
         val inst = OpenBIS("https://localhost:8443").apply { login("admin", "changeit") }
         val dumped = InstanceDeserializer().dumpInstance(inst)
         val instanceEntity = dumped.toEntityWithCodes()
+        println(dumped)
         println(instanceEntity.persist())
         //println(dumped.collectionTypes)
         //println(js.encodeToString(updatedCodes))

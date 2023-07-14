@@ -18,7 +18,6 @@
 package ch.empa.openbisio.identifier
 
 import ch.empa.openbisio.interfaces.HierarchicalIdentifier
-import ch.empa.openbisio.interfaces.HierarchyIdentifier
 
 
 sealed class ConcreteIdentifier(members: Collection<String>, maxSize: Int) : HierarchyIdentifier(members, maxSize),

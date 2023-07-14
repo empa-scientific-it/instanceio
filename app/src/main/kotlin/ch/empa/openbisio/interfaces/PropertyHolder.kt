@@ -17,6 +17,11 @@
 
 package ch.empa.openbisio.interfaces
 
+/**
+ * Represents an entity that has properties, these are openBIS entities like objects or
+ * collections, where the properties are simply a map
+ *
+ * */
 interface PropertyHolder {
     val properties: Map<String, String>?
 }

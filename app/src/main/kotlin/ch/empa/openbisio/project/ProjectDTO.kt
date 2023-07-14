@@ -50,4 +50,8 @@ data class ProjectDTO(
         return ProjectEntity(this)
     }
 
+    fun withCollection(collection: CollectionDTO): ProjectDTO {
+        return this.copy(collections = this.collections + collection)
+    }
+
 }

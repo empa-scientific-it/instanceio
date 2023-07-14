@@ -19,6 +19,11 @@ package ch.empa.openbisio.interfaces
 
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.ICreation
 
+/**
+ * Interface representing openBIS entities that can be created.
+ * The interface is quite "monadic" as they do not perform the operation
+ * themselves but return a ICreation object that can be used to create the entity from the V3 api
+ */
 interface CreatableEntity : Entity {
     val identifier: Identifier
 
