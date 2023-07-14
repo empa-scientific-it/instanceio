@@ -19,16 +19,22 @@ package ch.empa.openbisio
 
 import ch.empa.openbisio.collection.CollectionDTO
 import ch.empa.openbisio.instance.InstanceDTO
+import ch.empa.openbisio.`object`.ObjectDTO
 import ch.empa.openbisio.project.ProjectDTO
 import ch.empa.openbisio.space.SpaceDTO
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+/**
+ * Tests if the identifiers are correctly updated.
+ * The purpose is to push the identifier down the hierarchy to obtain the path to each entity. The path is then used by
+ * the entities to create the corresponding openBIS entities.
+ */
 class IdentifierTest {
     val instance = InstanceDTO().withSpace(
         SpaceDTO("space").withProject(
             ProjectDTO("project").withCollection(
-                CollectionDTO("collection", listOf(), "COLLECTION")
+                CollectionDTO("collection", "COLLECTION", listOf()).withObject(ObjectDTO("object", "UNKOWN"))
             )
         )
     )
@@ -46,6 +52,11 @@ class IdentifierTest {
     @Test
     fun testCollectionIdentifier(){
         assertEquals("/space/project/collection", updated.spaces?.get(0)?.projects?.get(0)?.collections?.get(0)?.code)
+    }
+
+    @Test
+    fun testObjectIdentifier(){
+        assertEquals("/space/project/collection/object", updated.spaces?.get(0)?.projects?.get(0)?.collections?.get(0)?.objects?.get(0)?.code)
     }
 
 }

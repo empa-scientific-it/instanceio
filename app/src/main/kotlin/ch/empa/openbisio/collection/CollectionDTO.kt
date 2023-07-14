@@ -27,8 +27,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CollectionDTO(
     override val code: String,
-    val objects: List<ObjectDTO> = listOf(),
     val type: String,
+    val objects: List<ObjectDTO> = listOf(),
     override val properties: Map<String, String> = mapOf<String, String>()
 ) :
     HierarchicalDTO, Tree<HierarchicalDTO>, CodeHolder, PropertyHolder {
@@ -36,6 +36,10 @@ data class CollectionDTO(
 
     override fun value(): HierarchicalDTO {
         return this
+    }
+
+    fun withObject(child: ObjectDTO): CollectionDTO {
+        return this.copy(objects = objects.plus(child))
     }
 
     override fun hasChildren(): Boolean {

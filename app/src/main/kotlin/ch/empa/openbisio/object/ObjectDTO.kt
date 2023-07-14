@@ -26,9 +26,9 @@ import kotlinx.serialization.Serializable
 data class ObjectDTO(
     override val code: String,
     val type: String,
-    val properties: Map<String, String>,
-    override val children: List<Identifier>? = null,
-    override val parents: List<Identifier>? = null
+    val properties: Map<String, String> = mapOf(),
+    override val children: List<Identifier>? = listOf(),
+    override val parents: List<Identifier>? = listOf()
 ) : RelationshipHolder, HierarchicalDTO, Tree<HierarchicalDTO>, CodeHolder {
     override fun getChild(name: String): CodeHolder? {
         TODO("Not yet implemented")

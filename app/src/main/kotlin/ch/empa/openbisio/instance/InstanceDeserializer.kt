@@ -171,7 +171,7 @@ fun Sample.toDTO(): ObjectDTO {
 fun Experiment.toDTO(): CollectionDTO {
     val sampleFetched = this.fetchOptions.hasSamples()
     val samples = if (sampleFetched) this.samples.map { it.toDTO() } else listOf()
-    return CollectionDTO(this.code, samples, this.type.code)
+    return CollectionDTO(this.code, this.type.code, samples)
 }
 
 fun Vocabulary.toDTO(): VocabularyDTO {

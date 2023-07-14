@@ -6,9 +6,7 @@ import ch.empa.openbisio.project.ProjectDTO
 import ch.empa.openbisio.space.SpaceDTO
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.decodeFromStream
 import kotlin.test.Test
-import java.io.File
 
 /**
  * Test the serialisation and deserialisation of the InstanceDTO class. The test checks
@@ -27,17 +25,16 @@ class DeserialiserTest {
     )
 
     val json = Json { prettyPrint = true }
+    val config = javaClass.getResource("/simple_instance.json").readText()
 
     @Test
     fun testRead() {
-        val config = javaClass.getResource("/simple_instance.json").readText()
         val readInst = json.decodeFromString<InstanceDTO>(config)
         assert(readInst == localInst)
     }
 
     @Test
     fun testWrite() {
-        val config = javaClass.getResource("/simple_instance.json").readText()
         val readInst = json.decodeFromString<InstanceDTO>(config)
         val writeInst = json.encodeToString(InstanceDTO.serializer(), readInst)
         val rereadInst = json.decodeFromString<InstanceDTO>(writeInst)

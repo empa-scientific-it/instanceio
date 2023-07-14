@@ -1,0 +1,22 @@
+{
+  "spaces": [
+    {
+      "code": "YOUR_SPACE_CODE",
+      "projects": [
+        {
+          "code": "YOUR_FIRST_PROJECT_CODE",
+          "collections": [
+            {
+              "code": "YOUR_FIRST_COLLECTION_CODE",
+              "type": "COLLECTION"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+
+
+
