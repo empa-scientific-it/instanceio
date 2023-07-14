@@ -1,6 +1,11 @@
 package ch.empa.openbisio.interfaces
 
 /**
+ * A tree implemented as list of lists
+ * @param T the type of the value contained in the tree
+ * @property value the value contained in the tree
+ * @property children the children of the tree
+ */
 class ListTree<T>(val value: T, val children: List<ListTree<T>>) : Tree<T> {
 
     override fun value(): T = value

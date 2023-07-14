@@ -101,7 +101,7 @@ data class InstanceDTO(
 
         val newCode = iterateWithParent(
             this.copy(),
-            { entity: HierarchicalDTO, parent: HierarchicalDTO -> entity.updateCode(parent.code + "/" + entity.code)},
+            { entity: HierarchicalDTO, parent: HierarchicalDTO -> entity.updateCode(when (parent){is InstanceDTO -> "" else -> (parent.code)} + "/" + entity.code)},
             { entity: HierarchicalDTO, children: List<HierarchicalDTO> ->  builder(entity, children)},
             this.copy(spaces = listOf())
         )
