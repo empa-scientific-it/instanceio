@@ -19,7 +19,7 @@ package ch.empa.openbisio.identifier
 
 import ch.empa.openbisio.interfaces.HierarchicalIdentifier
 
-abstract class HierarchyIdentifier(private val members: Collection<String>, val maxSize: Int) : HierarchicalIdentifier {
+abstract class HierarchyIdentifier(val members: Collection<String>, val maxSize: Int) : HierarchicalIdentifier {
     init {
         if (members.size > maxSize) {
             throw IllegalArgumentException("This identifier ${this::class} can only have $maxSize components")

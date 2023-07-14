@@ -19,10 +19,11 @@ package ch.empa.openbisio.space
 
 import ch.empa.openbisio.identifier.ConcreteIdentifier
 import ch.empa.openbisio.interfaces.CreatableEntity
+import ch.empa.openbisio.project.ProjectEntity
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.create.SpaceCreation
 
 class SpaceEntity(override val dto: SpaceDTO) : CreatableEntity {
-    override val identifier: ConcreteIdentifier.SpaceIdentifier = ConcreteIdentifier.SpaceIdentifier(listOf(dto.code))
+    override val identifier: ConcreteIdentifier.SpaceIdentifier = ConcreteIdentifier.SpaceIdentifier(dto.code)
 
     override fun persist(): List<SpaceCreation> {
         val sc = SpaceCreation().apply {
@@ -31,5 +32,6 @@ class SpaceEntity(override val dto: SpaceDTO) : CreatableEntity {
         }
         return listOf(sc)
     }
+    val projects: List<ProjectEntity> = dto.projects.map { it.toEntity() }
 
 }

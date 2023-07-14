@@ -56,7 +56,7 @@ data class InstanceDTO(
         return this.copy()
     }
 
-    override fun toEntity(): CreatableEntity {
+    override fun toEntity(): InstanceEntity {
         return InstanceEntity(this)
     }
 

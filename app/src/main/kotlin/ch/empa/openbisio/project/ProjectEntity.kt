@@ -27,7 +27,7 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.id.SpacePermId
 class ProjectEntity(override val dto: ProjectDTO) :
     CreatableEntity {
     override val identifier: ConcreteIdentifier.ProjectIdentifier =
-        ConcreteIdentifier.ProjectIdentifier(listOf(dto.code))
+        ConcreteIdentifier.ProjectIdentifier(dto.code)
 
     override fun persist(): List<ICreation> {
         val pc = ProjectCreation().apply {

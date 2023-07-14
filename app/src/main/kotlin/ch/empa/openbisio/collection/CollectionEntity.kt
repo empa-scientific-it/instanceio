@@ -26,7 +26,7 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.id.ProjectPermId
 class CollectionEntity(override val dto: CollectionDTO) : CreatableEntity {
 
     override val identifier: ConcreteIdentifier.CollectionIdentifier =
-        ConcreteIdentifier.CollectionIdentifier(listOf(dto.code))
+        ConcreteIdentifier.CollectionIdentifier(dto.code)
     val properties = dto.properties
     //val children = dto.children()?.map { it.toEntity() }
 

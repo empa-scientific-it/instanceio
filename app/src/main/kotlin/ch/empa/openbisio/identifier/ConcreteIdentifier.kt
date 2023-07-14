@@ -18,11 +18,22 @@
 package ch.empa.openbisio.identifier
 
 import ch.empa.openbisio.interfaces.HierarchicalIdentifier
+import ch.empa.openbisio.interfaces.Identifier
 
 
-sealed class ConcreteIdentifier(members: Collection<String>, maxSize: Int) : HierarchyIdentifier(members, maxSize),
-    HierarchicalIdentifier {
-    class InstanceIdentifier : ConcreteIdentifier(members = listOf("/"), 1) {
+fun splitIdentifier(identifier: String): List<String> {
+    return identifier.split("/")
+}
+
+sealed class ConcreteIdentifier(val members: Collection<String>, val maxSize: Int) : HierarchicalIdentifier {
+
+    override fun getCode(): String {
+            return members.last()
+        }
+
+
+
+    data class InstanceIdentifier(override val identifier: String = "/") : ConcreteIdentifier(listOf("/"), 1) {
         override fun getAncestor(): InstanceIdentifier? {
             return null
         }
@@ -42,12 +53,10 @@ sealed class ConcreteIdentifier(members: Collection<String>, maxSize: Int) : Hie
         override fun sample(): SampleIdentifier? {
             return null
         }
-
-        override val identifier: String
-            get() = "/"
     }
 
-    class SpaceIdentifier(private val members: Collection<String>) : HierarchyIdentifier(members, 2) {
+
+    data class SpaceIdentifier(override val identifier: String) : HierarchyIdentifier(splitIdentifier(identifier), 2) {
         override fun getAncestor(): InstanceIdentifier {
             return InstanceIdentifier()
         }
@@ -69,9 +78,9 @@ sealed class ConcreteIdentifier(members: Collection<String>, maxSize: Int) : Hie
         }
     }
 
-    class ProjectIdentifier(private val members: Collection<String>) : HierarchyIdentifier(members, 3) {
+    data class ProjectIdentifier(override val identifier: String) : HierarchyIdentifier(splitIdentifier(identifier), 3) {
         override fun getAncestor(): SpaceIdentifier {
-            return SpaceIdentifier(members.take(maxSize - 1))
+            return SpaceIdentifier(identifier)
         }
 
         override fun space(): SpaceIdentifier {
@@ -91,9 +100,9 @@ sealed class ConcreteIdentifier(members: Collection<String>, maxSize: Int) : Hie
         }
     }
 
-    class CollectionIdentifier(private val members: Collection<String>) : HierarchyIdentifier(members, 4) {
+    data class CollectionIdentifier(override val identifier: String) : HierarchyIdentifier(splitIdentifier(identifier), 4) {
         override fun getAncestor(): ProjectIdentifier {
-            return ProjectIdentifier(members.take(maxSize - 1))
+            return ProjectIdentifier(identifier)
         }
 
         override fun space(): SpaceIdentifier {
@@ -113,9 +122,9 @@ sealed class ConcreteIdentifier(members: Collection<String>, maxSize: Int) : Hie
         }
     }
 
-    class SampleIdentifier(private val members: Collection<String>) : HierarchyIdentifier(members, 4) {
+    data class SampleIdentifier(override val identifier: String) : HierarchyIdentifier(splitIdentifier(identifier), 4) {
         override fun getAncestor(): CollectionIdentifier {
-            return CollectionIdentifier(members.take(maxSize - 1))
+            return CollectionIdentifier(identifier)
         }
 
         override fun space(): SpaceIdentifier? {

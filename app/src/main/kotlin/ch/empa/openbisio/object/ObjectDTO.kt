@@ -59,7 +59,7 @@ data class ObjectDTO(
 
 
     override fun toEntity(): ObjectEntity {
-        return ObjectEntity(this, ConcreteIdentifier.SampleIdentifier(listOf(this.code)))
+        return ObjectEntity(this, ConcreteIdentifier.SampleIdentifier(this.code))
     }
 
 
