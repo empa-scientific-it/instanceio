@@ -20,6 +20,7 @@ package ch.empa.openbisio
 import ch.empa.openbisio.interfaces.ListTree
 import ch.empa.openbisio.interfaces.iterateWithParent
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 data class CodeEntity(val name: String, val path: List<String>)
 
@@ -56,8 +57,8 @@ class TraversalTest {
     @Test
     fun testDepthFirst() {
         val trav = testTree.iterator().asSequence().toList()
-        assert(
-            trav == listOf(
+        assertEquals(
+            trav , listOf(
                 CodeEntity("root", listOf()),
                 CodeEntity("a", listOf()),
                 CodeEntity("b", listOf()),
@@ -101,7 +102,7 @@ class PathTest {
             listOf("root", "e", "f", "h")
         )
         val paths = tr1.iterator().asSequence().map { it.path }.toList()
-        assert(paths == correctPaths)
+        assertEquals(paths , correctPaths)
     }
 }
 
