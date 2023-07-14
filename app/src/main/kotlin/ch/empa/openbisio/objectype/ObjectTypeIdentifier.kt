@@ -20,5 +20,5 @@ package ch.empa.openbisio.objectype
 import ch.empa.openbisio.interfaces.Identifier
 
 @JvmInline
-value class ObjectTypeIdentifier(override val identifier: String): Identifier
+value class ObjectTypeIdentifier(override val identifier: String) : Identifier
 

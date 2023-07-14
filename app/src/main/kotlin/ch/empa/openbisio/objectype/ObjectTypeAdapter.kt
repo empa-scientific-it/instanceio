@@ -23,6 +23,7 @@ import kotlinx.serialization.Serializable
 sealed class ObjectTypeAdapter {
     @Serializable
     class OT(val ot: ObjectTypeDTO) : ObjectTypeAdapter()
+
     @Serializable
     class OS(val ot: String) : ObjectTypeAdapter()
 

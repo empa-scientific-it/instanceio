@@ -26,21 +26,21 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.id.ProjectPermId
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.create.SampleCreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.id.SpacePermId
 
-class ObjectEntity(override val dto: ObjectDTO, override val identifier: ConcreteIdentifier.SampleIdentifier) : CreatableEntity {
+class ObjectEntity(override val dto: ObjectDTO, override val identifier: ConcreteIdentifier.SampleIdentifier) :
+    CreatableEntity {
 
 
     override fun persist(): List<ICreation> {
         val sc = SampleCreation().apply {
             code = dto.code
             experimentId = ExperimentIdentifier(identifier.getAncestor().getCode())
-            spaceId = SpacePermId(identifier!!.space()!!.identifier)
-            projectId = ProjectPermId(identifier!!.project()!!.identifier)
+            spaceId = SpacePermId(identifier.space()!!.identifier)
+            projectId = ProjectPermId(identifier.project()!!.identifier)
             typeId = EntityTypePermId(dto.type)
             properties = dto.properties.mapValues { it.toString() }
         }
         return listOf(sc)
     }
-
 
 
 }

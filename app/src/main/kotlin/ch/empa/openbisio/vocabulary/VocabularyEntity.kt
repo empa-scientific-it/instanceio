@@ -28,7 +28,7 @@ class VocabularyEntity(override val dto: VocabularyDTO) : CreatableEntity {
         val vc = VocabularyCreation().apply {
             this.code = dto.code
             this.description = dto.description
-            this.terms = dto.terms.flatMap  { it.toEntity().persist() }
+            this.terms = dto.terms.flatMap { it.toEntity().persist() }
         }
         return listOf(vc)
     }

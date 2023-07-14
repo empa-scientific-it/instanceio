@@ -18,7 +18,8 @@
 package ch.empa.openbisio.space
 
 import ch.empa.openbisio.hierarchy.HierarchicalDTO
-import ch.empa.openbisio.interfaces.*
+import ch.empa.openbisio.interfaces.CodeHolder
+import ch.empa.openbisio.interfaces.Tree
 import ch.empa.openbisio.project.ProjectDTO
 import kotlinx.serialization.Serializable
 

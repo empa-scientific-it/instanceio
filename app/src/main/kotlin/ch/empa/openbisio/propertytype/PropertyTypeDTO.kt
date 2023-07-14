@@ -19,9 +19,7 @@ package ch.empa.openbisio.propertytype
 
 import ch.empa.openbisio.datatype.DataTypeDTO
 import ch.empa.openbisio.interfaces.CodeHolder
-import ch.empa.openbisio.interfaces.CreatableEntity
 import ch.empa.openbisio.interfaces.DTO
-import ch.empa.openbisio.interfaces.Entity
 import kotlinx.serialization.Serializable
 
 @Serializable

@@ -21,7 +21,10 @@ import ch.empa.openbisio.collection.CollectionDTO
 import ch.empa.openbisio.collectiontype.CollectionTypeDTO
 import ch.empa.openbisio.datasettype.DataSetTypeDTO
 import ch.empa.openbisio.hierarchy.HierarchicalDTO
-import ch.empa.openbisio.interfaces.*
+import ch.empa.openbisio.interfaces.CreatableEntity
+import ch.empa.openbisio.interfaces.DTO
+import ch.empa.openbisio.interfaces.Tree
+import ch.empa.openbisio.interfaces.iterateWithParent
 import ch.empa.openbisio.`object`.ObjectDTO
 import ch.empa.openbisio.objectype.ObjectTypeDTO
 import ch.empa.openbisio.project.ProjectDTO
@@ -84,16 +87,15 @@ data class InstanceDTO(
     }
 
 
+    fun updateCodes(): InstanceDTO {
 
-    fun updateCodes(): InstanceDTO{
+        fun builder(entity: HierarchicalDTO, children: List<HierarchicalDTO>): HierarchicalDTO {
 
-        fun  builder(entity: HierarchicalDTO, children: List<HierarchicalDTO>): HierarchicalDTO {
-
-            val res = when(entity){
-                is SpaceDTO ->  entity.copy(projects=children.map { it as ProjectDTO })
-                is ProjectDTO ->  entity.copy(collections = children.map { it as CollectionDTO })
-                is CollectionDTO ->  entity.copy(objects=children.map { it as ObjectDTO })
-                is InstanceDTO -> entity.copy(spaces=children.map { it as SpaceDTO })
+            val res = when (entity) {
+                is SpaceDTO -> entity.copy(projects = children.map { it as ProjectDTO })
+                is ProjectDTO -> entity.copy(collections = children.map { it as CollectionDTO })
+                is CollectionDTO -> entity.copy(objects = children.map { it as ObjectDTO })
+                is InstanceDTO -> entity.copy(spaces = children.map { it as SpaceDTO })
                 else -> entity
             }
             return res
@@ -101,8 +103,15 @@ data class InstanceDTO(
 
         val newCode = iterateWithParent(
             this.copy(),
-            { entity: HierarchicalDTO, parent: HierarchicalDTO -> entity.updateCode(when (parent){is InstanceDTO -> "" else -> (parent.code)} + "/" + entity.code)},
-            { entity: HierarchicalDTO, children: List<HierarchicalDTO> ->  builder(entity, children)},
+            { entity: HierarchicalDTO, parent: HierarchicalDTO ->
+                entity.updateCode(
+                    when (parent) {
+                        is InstanceDTO -> ""
+                        else -> (parent.code)
+                    } + "/" + entity.code
+                )
+            },
+            { entity: HierarchicalDTO, children: List<HierarchicalDTO> -> builder(entity, children) },
             this.copy(spaces = listOf())
         )
         return newCode as InstanceDTO

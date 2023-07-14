@@ -22,7 +22,7 @@ import ch.empa.openbisio.interfaces.CreatableEntity
 import ch.empa.openbisio.interfaces.DTO
 import ch.empa.openbisio.interfaces.Tree
 
-interface HierarchicalDTO: DTO, CodeHolder, Tree<HierarchicalDTO> {
+interface HierarchicalDTO : DTO, CodeHolder, Tree<HierarchicalDTO> {
     fun updateCode(code: String): HierarchicalDTO
     override val code: String
         get() = TODO("Not yet implemented")

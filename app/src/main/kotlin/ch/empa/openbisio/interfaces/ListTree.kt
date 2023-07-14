@@ -10,7 +10,7 @@ class ListTree<T>(val value: T, val children: List<ListTree<T>>) : Tree<T> {
 
     override fun value(): T = value
     override fun hasChildren(): Boolean = children.isNotEmpty()
-    override fun  children(): Collection<ListTree<T>> = children
+    override fun children(): Collection<ListTree<T>> = children
     fun filter(predicate: (T) -> Boolean): ListTree<T> {
         return when (hasChildren()) {
             false -> if (predicate(value)) this else ListTree(value, listOf())

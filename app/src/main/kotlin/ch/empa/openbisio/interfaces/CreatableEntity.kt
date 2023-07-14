@@ -31,5 +31,5 @@ interface CreatableEntity : Entity {
      * Returns a Creation object that can be used
      * to create the openbis entity
      */
-    fun  persist(): List<ICreation>
+    fun persist(): List<ICreation>
 }

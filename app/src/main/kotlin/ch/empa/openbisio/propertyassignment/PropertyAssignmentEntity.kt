@@ -19,7 +19,6 @@ package ch.empa.openbisio.propertyassignment
 
 import ch.empa.openbisio.interfaces.CreatableEntity
 import ch.empa.openbisio.interfaces.Identifier
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.ICreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.create.PropertyAssignmentCreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.id.PropertyTypePermId
 

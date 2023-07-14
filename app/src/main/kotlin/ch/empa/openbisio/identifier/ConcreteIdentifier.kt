@@ -96,7 +96,7 @@ sealed class ConcreteIdentifier(members: Collection<String>, maxSize: Int) : Hie
             return ProjectIdentifier(members.take(maxSize - 1))
         }
 
-        override fun space(): SpaceIdentifier? {
+        override fun space(): SpaceIdentifier {
             return project().space()
         }
 
@@ -122,7 +122,7 @@ sealed class ConcreteIdentifier(members: Collection<String>, maxSize: Int) : Hie
             return project()?.space()
         }
 
-        override fun project(): ProjectIdentifier? {
+        override fun project(): ProjectIdentifier {
             return getAncestor().getAncestor()
         }
 

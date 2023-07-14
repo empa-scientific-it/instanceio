@@ -19,7 +19,8 @@ package ch.empa.openbisio.project
 
 import ch.empa.openbisio.collection.CollectionDTO
 import ch.empa.openbisio.hierarchy.HierarchicalDTO
-import ch.empa.openbisio.interfaces.*
+import ch.empa.openbisio.interfaces.CodeHolder
+import ch.empa.openbisio.interfaces.Tree
 import ch.empa.openbisio.person.PersonDTO
 import kotlinx.serialization.Serializable
 

@@ -18,12 +18,12 @@
 package ch.empa.openbisio.collection
 
 import ch.empa.openbisio.identifier.ConcreteIdentifier
-import ch.empa.openbisio.interfaces.*
+import ch.empa.openbisio.interfaces.CreatableEntity
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.ICreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.create.ExperimentCreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.id.ProjectPermId
 
-class CollectionEntity(override val dto: CollectionDTO) : CreatableEntity{
+class CollectionEntity(override val dto: CollectionDTO) : CreatableEntity {
 
     override val identifier: ConcreteIdentifier.CollectionIdentifier =
         ConcreteIdentifier.CollectionIdentifier(listOf(dto.code))

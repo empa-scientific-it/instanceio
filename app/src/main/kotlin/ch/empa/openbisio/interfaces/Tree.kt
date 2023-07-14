@@ -22,7 +22,7 @@ typealias Algebra<T, R> = (T, List<R>) -> R
 interface Tree<T> {
     fun value(): T
     fun hasChildren(): Boolean
-    fun   children(): Collection<Tree<T>>
+    fun children(): Collection<Tree<T>>
 
     //fun <R> map(transformer: (T) -> R): Tree<R>
 
@@ -81,7 +81,7 @@ fun <T, R, U : Tree<R>, V : Tree<T>> iterateWithParentHelper(
 }
 
 
-fun <R: Tree<T>, T> toListTreee(input: R): ListTree<T> {
+fun <R : Tree<T>, T> toListTreee(input: R): ListTree<T> {
     return ListTree(input.value(), input.children().map { toListTreee(it) })
 }
 

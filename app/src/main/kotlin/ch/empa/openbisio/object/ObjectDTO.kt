@@ -19,7 +19,10 @@ package ch.empa.openbisio.`object`
 
 import ch.empa.openbisio.hierarchy.HierarchicalDTO
 import ch.empa.openbisio.identifier.ConcreteIdentifier
-import ch.empa.openbisio.interfaces.*
+import ch.empa.openbisio.interfaces.CodeHolder
+import ch.empa.openbisio.interfaces.Identifier
+import ch.empa.openbisio.interfaces.RelationshipHolder
+import ch.empa.openbisio.interfaces.Tree
 import kotlinx.serialization.Serializable
 
 @Serializable

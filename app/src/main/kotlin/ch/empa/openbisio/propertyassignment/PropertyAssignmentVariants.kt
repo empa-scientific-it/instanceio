@@ -24,6 +24,7 @@ import kotlinx.serialization.Serializable
 sealed class PropertyAssignmentVariants {
     @Serializable
     data class NominalAssignment(val name: String) : PropertyAssignmentVariants()
+
     @Serializable
     data class LocalAssignment(val propertyType: PropertyTypeDTO) : PropertyAssignmentVariants()
 }

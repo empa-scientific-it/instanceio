@@ -18,9 +18,7 @@
 package ch.empa.openbisio.vocabulary
 
 import ch.empa.openbisio.interfaces.CodeHolder
-import ch.empa.openbisio.interfaces.CreatableEntity
 import ch.empa.openbisio.interfaces.DTO
-import ch.empa.openbisio.interfaces.Entity
 import kotlinx.serialization.Serializable
 
 @Serializable

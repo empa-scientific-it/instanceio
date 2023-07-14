@@ -18,7 +18,6 @@
 package ch.empa.openbisio.propertyassignment
 
 import ch.empa.openbisio.interfaces.DTO
-import ch.empa.openbisio.interfaces.Entity
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

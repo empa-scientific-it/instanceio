@@ -18,10 +18,12 @@
 package ch.empa.openbisio.collection
 
 import ch.empa.openbisio.hierarchy.HierarchicalDTO
-import ch.empa.openbisio.interfaces.*
+import ch.empa.openbisio.interfaces.CodeHolder
+import ch.empa.openbisio.interfaces.CreatableEntity
+import ch.empa.openbisio.interfaces.PropertyHolder
+import ch.empa.openbisio.interfaces.Tree
 import ch.empa.openbisio.`object`.ObjectDTO
 import kotlinx.serialization.Serializable
-
 
 
 @Serializable
