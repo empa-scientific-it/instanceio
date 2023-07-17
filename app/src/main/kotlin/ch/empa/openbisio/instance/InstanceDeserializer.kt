@@ -242,6 +242,7 @@ data class InstanceDeserializer(
         val spaceSearchCriteria = SpaceSearchCriteria().withAndOperator()
         val spaceFetchConf = spaceFecthConfig(withSamples)
         val spaces = service.searchSpaces(spaceSearchCriteria, spaceFetchConf).objects
+        println(spaces)
         // Get property types
         val propertyTypeSearchCriteria = PropertyTypeSearchCriteria().withAndOperator()
         val propertyTypeFecthOptions = PropertyTypeFetchOptions()

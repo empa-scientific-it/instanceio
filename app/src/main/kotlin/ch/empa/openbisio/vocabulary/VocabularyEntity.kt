@@ -18,19 +18,31 @@
 package ch.empa.openbisio.vocabulary
 
 import ch.empa.openbisio.interfaces.CreatableEntity
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.ICreation
+import ch.ethz.sis.openbis.generic.OpenBIS
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.vocabulary.create.CreateVocabulariesOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.vocabulary.create.VocabularyCreation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.vocabulary.fetchoptions.VocabularyFetchOptions
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.vocabulary.search.VocabularySearchCriteria
 
 class VocabularyEntity(override val dto: VocabularyDTO) : CreatableEntity {
     override val identifier: VocabularyIdentifier = VocabularyIdentifier(dto.code)
 
-    override fun persist(): List<ICreation> {
+    override fun persist(): List<IOperation> {
         val vc = VocabularyCreation().apply {
             this.code = dto.code
             this.description = dto.description
-            this.terms = dto.terms.flatMap { it.toEntity().persist() }
+            this.terms = dto.terms.map { it.toEntity().persist() }
         }
-        return listOf(vc)
+        return listOf(CreateVocabulariesOperation(listOf(vc)))
+    }
+
+    override fun exists(service: OpenBIS): Boolean {
+        val sc = VocabularySearchCriteria().apply {
+            this.withCode().thatEquals(identifier.identifier)
+        }
+        val res = service.searchVocabularies(sc, VocabularyFetchOptions())
+        return res.totalCount > 0
     }
 
 

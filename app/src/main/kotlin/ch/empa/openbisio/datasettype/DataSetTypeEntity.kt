@@ -18,18 +18,30 @@
 package ch.empa.openbisio.datasettype
 
 import ch.empa.openbisio.interfaces.CreatableEntity
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.ICreation
+import ch.ethz.sis.openbis.generic.OpenBIS
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.dataset.create.CreateDataSetTypesOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.dataset.create.DataSetTypeCreation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.dataset.fetchoptions.DataSetTypeFetchOptions
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.dataset.search.DataSetTypeSearchCriteria
 
 class DataSetTypeEntity(override val dto: DataSetTypeDTO) : CreatableEntity {
     override val identifier: DataSetTypeIdentifier = DataSetTypeIdentifier(dto.code)
 
-    override fun persist(): List<ICreation> {
+    override fun persist(): List<IOperation> {
         val dataSetTypeCreation = DataSetTypeCreation().apply {
             this.code = identifier.identifier
             this.description = dto.description
-            this.propertyAssignments = dto.propertyAssignments.flatMap { it.toEntity().persist() }
+            this.propertyAssignments = dto.propertyAssignments.map { it.toEntity().persist() }
         }
-        return listOf(dataSetTypeCreation)
+        return listOf(CreateDataSetTypesOperation(listOf(dataSetTypeCreation)))
+    }
+
+    override fun exists(service: OpenBIS): Boolean {
+        val sc = DataSetTypeSearchCriteria().apply {
+            this.withCode().thatEquals(identifier.identifier)
+        }
+        val res = service.searchDataSetTypes(sc, DataSetTypeFetchOptions())
+        return res.totalCount > 0
     }
 }

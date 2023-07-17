@@ -18,17 +18,29 @@
 package ch.empa.openbisio.objectype
 
 import ch.empa.openbisio.interfaces.CreatableEntity
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.ICreation
+import ch.ethz.sis.openbis.generic.OpenBIS
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.create.CreateSampleTypesOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.create.SampleTypeCreation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.fetchoptions.SampleTypeFetchOptions
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.search.SampleTypeSearchCriteria
 
 class ObjectTypeEntity(override val dto: ObjectTypeDTO) : CreatableEntity {
     override val identifier: ObjectTypeIdentifier = ObjectTypeIdentifier(dto.code)
-    override fun persist(): List<ICreation> {
+    override fun persist(): List<IOperation> {
         val objectTypeCreation = SampleTypeCreation().apply {
             this.code = dto.code
             this.description = dto.description
-            this.propertyAssignments = dto.propertyAssignments.flatMap { it.toEntity().persist() }
+            this.propertyAssignments = dto.propertyAssignments.map { it.toEntity().persist() }
         }
-        return listOf(objectTypeCreation)
+        return listOf(CreateSampleTypesOperation(listOf(objectTypeCreation)))
+    }
+
+    override fun exists(service: OpenBIS): Boolean {
+        val sc = SampleTypeSearchCriteria().apply {
+            this.withCode().thatEquals(identifier.identifier)
+        }
+        val res = service.searchSampleTypes(sc, SampleTypeFetchOptions())
+        return res.totalCount > 0
     }
 }

@@ -19,27 +19,43 @@ package ch.empa.openbisio.`object`
 
 import ch.empa.openbisio.identifier.ConcreteIdentifier
 import ch.empa.openbisio.interfaces.CreatableEntity
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.ICreation
+import ch.ethz.sis.openbis.generic.OpenBIS
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.entitytype.id.EntityTypePermId
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.id.ExperimentIdentifier
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.id.ProjectPermId
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.create.CreateSamplesOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.create.SampleCreation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.fetchoptions.SampleFetchOptions
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.search.SampleSearchCriteria
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.id.SpacePermId
 
 class ObjectEntity(override val dto: ObjectDTO, override val identifier: ConcreteIdentifier.SampleIdentifier) :
     CreatableEntity {
 
 
-    override fun persist(): List<ICreation> {
+    override fun persist(): List<IOperation> {
         val sc = SampleCreation().apply {
             code = dto.code
-            experimentId = ExperimentIdentifier(identifier.getAncestor().getCode())
+            experimentId = ExperimentIdentifier(identifier.getAncestor().code)
             spaceId = SpacePermId(identifier.space()!!.identifier)
             projectId = ProjectPermId(identifier.project()!!.identifier)
             typeId = EntityTypePermId(dto.type)
             properties = dto.properties.mapValues { it.toString() }
         }
-        return listOf(sc)
+        return listOf(CreateSamplesOperation(listOf(sc)))
+    }
+
+    override fun exists(service: OpenBIS): Boolean {
+        val sc = SampleSearchCriteria().apply {
+            withCode().thatEquals(dto.code)
+            withExperiment().withCode().thatEquals(identifier.getAncestor().code)
+            withProject().withCode().thatEquals(identifier.project()!!.code)
+            withSpace().withCode().thatEquals(identifier.space()!!.code)
+            withType().withCode().thatEquals(dto.type)
+        }
+        val res = service.searchSamples(sc, SampleFetchOptions())
+        return res.totalCount > 0
     }
 
 

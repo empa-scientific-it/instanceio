@@ -17,7 +17,8 @@
 
 package ch.empa.openbisio.interfaces
 
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.ICreation
+import ch.ethz.sis.openbis.generic.OpenBIS
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 
 /**
  * Interface representing openBIS entities that can be created.
@@ -31,5 +32,19 @@ interface CreatableEntity : Entity {
      * Returns a Creation object that can be used
      * to create the openbis entity
      */
-    fun persist(): List<ICreation>
+    fun persist(): List<IOperation>
+
+    /**
+     *  Checks if the entity exists in openBIS. This is needed
+     *  by persist() to decide if the entity should be created or not
+     */
+    fun exists(service: OpenBIS): Boolean
+
+    fun create(service: OpenBIS): List<IOperation> {
+        if(!exists(service)) {
+            return persist()
+        }else{
+            return emptyList()
+        }
+    }
 }

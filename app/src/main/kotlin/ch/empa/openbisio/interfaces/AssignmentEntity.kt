@@ -15,5 +15,10 @@
  *
  */
 
-package ch.empa.openbisio.instance
+package ch.empa.openbisio.interfaces
 
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.ICreation
+
+interface AssignmentEntity: Entity {
+    fun persist(): ICreation
+}

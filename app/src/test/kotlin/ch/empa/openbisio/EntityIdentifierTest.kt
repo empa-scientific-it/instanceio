@@ -41,6 +41,11 @@ class EntityIdentifierTest {
     }
 
     @Test
+    fun testSpaceCode(){
+        assertEquals("YOUR_SPACE_CODE", instance.spaces?.first()?.identifier?.code)
+    }
+
+    @Test
     fun testProjectIdentifier() {
         assertEquals(ConcreteIdentifier.ProjectIdentifier("/YOUR_SPACE_CODE/YOUR_FIRST_PROJECT_CODE"), instance.spaces?.first()?.projects?.first()?.identifier)
     }

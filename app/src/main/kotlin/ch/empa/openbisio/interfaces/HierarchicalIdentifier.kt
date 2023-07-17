@@ -18,7 +18,7 @@
 package ch.empa.openbisio.interfaces
 
 interface HierarchicalIdentifier : Identifier {
-    fun getCode(): String
+    val code: String
     fun getAncestor(): HierarchicalIdentifier?
     fun space(): HierarchicalIdentifier?
     fun project(): HierarchicalIdentifier?

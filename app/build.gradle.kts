@@ -91,6 +91,8 @@ dependencies {
 
     //Mapstruct for mapping
     implementation(libs.modelmapper)
+
+    testImplementation(libs.testcontainer)
 }
 
 

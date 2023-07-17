@@ -19,8 +19,12 @@ package ch.empa.openbisio.collection
 
 import ch.empa.openbisio.identifier.ConcreteIdentifier
 import ch.empa.openbisio.interfaces.CreatableEntity
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.ICreation
+import ch.ethz.sis.openbis.generic.OpenBIS
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.create.CreateExperimentsOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.create.ExperimentCreation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.fetchoptions.ExperimentFetchOptions
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.search.ExperimentSearchCriteria
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.id.ProjectPermId
 
 class CollectionEntity(override val dto: CollectionDTO) : CreatableEntity {
@@ -30,13 +34,21 @@ class CollectionEntity(override val dto: CollectionDTO) : CreatableEntity {
     val properties = dto.properties
     //val children = dto.children()?.map { it.toEntity() }
 
-    override fun persist(): List<ICreation> {
+    override fun persist(): List<IOperation> {
         val cr = ExperimentCreation().apply {
             this.code = dto.code
             this.projectId = ProjectPermId(identifier.project().identifier)
             this.properties = dto.properties
         }
-        return listOf(cr)
+        return listOf(CreateExperimentsOperation(listOf(cr)))
+    }
+
+    override fun exists(service: OpenBIS): Boolean {
+        val sc = ExperimentSearchCriteria().apply {
+            this.withCode().thatEquals(dto.code)
+            this.withProject().withCode().thatEquals(identifier.project().code)}
+        val res = service.searchExperiments(sc, ExperimentFetchOptions())
+        return res.totalCount > 0
     }
 
 }

@@ -25,17 +25,27 @@ import ch.empa.openbisio.objectype.ObjectTypeEntity
 import ch.empa.openbisio.propertytype.PropertyTypeEntity
 import ch.empa.openbisio.space.SpaceEntity
 import ch.empa.openbisio.vocabulary.VocabularyEntity
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.ICreation
+import ch.ethz.sis.openbis.generic.OpenBIS
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 
 class InstanceEntity(override val dto: InstanceDTO) : CreatableEntity {
     override val identifier = ConcreteIdentifier.InstanceIdentifier()
-    override fun persist(): List<ICreation> {
-        val propertyTypeCreations = propertyTypes.flatMap { it.persist() }
-        val objectTypeCreations = objectTypes.flatMap { it.persist() }
-        val vocabularyCreations = vocabularies.flatMap { it.persist() }
-        val dataSetTypeCreations = dataSetTypes.flatMap { it.persist() }
-        val collectionTypeCreations = collectionTypes.flatMap { it.persist() }
-        val spaceCreations = spaces.flatMap { it.persist() }
+    override fun persist(): List<IOperation> {
+        TODO("Not yet implemented")
+    }
+
+    override fun exists(service: OpenBIS): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun create(service: OpenBIS): List<IOperation> {
+        val propertyTypeCreations = propertyTypes.flatMap { it.create(service) }
+        val objectTypeCreations = objectTypes.flatMap { it.create(service) }
+        val vocabularyCreations = vocabularies.flatMap { it.create(service) }
+        val dataSetTypeCreations = dataSetTypes.flatMap { it.create(service) }
+        val collectionTypeCreations = collectionTypes.flatMap { it.create(service) }
+        val spaceCreations = spaces.flatMap { it.create(service) }
+        println("spaceCreations: $spaceCreations")
         return propertyTypeCreations.plus(objectTypeCreations).plus(vocabularyCreations).plus(dataSetTypeCreations)
             .plus(collectionTypeCreations).plus(spaceCreations)
     }

@@ -32,8 +32,9 @@ abstract class HierarchyIdentifier(val members: Collection<String>, val maxSize:
     override val identifier = components.joinToString(separator = "/", prefix = "", postfix = "")
 
 
-    override fun getCode(): String {
-        return members.last()
-    }
+    override val code: String
+        get() {
+            return members.last()
+        }
 
 }

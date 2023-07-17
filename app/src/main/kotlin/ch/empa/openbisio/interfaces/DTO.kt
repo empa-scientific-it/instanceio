@@ -23,5 +23,5 @@ package ch.empa.openbisio.interfaces
  * support is toEntity(), which converts them to an entity, which in turn can be stored to openBIS.
  */
 interface DTO {
-    fun toEntity(): CreatableEntity
+    fun toEntity(): Entity
 }

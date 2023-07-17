@@ -18,18 +18,31 @@
 package ch.empa.openbisio.person
 
 import ch.empa.openbisio.interfaces.CreatableEntity
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.ICreation
+import ch.ethz.sis.openbis.generic.OpenBIS
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.person.create.CreatePersonsOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.person.create.PersonCreation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.person.fetchoptions.PersonFetchOptions
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.person.search.PersonSearchCriteria
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.id.SpacePermId
 
 class PersonEntity(override val dto: PersonDTO) : CreatableEntity {
     override val identifier: PersonIdentifier = PersonIdentifier(dto.code)
 
-    override fun persist(): List<ICreation> {
+    override fun persist(): List<IOperation> {
         val pc = PersonCreation().apply {
             this.userId = dto.code
             this.spaceId = SpacePermId(dto.space)
         }
-        return listOf(pc)
+        return listOf(CreatePersonsOperation(listOf(pc)))
     }
+
+    override fun exists(service: OpenBIS): Boolean {
+        val sc = PersonSearchCriteria().apply {
+            this.withUserId().thatEquals(identifier.identifier)
+        }
+        val res = service.searchPersons(sc, PersonFetchOptions())
+
+
+        return res.totalCount > 0    }
 }

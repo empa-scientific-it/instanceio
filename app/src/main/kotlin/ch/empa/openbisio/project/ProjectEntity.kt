@@ -19,9 +19,13 @@ package ch.empa.openbisio.project
 
 import ch.empa.openbisio.identifier.ConcreteIdentifier
 import ch.empa.openbisio.interfaces.CreatableEntity
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.ICreation
+import ch.ethz.sis.openbis.generic.OpenBIS
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.person.id.PersonPermId
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.create.CreateProjectsOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.create.ProjectCreation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.fetchoptions.ProjectFetchOptions
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.search.ProjectSearchCriteria
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.id.SpacePermId
 
 class ProjectEntity(override val dto: ProjectDTO) :
@@ -29,14 +33,33 @@ class ProjectEntity(override val dto: ProjectDTO) :
     override val identifier: ConcreteIdentifier.ProjectIdentifier =
         ConcreteIdentifier.ProjectIdentifier(dto.code)
 
-    override fun persist(): List<ICreation> {
+    val collections = dto.collections.map { it.toEntity() }
+    override fun persist(): List<IOperation> {
         val pc = ProjectCreation().apply {
-            this.code = dto.code
+            this.code = identifier.code
             this.description = dto.description
-            this.spaceId = SpacePermId(identifier.space().identifier)
-            this.leaderId = PersonPermId(dto.leader?.code)
+            this.spaceId = SpacePermId(identifier.space().code)
+            this.leaderId = PersonPermId(dto.leader?.code.let { "etlserver" })
         }
-        return listOf(pc)
+        return listOf(CreateProjectsOperation(listOf(pc)))
+    }
+
+    override fun exists(service: OpenBIS): Boolean {
+        val sc = ProjectSearchCriteria().apply {
+            this.withCode().thatEquals(identifier.identifier)
+            this.withSpace().withPermId().thatEquals(identifier.space().code)
+        }
+        val res = service.searchProjects(sc, ProjectFetchOptions())
+        return res.totalCount > 0
+    }
+
+    override fun create(service: OpenBIS): List<IOperation> {
+        val sc = collections.flatMap { it.create(service) }
+        if (exists(service)) {
+            return sc
+        } else {
+            return persist().plus(sc)
+        }
     }
 
 

@@ -19,19 +19,31 @@ package ch.empa.openbisio.propertytype
 
 import ch.empa.openbisio.interfaces.CreatableEntity
 import ch.empa.openbisio.interfaces.Identifier
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.ICreation
+import ch.ethz.sis.openbis.generic.OpenBIS
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.create.CreatePropertyTypesOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.create.PropertyTypeCreation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.fetchoptions.PropertyTypeFetchOptions
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.search.PropertyTypeSearchCriteria
 
 class PropertyTypeEntity(override val dto: PropertyTypeDTO) : CreatableEntity {
     override val identifier: Identifier = PropertyTypeIdentifier(dto.code)
 
-    override fun persist(): List<ICreation> {
+    override fun persist(): List<IOperation> {
         val propertyTypeCreation = PropertyTypeCreation().apply {
             this.code = dto.code
             this.label = dto.label
             this.description = dto.description
             this.dataType = dto.dataType.toOpenBISDataType()
         }
-        return listOf(propertyTypeCreation)
+        return listOf(CreatePropertyTypesOperation(listOf(propertyTypeCreation)))
+    }
+
+    override fun exists(service: OpenBIS): Boolean {
+        val sc = PropertyTypeSearchCriteria().apply {
+            this.withCode().thatEquals(identifier.identifier)
+        }
+        val res = service.searchPropertyTypes(sc, PropertyTypeFetchOptions())
+        return res.totalCount > 0
     }
 }

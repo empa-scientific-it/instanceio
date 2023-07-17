@@ -25,9 +25,14 @@ fun splitIdentifier(identifier: String): List<String> {
     return identifier.split("/")
 }
 
+fun removeComponent(identifier: String): String {
+    return splitIdentifier(identifier).dropLast(1).joinToString(separator = "/")
+}
+
 sealed class ConcreteIdentifier(val members: Collection<String>, val maxSize: Int) : HierarchicalIdentifier {
 
-    override fun getCode(): String {
+    override val code: String
+        get() {
             return members.last()
         }
 
@@ -80,7 +85,7 @@ sealed class ConcreteIdentifier(val members: Collection<String>, val maxSize: In
 
     data class ProjectIdentifier(override val identifier: String) : HierarchyIdentifier(splitIdentifier(identifier), 3) {
         override fun getAncestor(): SpaceIdentifier {
-            return SpaceIdentifier(identifier)
+            return SpaceIdentifier(removeComponent(identifier))
         }
 
         override fun space(): SpaceIdentifier {
@@ -102,7 +107,7 @@ sealed class ConcreteIdentifier(val members: Collection<String>, val maxSize: In
 
     data class CollectionIdentifier(override val identifier: String) : HierarchyIdentifier(splitIdentifier(identifier), 4) {
         override fun getAncestor(): ProjectIdentifier {
-            return ProjectIdentifier(identifier)
+            return ProjectIdentifier(removeComponent(identifier))
         }
 
         override fun space(): SpaceIdentifier {
@@ -124,7 +129,7 @@ sealed class ConcreteIdentifier(val members: Collection<String>, val maxSize: In
 
     data class SampleIdentifier(override val identifier: String) : HierarchyIdentifier(splitIdentifier(identifier), 4) {
         override fun getAncestor(): CollectionIdentifier {
-            return CollectionIdentifier(identifier)
+            return CollectionIdentifier(removeComponent(identifier))
         }
 
         override fun space(): SpaceIdentifier? {

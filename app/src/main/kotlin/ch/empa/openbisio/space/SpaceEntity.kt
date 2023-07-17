@@ -20,18 +20,45 @@ package ch.empa.openbisio.space
 import ch.empa.openbisio.identifier.ConcreteIdentifier
 import ch.empa.openbisio.interfaces.CreatableEntity
 import ch.empa.openbisio.project.ProjectEntity
+import ch.ethz.sis.openbis.generic.OpenBIS
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.create.CreateSpacesOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.create.SpaceCreation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.fetchoptions.SpaceFetchOptions
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.search.SpaceSearchCriteria
 
 class SpaceEntity(override val dto: SpaceDTO) : CreatableEntity {
+    init {
+        println(dto)
+    }
     override val identifier: ConcreteIdentifier.SpaceIdentifier = ConcreteIdentifier.SpaceIdentifier(dto.code)
 
-    override fun persist(): List<SpaceCreation> {
+    override fun persist(): List<IOperation> {
         val sc = SpaceCreation().apply {
-            this.code = dto.code
+            this.code = identifier.code
             this.description = dto.description
         }
-        return listOf(sc)
+        return listOf(CreateSpacesOperation(listOf(sc)))
     }
+
+    override fun exists(service: OpenBIS): Boolean {
+        val sc = SpaceSearchCriteria().apply {
+            this.withCode().thatEquals(identifier.code)
+        }
+        val res = service.searchSpaces(sc, SpaceFetchOptions())
+        return res.totalCount > 0
+    }
+
+
+    override fun create(service: OpenBIS): List<IOperation> {
+        val pc = projects.flatMap { it.create(service) }
+        if (exists(service)) {
+            return pc
+        }else{
+            return persist().plus(pc)
+        }
+    }
+
     val projects: List<ProjectEntity> = dto.projects.map { it.toEntity() }
 
 }
