@@ -31,6 +31,7 @@ class SpaceEntity(override val dto: SpaceDTO) : CreatableEntity {
     init {
         println(dto)
     }
+
     override val identifier: ConcreteIdentifier.SpaceIdentifier = ConcreteIdentifier.SpaceIdentifier(dto.code)
 
     override fun persist(): List<IOperation> {
@@ -54,7 +55,7 @@ class SpaceEntity(override val dto: SpaceDTO) : CreatableEntity {
         val pc = projects.flatMap { it.create(service) }
         if (exists(service)) {
             return pc
-        }else{
+        } else {
             return persist().plus(pc)
         }
     }

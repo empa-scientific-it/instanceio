@@ -20,15 +20,10 @@
  */
 package ch.empa.openbisio
 
-import ch.empa.openbisio.openbis.OpenBISService
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.service.CustomASServiceExecutionOptions
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.service.fetchoptions.CustomASServiceFetchOptions
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.service.id.CustomASServiceCode
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.service.search.CustomASServiceSearchCriteria
+import ch.ethz.sis.openbis.generic.OpenBIS
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
 import java.io.File
-import java.net.URL
 
 //
 //
@@ -142,37 +137,9 @@ fun main(args: Array<String>) {
     val mode by parser.argument(ArgType.Choice<Mode>())
     val ioFile by parser.option(ArgType.String)
     parser.parse(args)
-    val service = OpenBISService(URL(openbisURL))
-    val token = service.connect(username, password)
+    val service = OpenBIS(openbisURL)
+    val token = service.login(username, password)
     val configFile = File(ioFile ?: "./test.json")
-    when (mode) {
-        Mode.dump -> {
-            val props = CustomASServiceExecutionOptions()
-                .withParameter("xls", "f")
-                .withParameter("method", "export")
-                .withParameter("ids", listOf(mapOf("exportable_kind" to "SPACE"), mapOf("permid" to "/")))
-                .withParameter("export_referred_master_data", "true")
-                .withParameter("text_formatting", "PLAIN")
-//
-            val serviceResult =
-                service.con.executeCustomASService(service.token, CustomASServiceCode("excel-export"), props)
-            println(serviceResult)
-//            val format = Json { prettyPrint = true }
-//            val res=   format.encodeToString(inst)
-//            configFile.writeText(res)
-            val res = service.con.searchCustomASServices(
-                service.token,
-                CustomASServiceSearchCriteria(),
-                CustomASServiceFetchOptions()
-            )
-            println(res.objects)
-        }
-
-        Mode.load -> {
-            print("Not implem,ented")
-        }
-        //val instance = readInstance(configFile.readText()).create(service)
-    }
 }
 
 

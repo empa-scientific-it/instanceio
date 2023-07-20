@@ -44,5 +44,6 @@ class PersonEntity(override val dto: PersonDTO) : CreatableEntity {
         val res = service.searchPersons(sc, PersonFetchOptions())
 
 
-        return res.totalCount > 0    }
+        return res.totalCount > 0
+    }
 }

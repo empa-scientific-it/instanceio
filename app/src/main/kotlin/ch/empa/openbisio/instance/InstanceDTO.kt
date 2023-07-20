@@ -21,7 +21,6 @@ import ch.empa.openbisio.collection.CollectionDTO
 import ch.empa.openbisio.collectiontype.CollectionTypeDTO
 import ch.empa.openbisio.datasettype.DataSetTypeDTO
 import ch.empa.openbisio.hierarchy.HierarchicalDTO
-import ch.empa.openbisio.interfaces.CreatableEntity
 import ch.empa.openbisio.interfaces.DTO
 import ch.empa.openbisio.interfaces.Tree
 import ch.empa.openbisio.interfaces.iterateWithParent

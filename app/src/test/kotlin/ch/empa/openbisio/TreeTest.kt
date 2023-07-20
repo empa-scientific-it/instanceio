@@ -58,7 +58,7 @@ class TraversalTest {
     fun testDepthFirst() {
         val trav = testTree.iterator().asSequence().toList()
         assertEquals(
-            trav , listOf(
+            trav, listOf(
                 CodeEntity("root", listOf()),
                 CodeEntity("a", listOf()),
                 CodeEntity("b", listOf()),
@@ -102,7 +102,7 @@ class PathTest {
             listOf("root", "e", "f", "h")
         )
         val paths = tr1.iterator().asSequence().map { it.path }.toList()
-        assertEquals(paths , correctPaths)
+        assertEquals(paths, correctPaths)
     }
 }
 

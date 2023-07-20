@@ -21,11 +21,13 @@ import ch.empa.openbisio.identifier.ConcreteIdentifier
 import ch.empa.openbisio.interfaces.CreatableEntity
 import ch.ethz.sis.openbis.generic.OpenBIS
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.entitytype.EntityKind
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.entitytype.id.EntityTypePermId
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.create.CreateExperimentsOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.create.ExperimentCreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.fetchoptions.ExperimentFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.search.ExperimentSearchCriteria
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.id.ProjectPermId
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.id.ProjectIdentifier
 
 class CollectionEntity(override val dto: CollectionDTO) : CreatableEntity {
 
@@ -36,17 +38,19 @@ class CollectionEntity(override val dto: CollectionDTO) : CreatableEntity {
 
     override fun persist(): List<IOperation> {
         val cr = ExperimentCreation().apply {
-            this.code = dto.code
-            this.projectId = ProjectPermId(identifier.project().identifier)
-            this.properties = dto.properties
+            this.code = identifier.code
+            this.projectId = ProjectIdentifier(identifier.project().identifier)
+            this.properties = dto.properties.ifEmpty { null }
+            this.typeId = EntityTypePermId(dto.type, EntityKind.EXPERIMENT)
         }
         return listOf(CreateExperimentsOperation(listOf(cr)))
     }
 
     override fun exists(service: OpenBIS): Boolean {
         val sc = ExperimentSearchCriteria().apply {
-            this.withCode().thatEquals(dto.code)
-            this.withProject().withCode().thatEquals(identifier.project().code)}
+            this.withCode().thatEquals(identifier.code)
+            this.withProject().withCode().thatEquals(identifier.project().code)
+        }
         val res = service.searchExperiments(sc, ExperimentFetchOptions())
         return res.totalCount > 0
     }

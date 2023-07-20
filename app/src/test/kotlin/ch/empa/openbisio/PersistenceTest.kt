@@ -23,48 +23,49 @@ import ch.empa.openbisio.instance.InstanceSerializer
 import ch.ethz.sis.openbis.generic.OpenBIS
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import org.testcontainers.containers.DockerComposeContainer
-import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy
-import org.testcontainers.containers.wait.strategy.Wait
-import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertContains
-import java.time.Duration
+import kotlin.test.assertEquals
+
 class PersistenceTest {
-//    val openBISContainer = DockerComposeContainer(File(composeFile))
+    //    val openBISContainer = DockerComposeContainer(File(composeFile))
 //        .withExposedService("openbis", 443)
 //        .withLocalCompose(true)
 //        .withStartupTimeout(Duration.ofSeconds(20))
 //
-        val json = Json { prettyPrint = true }
-        val config = javaClass.getResource("/simple_instance.json").readText()
-        val instanceDTO = json.decodeFromString<InstanceDTO>(config)
-        //val done = openBISContainer.start()
-        val openBIS = OpenBIS("https://localhost:8445")
-        val log = openBIS.login("admin", "changeit")
-        val res = InstanceSerializer(openBIS).persist(instanceDTO.toEntityWithCodes())
-        //val readInstance = InstanceDeserializer().dumpInstance(openBIS)
+    val json = Json { prettyPrint = true }
+    val config = javaClass.getResource("/simple_instance.json").readText()
+    val instanceDTO = json.decodeFromString<InstanceDTO>(config)
+    val openBIS = OpenBIS("https://localhost:8445")
+    val log = openBIS.login("admin", "changeit")
+    val res = InstanceSerializer(openBIS).persist(instanceDTO.toEntityWithCodes())
+    val readInstance = InstanceDeserializer().dumpInstance(openBIS)
 
     @Test
-    fun test() {
-        println(log)
-    }
-
-
-/*
-    @Test
-    fun testSpaceCreation() {
-        assertContains(readInstance.spaces!!.asIterable(), readInstance.getSpace("YOUR_SPACE_CODE"))
-    }
-
-    @Test
-    fun testProjectCreation() {
-        println(readInstance.getSpace("YOUR_SPACE_CODE"))
-        assertContains(
-            readInstance.spaces!!.flatMap { it.projects },
-            readInstance.getSpace("YOUR_SPACE_CODE")?.getProject("YOUR_FIRST_PROJECT_CODE")
+    fun assertSame() {
+        assertContains(readInstance.spaces!!.map { it.code }, "YOUR_SPACE_CODE")
+        assertEquals(
+            readInstance.getSpace("YOUR_SPACE_CODE")!!.projects,
+            instanceDTO.getSpace("YOUR_SPACE_CODE")!!.projects
         )
+        //assertContains(readInstance.spaces!!.asIterable(), readInstance.getSpace("YOUR_SPACE_CODE"))
     }
-*/
+
+
+    /*
+        @Test
+        fun testSpaceCreation() {
+            assertContains(readInstance.spaces!!.asIterable(), readInstance.getSpace("YOUR_SPACE_CODE"))
+        }
+
+        @Test
+        fun testProjectCreation() {
+            println(readInstance.getSpace("YOUR_SPACE_CODE"))
+            assertContains(
+                readInstance.spaces!!.flatMap { it.projects },
+                readInstance.getSpace("YOUR_SPACE_CODE")?.getProject("YOUR_FIRST_PROJECT_CODE")
+            )
+        }
+    */
 
 }

@@ -18,7 +18,6 @@
 package ch.empa.openbisio.identifier
 
 import ch.empa.openbisio.interfaces.HierarchicalIdentifier
-import ch.empa.openbisio.interfaces.Identifier
 
 
 fun splitIdentifier(identifier: String): List<String> {
@@ -35,7 +34,6 @@ sealed class ConcreteIdentifier(val members: Collection<String>, val maxSize: In
         get() {
             return members.last()
         }
-
 
 
     data class InstanceIdentifier(override val identifier: String = "/") : ConcreteIdentifier(listOf("/"), 1) {
@@ -83,7 +81,8 @@ sealed class ConcreteIdentifier(val members: Collection<String>, val maxSize: In
         }
     }
 
-    data class ProjectIdentifier(override val identifier: String) : HierarchyIdentifier(splitIdentifier(identifier), 3) {
+    data class ProjectIdentifier(override val identifier: String) :
+        HierarchyIdentifier(splitIdentifier(identifier), 3) {
         override fun getAncestor(): SpaceIdentifier {
             return SpaceIdentifier(removeComponent(identifier))
         }
@@ -105,7 +104,8 @@ sealed class ConcreteIdentifier(val members: Collection<String>, val maxSize: In
         }
     }
 
-    data class CollectionIdentifier(override val identifier: String) : HierarchyIdentifier(splitIdentifier(identifier), 4) {
+    data class CollectionIdentifier(override val identifier: String) :
+        HierarchyIdentifier(splitIdentifier(identifier), 4) {
         override fun getAncestor(): ProjectIdentifier {
             return ProjectIdentifier(removeComponent(identifier))
         }
@@ -133,7 +133,7 @@ sealed class ConcreteIdentifier(val members: Collection<String>, val maxSize: In
         }
 
         override fun space(): SpaceIdentifier? {
-            return project()?.space()
+            return project().space()
         }
 
         override fun project(): ProjectIdentifier {

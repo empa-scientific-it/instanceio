@@ -30,7 +30,7 @@ interface CreatableEntity : Entity {
 
     /**
      * Returns a Creation object that can be used
-     * to create the openbis entity
+     * to create the openBIS entity
      */
     fun persist(): List<IOperation>
 
@@ -41,9 +41,9 @@ interface CreatableEntity : Entity {
     fun exists(service: OpenBIS): Boolean
 
     fun create(service: OpenBIS): List<IOperation> {
-        if(!exists(service)) {
+        if (!exists(service)) {
             return persist()
-        }else{
+        } else {
             return emptyList()
         }
     }

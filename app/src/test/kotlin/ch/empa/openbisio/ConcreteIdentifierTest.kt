@@ -18,9 +18,8 @@
 package ch.empa.openbisio
 
 import ch.empa.openbisio.identifier.ConcreteIdentifier
-import org.junit.jupiter.api.assertAll
 import kotlin.test.Test
-import kotlin.test.*
+import kotlin.test.assertEquals
 
 class ConcreteIdentifierTest {
     @Test

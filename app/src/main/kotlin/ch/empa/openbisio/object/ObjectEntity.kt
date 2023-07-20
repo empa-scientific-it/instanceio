@@ -39,7 +39,7 @@ class ObjectEntity(override val dto: ObjectDTO, override val identifier: Concret
             code = dto.code
             experimentId = ExperimentIdentifier(identifier.getAncestor().code)
             spaceId = SpacePermId(identifier.space()!!.identifier)
-            projectId = ProjectPermId(identifier.project()!!.identifier)
+            projectId = ProjectPermId(identifier.project().identifier)
             typeId = EntityTypePermId(dto.type)
             properties = dto.properties.mapValues { it.toString() }
         }
@@ -50,7 +50,7 @@ class ObjectEntity(override val dto: ObjectDTO, override val identifier: Concret
         val sc = SampleSearchCriteria().apply {
             withCode().thatEquals(dto.code)
             withExperiment().withCode().thatEquals(identifier.getAncestor().code)
-            withProject().withCode().thatEquals(identifier.project()!!.code)
+            withProject().withCode().thatEquals(identifier.project().code)
             withSpace().withCode().thatEquals(identifier.space()!!.code)
             withType().withCode().thatEquals(dto.type)
         }

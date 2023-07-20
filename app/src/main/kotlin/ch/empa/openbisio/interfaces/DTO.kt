@@ -19,7 +19,7 @@ package ch.empa.openbisio.interfaces
 
 /**
  * Interface for DTOs. They are used as data exchange for serialising
- * and deserialising all sorts of openBIS data. The only method they should
+ * and deserializing all sorts of openBIS data. The only method they should
  * support is toEntity(), which converts them to an entity, which in turn can be stored to openBIS.
  */
 interface DTO {

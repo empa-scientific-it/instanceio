@@ -24,7 +24,6 @@ interface Tree<T> {
     fun hasChildren(): Boolean
     fun children(): Collection<Tree<T>>
 
-    //fun <R> map(transformer: (T) -> R): Tree<R>
 
 
     fun <R> cata(transformer: Algebra<T, R>): R {

@@ -18,21 +18,20 @@
 package ch.empa.openbisio.instance
 
 import ch.ethz.sis.openbis.generic.OpenBIS
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.CreateObjectsOperation
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.operation.AsynchronousOperationExecutionOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.operation.IOperationExecutionResults
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.operation.SynchronousOperationExecutionOptions
 
 class InstanceSerializer(val openBIS: OpenBIS) {
-    fun persist(entity: InstanceEntity): IOperationExecutionResults{
+    fun persist(entity: InstanceEntity): IOperationExecutionResults {
         val operations = entity.create(openBIS)
-        val options =  SynchronousOperationExecutionOptions().apply{
+        val options = SynchronousOperationExecutionOptions().apply {
             isExecuteInOrder = true
-            i
         }
-        println(openBIS.sessionToken)
-        val res = openBIS.executeOperations( openBIS.sessionToken, operations, options)
-        println(res)
+
+
+        val res = openBIS.executeOperations(openBIS.sessionToken, operations, options)
+
         return res
     }
 }
+

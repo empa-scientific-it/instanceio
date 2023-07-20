@@ -46,10 +46,13 @@ class ProjectEntity(override val dto: ProjectDTO) :
 
     override fun exists(service: OpenBIS): Boolean {
         val sc = ProjectSearchCriteria().apply {
-            this.withCode().thatEquals(identifier.identifier)
-            this.withSpace().withPermId().thatEquals(identifier.space().code)
+            this.withCode().thatEquals(identifier.code)
+            this.withSpace().withCode().thatEquals(identifier.space().code)
         }
         val res = service.searchProjects(sc, ProjectFetchOptions())
+        if (res.totalCount > 0) {
+            println("Project ${res.objects[0].identifier} already exists")
+        }
         return res.totalCount > 0
     }
 

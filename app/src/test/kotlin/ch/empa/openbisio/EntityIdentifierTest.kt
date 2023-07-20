@@ -27,7 +27,7 @@ import kotlin.test.assertEquals
 class EntityIdentifierTest {
     val json = Json { prettyPrint = true }
     val config = javaClass.getResource("/simple_instance.json").readText()
-    val instanceDTO  = json.decodeFromString<InstanceDTO>(config)
+    val instanceDTO = json.decodeFromString<InstanceDTO>(config)
     val instance = instanceDTO.toEntityWithCodes()
 
     @Test
@@ -41,13 +41,16 @@ class EntityIdentifierTest {
     }
 
     @Test
-    fun testSpaceCode(){
+    fun testSpaceCode() {
         assertEquals("YOUR_SPACE_CODE", instance.spaces?.first()?.identifier?.code)
     }
 
     @Test
     fun testProjectIdentifier() {
-        assertEquals(ConcreteIdentifier.ProjectIdentifier("/YOUR_SPACE_CODE/YOUR_FIRST_PROJECT_CODE"), instance.spaces?.first()?.projects?.first()?.identifier)
+        assertEquals(
+            ConcreteIdentifier.ProjectIdentifier("/YOUR_SPACE_CODE/YOUR_FIRST_PROJECT_CODE"),
+            instance.spaces?.first()?.projects?.first()?.identifier
+        )
     }
 
 }

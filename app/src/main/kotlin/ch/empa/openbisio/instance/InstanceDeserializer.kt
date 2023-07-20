@@ -94,7 +94,9 @@ fun collectionFetchConfig(withSamples: Boolean): ExperimentFetchOptions {
 
 fun projectFetchConfig(withSamples: Boolean): ProjectFetchOptions {
     val pfo = ProjectFetchOptions()
-    pfo.withLeader()
+    pfo.withLeader().apply {
+        this.withSpace()
+    }
     pfo.withRegistrator()
     pfo.withExperimentsUsing(collectionFetchConfig(withSamples))
     if (withSamples) {
@@ -146,9 +148,10 @@ fun Space.toDTO(): SpaceDTO {
 }
 
 fun Person.toDTO(): PersonDTO {
+    println(this)
     return PersonDTO(
         code = this.permId.permId,
-        space = this.space.code,
+        space = this.space?.code ?: "",
         email = this.email,
         firstName = this.firstName,
         lastName = this.lastName

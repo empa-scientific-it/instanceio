@@ -41,22 +41,26 @@ class IdentifierTest {
     val updated = instance.updateCodes()
 
     @Test
-    fun testSpaceIdentifier(){
+    fun testSpaceIdentifier() {
         assertEquals("/space", updated.spaces?.get(0)?.code)
     }
+
     @Test
-    fun testProjectIdentifier(){
+    fun testProjectIdentifier() {
         assertEquals("/space/project", updated.spaces?.get(0)?.projects?.get(0)?.code)
     }
 
     @Test
-    fun testCollectionIdentifier(){
+    fun testCollectionIdentifier() {
         assertEquals("/space/project/collection", updated.spaces?.get(0)?.projects?.get(0)?.collections?.get(0)?.code)
     }
 
     @Test
-    fun testObjectIdentifier(){
-        assertEquals("/space/project/collection/object", updated.spaces?.get(0)?.projects?.get(0)?.collections?.get(0)?.objects?.get(0)?.code)
+    fun testObjectIdentifier() {
+        assertEquals(
+            "/space/project/collection/object",
+            updated.spaces?.get(0)?.projects?.get(0)?.collections?.get(0)?.objects?.get(0)?.code
+        )
     }
 
 }
