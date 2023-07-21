@@ -68,7 +68,7 @@ class ProjectEntity(override val dto: ProjectDTO) :
         }
     }
 
-    override fun delete(): List<IOperation> {
+    override fun delete(service: OpenBIS): List<IOperation> {
         return listOf(
             DeleteProjectsOperation(
                 listOf(ProjectIdentifier(identifier.identifier)),

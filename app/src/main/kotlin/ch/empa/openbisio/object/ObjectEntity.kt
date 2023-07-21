@@ -61,7 +61,7 @@ class ObjectEntity(override val dto: ObjectDTO, override val identifier: Concret
         return res.totalCount > 0
     }
 
-    override fun delete(): List<IOperation> {
+    override fun delete(service: OpenBIS): List<IOperation> {
         return listOf(DeleteSamplesOperation(listOf(SampleIdentifier(identifier.identifier)), SampleDeletionOptions()))
     }
 

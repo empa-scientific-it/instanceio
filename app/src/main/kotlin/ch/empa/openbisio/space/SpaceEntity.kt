@@ -61,7 +61,7 @@ class SpaceEntity(override val dto: SpaceDTO) : CreatableEntity {
         }
     }
 
-    override fun delete(): List<IOperation> {
+    override fun delete(service: OpenBIS): List<IOperation> {
         return listOf(DeleteSpacesOperation(listOf(SpacePermId(identifier.code)), SpaceDeletionOptions()))
     }
 

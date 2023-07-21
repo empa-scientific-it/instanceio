@@ -50,7 +50,7 @@ class CollectionTypeEntity(override val dto: CollectionTypeDTO) : CreatableEntit
         return res.totalCount > 0
     }
 
-    override fun delete(): List<IOperation> {
+    override fun delete(service: OpenBIS): List<IOperation> {
         return listOf(
             DeleteExperimentTypesOperation(
                 listOf(EntityTypePermId(identifier.identifier)),
