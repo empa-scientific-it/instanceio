@@ -42,7 +42,7 @@ class ProjectEntity(override val dto: ProjectDTO) :
             this.code = identifier.code
             this.description = dto.description
             this.spaceId = SpacePermId(identifier.space().code)
-            this.leaderId = PersonPermId(dto.leader?.code.let { "etlserver" })
+            this.leaderId = null
         }
         return listOf(CreateProjectsOperation(listOf(pc)))
     }

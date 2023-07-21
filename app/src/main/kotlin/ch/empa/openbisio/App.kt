@@ -23,7 +23,13 @@ package ch.empa.openbisio
 import ch.ethz.sis.openbis.generic.OpenBIS
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
+import org.slf4j.LoggerFactory
+import org.springframework.boot.CommandLineRunner
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.runApplication
 import java.io.File
+
+
 
 //
 //
@@ -78,10 +84,7 @@ import java.io.File
 //}
 //
 //
-enum class Mode {
-    dump,
-    load
-}
+
 
 //fun dumpInstance(service: OpenBISService): Instance {
 //    val spaceSearchCriteria = SpaceSearchCriteria().withAndOperator()
@@ -127,21 +130,35 @@ enum class Mode {
 //    }
 
 //}
+@SpringBootApplication
+open class App: CommandLineRunner {
+    enum class Mode {
+        dump,
+        load
+    }
+    private val LOG = LoggerFactory.getLogger(App::class.java)
+    private val parser = ArgParser(App::class.java.simpleName)
 
 
-fun main(args: Array<String>) {
-    val parser = ArgParser("example")
-    val openbisURL by (parser.argument(ArgType.String))
-    val username by parser.argument(ArgType.String)
-    val password by parser.argument(ArgType.String)
-    val mode by parser.argument(ArgType.Choice<Mode>())
-    val ioFile by parser.option(ArgType.String)
-    parser.parse(args)
-    val service = OpenBIS(openbisURL)
-    val token = service.login(username, password)
-    val configFile = File(ioFile ?: "./test.json")
+    override fun run(vararg list: String?) {
+        LOG.info("Starting application")
+        val openbisURL by parser.argument(ArgType.String)
+        val username by parser.argument(ArgType.String)
+        val password by parser.argument(ArgType.String)
+        val mode by parser.argument(ArgType.Choice<Mode>())
+        val ioFile by parser.option(ArgType.String)
+        val args = list.asIterable().filterNotNull().toTypedArray()
+        val res = parser.parse(args)
+        val service = OpenBIS(openbisURL)
+        val token = service.login(username, password)
+        val configFile = File(ioFile ?: "./test.json")
+    }
+
 }
 
 
 
 
+fun main(args: Array<String>) {
+    runApplication<App>(*args)
+}

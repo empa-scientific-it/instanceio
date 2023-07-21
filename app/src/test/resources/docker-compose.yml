@@ -13,8 +13,6 @@ services:
       - SERVER_HOST_PORT=localhost:443
       - GROUP_ID=1000
       - CORE_PLUGINS=enabled-modules = dataset-uploader, dataset-file-search, xls-import, eln-lims, openbis-ng-ui, search-store, user-management-maintenance
-    ports:
-      - "8445:443"
     deploy:
       resources:
         limits:

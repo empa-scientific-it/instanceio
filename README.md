@@ -6,6 +6,7 @@ This software is in a very preliminary state, please feel free to open an issue 
 
 ## How to build the project
 If you want to easily manage various Java versions, I recommend to use SDKMAN as a package manager.
+Because of dependency issues, the project requires Java 17 or higher.
 ### Setup envrionment
 Follow these steps:
 1. Install SDKMAN following the guide [here](https://sdkman.io/install)
