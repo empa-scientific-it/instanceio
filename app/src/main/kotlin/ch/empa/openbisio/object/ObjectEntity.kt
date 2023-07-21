@@ -26,7 +26,10 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.id.ExperimentIdentifi
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.id.ProjectPermId
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.create.CreateSamplesOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.create.SampleCreation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.delete.DeleteSamplesOperation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.delete.SampleDeletionOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.fetchoptions.SampleFetchOptions
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.id.SampleIdentifier
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.search.SampleSearchCriteria
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.id.SpacePermId
 
@@ -56,6 +59,10 @@ class ObjectEntity(override val dto: ObjectDTO, override val identifier: Concret
         }
         val res = service.searchSamples(sc, SampleFetchOptions())
         return res.totalCount > 0
+    }
+
+    override fun delete(): List<IOperation> {
+        return listOf(DeleteSamplesOperation(listOf(SampleIdentifier(identifier.identifier)), SampleDeletionOptions()))
     }
 
 

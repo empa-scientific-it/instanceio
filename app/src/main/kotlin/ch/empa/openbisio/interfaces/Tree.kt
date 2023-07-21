@@ -25,7 +25,6 @@ interface Tree<T> {
     fun children(): Collection<Tree<T>>
 
 
-
     fun <R> cata(transformer: Algebra<T, R>): R {
         return when (hasChildren()) {
             false -> transformer(value(), emptyList())

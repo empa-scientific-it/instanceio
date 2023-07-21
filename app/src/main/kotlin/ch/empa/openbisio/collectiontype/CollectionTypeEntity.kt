@@ -21,8 +21,11 @@ import ch.empa.openbisio.interfaces.CreatableEntity
 import ch.empa.openbisio.interfaces.Identifier
 import ch.ethz.sis.openbis.generic.OpenBIS
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.entitytype.id.EntityTypePermId
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.create.CreateExperimentTypesOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.create.ExperimentTypeCreation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.delete.DeleteExperimentTypesOperation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.delete.ExperimentTypeDeletionOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.fetchoptions.ExperimentFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.search.ExperimentSearchCriteria
 
@@ -45,5 +48,14 @@ class CollectionTypeEntity(override val dto: CollectionTypeDTO) : CreatableEntit
         }
         val res = service.searchExperiments(sc, ExperimentFetchOptions())
         return res.totalCount > 0
+    }
+
+    override fun delete(): List<IOperation> {
+        return listOf(
+            DeleteExperimentTypesOperation(
+                listOf(EntityTypePermId(identifier.identifier)),
+                ExperimentTypeDeletionOptions()
+            )
+        )
     }
 }

@@ -22,8 +22,11 @@ import ch.ethz.sis.openbis.generic.OpenBIS
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.dataset.create.CreateDataSetTypesOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.dataset.create.DataSetTypeCreation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.dataset.delete.DataSetTypeDeletionOptions
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.dataset.delete.DeleteDataSetTypesOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.dataset.fetchoptions.DataSetTypeFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.dataset.search.DataSetTypeSearchCriteria
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.entitytype.id.EntityTypePermId
 
 class DataSetTypeEntity(override val dto: DataSetTypeDTO) : CreatableEntity {
     override val identifier: DataSetTypeIdentifier = DataSetTypeIdentifier(dto.code)
@@ -43,5 +46,16 @@ class DataSetTypeEntity(override val dto: DataSetTypeDTO) : CreatableEntity {
         }
         val res = service.searchDataSetTypes(sc, DataSetTypeFetchOptions())
         return res.totalCount > 0
+    }
+
+    override fun delete(): List<IOperation> {
+        return listOf(
+            DeleteDataSetTypesOperation(
+                listOf(
+                    EntityTypePermId(identifier.identifier)
+                ),
+                DataSetTypeDeletionOptions()
+            )
+        )
     }
 }

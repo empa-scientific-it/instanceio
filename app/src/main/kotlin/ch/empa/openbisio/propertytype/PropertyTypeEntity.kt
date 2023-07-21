@@ -23,7 +23,10 @@ import ch.ethz.sis.openbis.generic.OpenBIS
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.create.CreatePropertyTypesOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.create.PropertyTypeCreation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.delete.DeletePropertyTypesOperation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.delete.PropertyTypeDeletionOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.fetchoptions.PropertyTypeFetchOptions
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.id.PropertyTypePermId
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.search.PropertyTypeSearchCriteria
 
 class PropertyTypeEntity(override val dto: PropertyTypeDTO) : CreatableEntity {
@@ -45,5 +48,14 @@ class PropertyTypeEntity(override val dto: PropertyTypeDTO) : CreatableEntity {
         }
         val res = service.searchPropertyTypes(sc, PropertyTypeFetchOptions())
         return res.totalCount > 0
+    }
+
+    override fun delete(): List<IOperation> {
+        return listOf(
+            DeletePropertyTypesOperation(
+                listOf(PropertyTypePermId(identifier.identifier)),
+                PropertyTypeDeletionOptions()
+            )
+        )
     }
 }

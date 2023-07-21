@@ -28,7 +28,16 @@ import ch.empa.openbisio.vocabulary.VocabularyEntity
 import ch.ethz.sis.openbis.generic.OpenBIS
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 
+/**
+ * This class represents an instance of openBIS.
+ * It is used to create, delete and update the instance.
+ * @param dto the data transfer object used to initialize the instance
+ */
 class InstanceEntity(override val dto: InstanceDTO) : CreatableEntity {
+    /**
+     * The identifier of the instance, in this case it is fixed to `/` because the
+     * instance is the root of the tree.
+     */
     override val identifier = ConcreteIdentifier.InstanceIdentifier()
     override fun persist(): List<IOperation> {
         TODO("Not yet implemented")
@@ -37,17 +46,42 @@ class InstanceEntity(override val dto: InstanceDTO) : CreatableEntity {
     override fun exists(service: OpenBIS): Boolean {
         TODO("Not yet implemented")
     }
+    /**
+     * Performs an operation on all the entities of the instance. This is assuming that all
+     * the operations return a list of `IOperation` because they potentially act on multiple
+     * entities in the hierarchy. The function combined them monadically using `flatMap` and returns a single
+     * list of operations. To take care of the dependencies, the operations are performed in the following order:
+     * 1. Property types
+     * 2. Object types
+     * 3. Vocabularies
+     * 4. Data set types
+     * 5. Collection types
+     * 6. Spaces are performed last because they depend on the other entities and the operations are performed breadth-first because every entity can depend on the previous ones:
+     *
+     * @param op the operation to perform
+     * @param service the openBIS service to use
+     * @return a list of operations that can be used to perform the operation
+     */
+
+    //TODO: check if the order is correct for deletions
+    fun performOperations(op: (CreatableEntity, OpenBIS) -> Iterable<IOperation>, service: OpenBIS): List<IOperation> {
+        val propertyTypeCreations = propertyTypes.flatMap { op(it, service) }
+        val objectTypeCreations = objectTypes.flatMap { op(it, service) }
+        val vocabularyCreations = vocabularies.flatMap { op(it, service) }
+        val dataSetTypeCreations = dataSetTypes.flatMap { op(it, service) }
+        val collectionTypeCreations = collectionTypes.flatMap { op(it, service) }
+        val spaceCreations = spaces.flatMap { op(it, service) }
+        return propertyTypeCreations.asSequence().plus(objectTypeCreations).plus(vocabularyCreations)
+            .plus(dataSetTypeCreations)
+            .plus(collectionTypeCreations).plus(spaceCreations).toList()
+    }
 
     override fun create(service: OpenBIS): List<IOperation> {
-        val propertyTypeCreations = propertyTypes.flatMap { it.create(service) }
-        val objectTypeCreations = objectTypes.flatMap { it.create(service) }
-        val vocabularyCreations = vocabularies.flatMap { it.create(service) }
-        val dataSetTypeCreations = dataSetTypes.flatMap { it.create(service) }
-        val collectionTypeCreations = collectionTypes.flatMap { it.create(service) }
-        val spaceCreations = spaces.flatMap { it.create(service) }
-        println("spaceCreations: $spaceCreations")
-        return propertyTypeCreations.plus(objectTypeCreations).plus(vocabularyCreations).plus(dataSetTypeCreations)
-            .plus(collectionTypeCreations).plus(spaceCreations)
+        return performOperations(op = CreatableEntity::create, service)
+    }
+
+    override fun delete(service: OpenBIS): List<IOperation> {
+        return performOperations(op = CreatableEntity::delete, service)
     }
 
     val spaces: List<SpaceEntity> = dto.spaces?.map { it.toEntity() } ?: listOf()

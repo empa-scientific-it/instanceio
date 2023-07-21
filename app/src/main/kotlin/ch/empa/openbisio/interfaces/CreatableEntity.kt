@@ -47,4 +47,14 @@ interface CreatableEntity : Entity {
             return emptyList()
         }
     }
+
+    fun delete(service: OpenBIS): List<IOperation>
+
+    fun remove(service: OpenBIS): List<IOperation> {
+        if (exists(service)) {
+            return delete(service)
+        } else {
+            return emptyList()
+        }
+    }
 }

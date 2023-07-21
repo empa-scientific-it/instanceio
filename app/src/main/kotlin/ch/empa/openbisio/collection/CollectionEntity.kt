@@ -25,7 +25,10 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.entitytype.EntityKind
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.entitytype.id.EntityTypePermId
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.create.CreateExperimentsOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.create.ExperimentCreation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.delete.DeleteExperimentsOperation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.delete.ExperimentDeletionOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.fetchoptions.ExperimentFetchOptions
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.id.ExperimentIdentifier
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.search.ExperimentSearchCriteria
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.id.ProjectIdentifier
 
@@ -53,6 +56,15 @@ class CollectionEntity(override val dto: CollectionDTO) : CreatableEntity {
         }
         val res = service.searchExperiments(sc, ExperimentFetchOptions())
         return res.totalCount > 0
+    }
+
+    override fun delete(): List<IOperation> {
+        return listOf(
+            DeleteExperimentsOperation(
+                mutableListOf(ExperimentIdentifier(identifier.identifier)),
+                ExperimentDeletionOptions()
+            )
+        )
     }
 
 }

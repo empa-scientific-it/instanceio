@@ -24,7 +24,10 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.person.id.PersonPermId
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.create.CreateProjectsOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.create.ProjectCreation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.delete.DeleteProjectsOperation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.delete.ProjectDeletionOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.fetchoptions.ProjectFetchOptions
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.id.ProjectIdentifier
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.search.ProjectSearchCriteria
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.id.SpacePermId
 
@@ -63,6 +66,15 @@ class ProjectEntity(override val dto: ProjectDTO) :
         } else {
             return persist().plus(sc)
         }
+    }
+
+    override fun delete(): List<IOperation> {
+        return listOf(
+            DeleteProjectsOperation(
+                listOf(ProjectIdentifier(identifier.identifier)),
+                ProjectDeletionOptions()
+            )
+        )
     }
 
 

@@ -24,13 +24,14 @@ import ch.ethz.sis.openbis.generic.OpenBIS
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.create.CreateSpacesOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.create.SpaceCreation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.delete.DeleteSpacesOperation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.delete.SpaceDeletionOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.fetchoptions.SpaceFetchOptions
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.id.SpacePermId
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.search.SpaceSearchCriteria
 
 class SpaceEntity(override val dto: SpaceDTO) : CreatableEntity {
-    init {
-        println(dto)
-    }
+
 
     override val identifier: ConcreteIdentifier.SpaceIdentifier = ConcreteIdentifier.SpaceIdentifier(dto.code)
 
@@ -58,6 +59,10 @@ class SpaceEntity(override val dto: SpaceDTO) : CreatableEntity {
         } else {
             return persist().plus(pc)
         }
+    }
+
+    override fun delete(): List<IOperation> {
+        return listOf(DeleteSpacesOperation(listOf(SpacePermId(identifier.code)), SpaceDeletionOptions()))
     }
 
     val projects: List<ProjectEntity> = dto.projects.map { it.toEntity() }

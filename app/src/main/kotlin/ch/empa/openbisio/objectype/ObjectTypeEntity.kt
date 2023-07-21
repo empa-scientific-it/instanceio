@@ -20,8 +20,11 @@ package ch.empa.openbisio.objectype
 import ch.empa.openbisio.interfaces.CreatableEntity
 import ch.ethz.sis.openbis.generic.OpenBIS
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.entitytype.id.EntityTypePermId
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.create.CreateSampleTypesOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.create.SampleTypeCreation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.delete.DeleteSampleTypesOperation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.delete.SampleTypeDeletionOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.fetchoptions.SampleTypeFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.search.SampleTypeSearchCriteria
 
@@ -42,5 +45,14 @@ class ObjectTypeEntity(override val dto: ObjectTypeDTO) : CreatableEntity {
         }
         val res = service.searchSampleTypes(sc, SampleTypeFetchOptions())
         return res.totalCount > 0
+    }
+
+    override fun delete(): List<IOperation> {
+        return listOf(
+            DeleteSampleTypesOperation(
+                listOf(EntityTypePermId(identifier.identifier)),
+                SampleTypeDeletionOptions()
+            )
+        )
     }
 }

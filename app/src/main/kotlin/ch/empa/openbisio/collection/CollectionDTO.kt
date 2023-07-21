@@ -25,7 +25,10 @@ import ch.empa.openbisio.interfaces.Tree
 import ch.empa.openbisio.`object`.ObjectDTO
 import kotlinx.serialization.Serializable
 
-
+/**
+ * DTO representing a collection. It is a data class, therefore it is immutablen, any change returns a copy.
+ * It is a tree, so it can have children that represents the objects contained in the collection.
+ */
 @Serializable
 data class CollectionDTO(
     override val code: String,
@@ -40,6 +43,11 @@ data class CollectionDTO(
         return this
     }
 
+    /**
+     * Add a child to the collection and return a new collection.
+     * @param child the child to add
+     * @return the collection with the child added
+     */
     fun withObject(child: ObjectDTO): CollectionDTO {
         return this.copy(objects = objects.plus(child))
     }
@@ -52,6 +60,13 @@ data class CollectionDTO(
         return objects
     }
 
+    /**
+     * Update the code of the collection and return a new collection.
+     * This is used to update the code of the collection when it is added to the tree, so that the code
+     * represents the path to the collection.
+     * @param code the new code
+     * @return the collection with the new code
+     */
     override fun updateCode(code: String): HierarchicalDTO {
         return this.copy(code = code)
     }

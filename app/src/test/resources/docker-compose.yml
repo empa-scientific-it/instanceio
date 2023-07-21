@@ -15,6 +15,11 @@ services:
       - CORE_PLUGINS=enabled-modules = dataset-uploader, dataset-file-search, xls-import, eln-lims, openbis-ng-ui, search-store, user-management-maintenance
     ports:
       - "8445:443"
+    deploy:
+      resources:
+        limits:
+          cpus: "4.0"
+          memory: 2048M
     volumes:
       #Openbis state
       - openbis-state:/home/openbis/openbis_state/
