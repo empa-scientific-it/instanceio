@@ -20,15 +20,14 @@
  */
 package ch.empa.openbisio
 
+import ch.empa.openbisio.instance.InstanceDTO
+import ch.empa.openbisio.instance.InstanceDeserializer
+import ch.empa.openbisio.instance.InstanceSerializer
 import ch.ethz.sis.openbis.generic.OpenBIS
-import kotlinx.cli.ArgParser
-import kotlinx.cli.ArgType
-import org.slf4j.LoggerFactory
-import org.springframework.boot.CommandLineRunner
-import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.runApplication
+import kotlinx.cli.*
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromStream
 import java.io.File
-
 
 
 //
@@ -106,59 +105,35 @@ import java.io.File
 //
 //
 //
-//fun main(args: Array<String>) {
-//    val parser = ArgParser("example")
-//    val openbisURL by (parser.argument(ArgType.String))
-//    val username by parser.argument(ArgType.String)
-//    val password by parser.argument(ArgType.String)
-//    val mode by parser.argument(ArgType.Choice<Mode>())
-//    val ioFile by parser.option(ArgType.String)
-//    parser.parse(args)
-//    val service = OpenBISService(URL(openbisURL))
-//    val token = service.connect(username, password)
-//    val configFile = File(ioFile ?: "./test.json")
-//    when (mode) {
-//        Mode.dump -> {
-//            val inst = dumpInstance(service)
-//            val format = Json { prettyPrint = true }
-//            val res=   format.encodeToString(inst)
-//            configFile.writeText(res)
-//        }
-//        Mode.load -> {
-//            val instance = readInstance(configFile.readText()).create(service)
-//        }
-//    }
-
-//}
-@SpringBootApplication
-open class App: CommandLineRunner {
-    enum class Mode {
-        dump,
-        load
-    }
-    private val LOG = LoggerFactory.getLogger(App::class.java)
-    private val parser = ArgParser(App::class.java.simpleName)
-
-
-    override fun run(vararg list: String?) {
-        LOG.info("Starting application")
-        val openbisURL by parser.argument(ArgType.String)
-        val username by parser.argument(ArgType.String)
-        val password by parser.argument(ArgType.String)
-        val mode by parser.argument(ArgType.Choice<Mode>())
-        val ioFile by parser.option(ArgType.String)
-        val args = list.asIterable().filterNotNull().toTypedArray()
-        val res = parser.parse(args)
-        val service = OpenBIS(openbisURL)
-        val token = service.login(username, password)
-        val configFile = File(ioFile ?: "./test.json")
-    }
-
+enum class Mode {
+    dump,
+    load
 }
-
-
-
-
 fun main(args: Array<String>) {
-    runApplication<App>(*args)
+
+    val parser = ArgParser("example")
+    val openbisURL by (parser.argument(ArgType.String))
+    val username by parser.argument(ArgType.String)
+    val password by parser.argument(ArgType.String)
+    val mode by parser.argument(ArgType.Choice<Mode>())
+    val ioFile by parser.option(ArgType.String)
+    parser.parse(args)
+    val service = OpenBIS(openbisURL)
+    val token = service.login(username, password)
+    val configFile = File(ioFile ?: "./test.json")
+    val format = Json { prettyPrint = true }
+    when (mode) {
+        Mode.dump -> {
+            val inst = InstanceDeserializer().dumpInstance(service)
+
+            val res = format.encodeToString(InstanceDTO.serializer(), inst)
+            configFile.writeText(res)
+        }
+        Mode.load -> {
+            val serialiser = InstanceSerializer(service)
+            val inst = Json.decodeFromStream(InstanceDTO.serializer(), configFile.inputStream())
+            serialiser.persist(inst.toEntityWithCodes())
+        }
+    }
 }
+

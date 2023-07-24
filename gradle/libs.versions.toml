@@ -1,24 +1,25 @@
 [versions]
 openbis = "20.10.6"
 openbis-common = "r20230123"
-kotlinx-serialization = "1.4.1"
+kotlinx-serialization = "1.5.1"
 kotlinx-cli = "0.3.5"
-kotlin = "1.8.22"
+kotlin = "1.9.0"
 modelmapper = "3.0.0"
 testcontainer = "1.18.3"
-spring="3.1.1"
+spring="3.1.2"
+dependency="1.1.2"
 [libraries]
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 openbis = { module = "openbis:openbis-v3-api", version.ref = "openbis" }
 openbis-common = { module = "openbis:common", version.ref = "openbis-common" }
-kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test" }
-test = { module = "org.jetbrains.kotlin:test" }
-kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit5" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin"}
+kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit5", version.ref="kotlin" }
+kotlin-reflection = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 kotlinx-cli = { module = "org.jetbrains.kotlinx:kotlinx-cli", version.ref = "kotlinx-cli" }
 jakarta-mail = { module = "jakarta.mail:jakarta.mail-api", version = "latest.release" }
 jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version = "latest.release" }
 jackson-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version = "latest.release" }
-kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8" }
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 kotlin-bom = { module = "org.jetbrains.kotlin:kotlin-bom", version = "latest.release" }
 junit = { module = "junit:junit", version = "4.13" }
 modelmapper = { module = "org.modelmapper:modelmapper", version.ref = "modelmapper" }
@@ -32,7 +33,9 @@ spring-boot-autoconfigure = { module = "org.springframework.boot:spring-boot-aut
 spring-boot-web = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "spring" }
 spring-shell = { module = "org.springframework.shell:spring-shell-starter", version.ref = "spring" }
 [plugins]
-kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 fatJar = { id = "io.ktor.plugin", version = "2.2.3" }
 spring-boot = { id = "org.springframework.boot", version.ref = "spring" }
+dependency-management = { id = "io.spring.dependency-management", version.ref = "dependency" }

@@ -8,16 +8,20 @@
 
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
-    alias(libs.plugins.kotlin)
+    alias(libs.plugins.kotlin.jvm)
 
 
-    alias(libs.plugins.fatJar)
+    //alias(libs.plugins.fatJar)
 
     //Serialisation
     alias(libs.plugins.kotlin.serialization)
 
     //Spring boot application
-    alias(libs.plugins.spring.boot)
+    //alias(libs.plugins.spring.boot)
+    //alias(libs.plugins.spring)
+
+    //Spring dependency management
+    //alias(libs.plugins.dependency.management)
 
     // Apply the application plugin to add support for building a CLI application in Java.
     //application
@@ -59,15 +63,21 @@ repositories {
 
 
 dependencies {
+    //Spring boot
+    //(libs.spring.boot.starter)
+    //implementation(libs.spring.boot.autoconfigure)
+    //implementation(libs.spring.boot.web)
+    //implementation(libs.spring.shell)
+
     // Align versions of all Kotlin components
-    implementation(libs.kotlin.bom)
+    //implementation(libs.kotlin.bom)
     // Use the Kotlin JDK 8 standard library.
     implementation(libs.kotlin.stdlib)
 
     // Use the Kotlin test library.
-    implementation(libs.kotlin.test)
+    testImplementation(libs.kotlin.test)
     // Use the Kotlin JUnit integration.
-    implementation(libs.kotlin.test.junit)
+    testImplementation(libs.kotlin.test.junit)
 
     //Openbis v3 API
     implementation(libs.openbis)
@@ -75,46 +85,38 @@ dependencies {
     implementation(libs.kotlinx.serialization)
 
     //Jackson
-    implementation(libs.jackson.databind)
-    implementation(libs.jackson.kotlin)
+    //implementation(libs.jackson.databind)
+    //implementation(libs.jackson.kotlin)
 
     //Email validation
-    implementation(libs.jakarta.mail)
+    //implementation(libs.jakarta.mail)
 
     //Command line
     implementation(libs.kotlinx.cli)
 
     //Junit
-    implementation(libs.junit)
+    //implementation(libs.junit)
 
     //Logging
-    implementation(libs.slf4j.api)
-    implementation(libs.logback.core)
-    implementation(libs.logback.classic)
+    //implementation(libs.slf4j.api)
+    //implementation(libs.logback.core)
+    //implementation(libs.logback.classic)
 
-    //Spring boot
-    implementation(libs.spring.boot.starter)
-    implementation(libs.spring.boot.autoconfigure)
-    implementation(libs.spring.boot.web)
-    implementation(libs.spring.shell)
 
 
     testImplementation(libs.testcontainer)
+
+
 }
 
 
 
-
-
-
-
-ktor {
-    fatJar {
-    }
-}
 
 kotlin{
-    jvmToolchain(17)
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+
+    }
 }
 
 
