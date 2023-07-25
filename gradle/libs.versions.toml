@@ -4,7 +4,7 @@ openbis-common = "r20230123"
 kotlinx-serialization = "1.5.1"
 kotlinx-cli = "0.3.5"
 kotlin = "1.9.0"
-modelmapper = "3.0.0"
+mapstruct = "1.5.3.Final"
 testcontainer = "1.18.3"
 spring="3.1.2"
 dependency="1.1.2"
@@ -22,7 +22,8 @@ jackson-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin"
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 kotlin-bom = { module = "org.jetbrains.kotlin:kotlin-bom", version = "latest.release" }
 junit = { module = "junit:junit", version = "4.13" }
-modelmapper = { module = "org.modelmapper:modelmapper", version.ref = "modelmapper" }
+mapstruct = { module = "org.mapstruct:mapstruct", version.ref = "mapstruct" }
+mapstruct-processor = { module = "org.mapstruct:mapstruct-processor", version.ref = "mapstruct" }
 testcontainer = { module = "org.testcontainers:testcontainers", version.ref = "testcontainer" }
 slf4j-api = { module = "org.slf4j:slf4j-api", version = "latest.release" }
 logback-classic = { module = "ch.qos.logback:logback-classic", version = "latest.release" }
@@ -39,3 +40,4 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 fatJar = { id = "io.ktor.plugin", version = "2.2.3" }
 spring-boot = { id = "org.springframework.boot", version.ref = "spring" }
 dependency-management = { id = "io.spring.dependency-management", version.ref = "dependency" }
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }

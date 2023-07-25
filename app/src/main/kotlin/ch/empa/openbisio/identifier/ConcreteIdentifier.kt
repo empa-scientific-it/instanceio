@@ -132,7 +132,7 @@ sealed class ConcreteIdentifier(val members: Collection<String>, val maxSize: In
             return CollectionIdentifier(removeComponent(identifier))
         }
 
-        override fun space(): SpaceIdentifier? {
+        override fun space(): SpaceIdentifier {
             return project().space()
         }
 

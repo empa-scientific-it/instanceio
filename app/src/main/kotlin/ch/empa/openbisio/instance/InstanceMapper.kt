@@ -15,9 +15,15 @@
  *
  */
 
-package ch.empa.openbisio.propertytype
+package ch.empa.openbisio.instance
 
-import ch.empa.openbisio.interfaces.Identifier
+import ch.empa.openbisio.mappers.DTOMapper
+import org.mapstruct.factory.Mappers
 
+class InstanceMapper(val inst: InstanceDTO) {
+    val mapper = Mappers.getMapper(DTOMapper::class.java)
 
-data class PropertyTypeIdentifier(override val identifier: String) : Identifier
+    fun mapToEntity(): InstanceEntity {
+        return mapper.toInstanceEntity(inst.updateCodes())
+    }
+}

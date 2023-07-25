@@ -55,8 +55,8 @@ data class InstanceDTO(
         return this.copy()
     }
 
-    override fun toEntity(): InstanceEntity {
-        return InstanceEntity(this)
+    fun toEntity(): InstanceEntity {
+        TODO()
     }
 
     override val code: String
@@ -117,7 +117,7 @@ data class InstanceDTO(
     }
 
     fun toEntityWithCodes(): InstanceEntity {
-        return InstanceEntity(this.updateCodes())
+        return this.updateCodes().toEntity()
     }
 
 

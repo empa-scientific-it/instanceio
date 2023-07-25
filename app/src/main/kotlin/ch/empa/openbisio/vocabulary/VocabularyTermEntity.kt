@@ -18,17 +18,23 @@
 package ch.empa.openbisio.vocabulary
 
 import ch.empa.openbisio.interfaces.AssignmentEntity
+import ch.empa.openbisio.interfaces.IdentifiedEntity
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.vocabulary.create.VocabularyTermCreation
 
-class VocabularyTermEntity(override val dto: VocabularyTermDTO) : AssignmentEntity {
+data class VocabularyTermEntity(
+    override val identifier: VocabularyTermIdentifier,
+    val label: String,
+    val official: Boolean,
+    val description: String
+) : IdentifiedEntity, AssignmentEntity {
 
 
     override fun persist(): VocabularyTermCreation {
         return VocabularyTermCreation().apply {
-            this.code = dto.code
-            this.label = dto.label
-            this.isOfficial = dto.isOfficial
-            this.description = dto.description
+            this.code = this@VocabularyTermEntity.identifier.identifier
+            this.label = this@VocabularyTermEntity.label
+            this.isOfficial = this@VocabularyTermEntity.official
+            this.description = this@VocabularyTermEntity.description
         }
     }
 

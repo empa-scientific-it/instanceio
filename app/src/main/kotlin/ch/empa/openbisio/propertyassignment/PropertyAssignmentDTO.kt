@@ -28,8 +28,12 @@ data class PropertyAssignmentDTO(
     val mandatory: Boolean,
     @SerialName("property_type") val propertyTypeCode: String
 ) : DTO {
-    override fun toEntity(): PropertyAssignmentEntity {
-        return PropertyAssignmentEntity(this)
+    fun toEntity(): PropertyAssignmentEntity {
+        return PropertyAssignmentEntity(
+            propertyTypeCode,
+            mandatory,
+            section ?: ""
+        )
     }
 
 }

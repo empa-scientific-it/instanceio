@@ -22,6 +22,7 @@ package ch.empa.openbisio
 
 import ch.empa.openbisio.instance.InstanceDTO
 import ch.empa.openbisio.instance.InstanceDeserializer
+import ch.empa.openbisio.instance.InstanceMapper
 import ch.empa.openbisio.instance.InstanceSerializer
 import ch.ethz.sis.openbis.generic.OpenBIS
 import kotlinx.cli.ArgParser
@@ -127,7 +128,7 @@ fun main(args: Array<String>) {
         val ioFile by argument(ArgType.String)
     }
 
-    class Dump() : Common("dump", "Dump the instance to a file") {
+    class Dump : Common("dump", "Dump the instance to a file") {
 
         override fun execute() {
             val configFile = File(ioFile)
@@ -140,15 +141,15 @@ fun main(args: Array<String>) {
 
     }
 
-    class Load() : Common("load", "Load the instance from a file") {
+    class Load : Common("load", "Load the instance from a file") {
 
         override fun execute() {
             val configFile = File(ioFile)
-            val service = OpenBIS(openbisURL,60000)
+            val service = OpenBIS(openbisURL, 60000)
             service.login(username, password)
             val serialiser = InstanceSerializer(service)
             val inst = Json.decodeFromStream(InstanceDTO.serializer(), configFile.inputStream())
-            serialiser.persist(inst.toEntityWithCodes())
+            serialiser.persist(InstanceMapper(inst).mapToEntity())
         }
     }
 

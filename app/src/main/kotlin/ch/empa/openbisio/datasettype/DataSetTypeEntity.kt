@@ -18,6 +18,8 @@
 package ch.empa.openbisio.datasettype
 
 import ch.empa.openbisio.interfaces.CreatableEntity
+import ch.empa.openbisio.interfaces.IdentifiedEntity
+import ch.empa.openbisio.propertyassignment.PropertyAssignmentEntity
 import ch.ethz.sis.openbis.generic.OpenBIS
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.dataset.create.CreateDataSetTypesOperation
@@ -28,14 +30,17 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.dataset.fetchoptions.DataSetType
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.dataset.search.DataSetTypeSearchCriteria
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.entitytype.id.EntityTypePermId
 
-class DataSetTypeEntity(override val dto: DataSetTypeDTO) : CreatableEntity {
-    override val identifier: DataSetTypeIdentifier = DataSetTypeIdentifier(dto.code)
+data class DataSetTypeEntity(
+    override val identifier: DataSetTypeIdentifier,
+    val description: String?,
+    val propertyAssignments: List<PropertyAssignmentEntity> = listOf()
+) : CreatableEntity, IdentifiedEntity {
 
     override fun persist(): List<IOperation> {
         val dataSetTypeCreation = DataSetTypeCreation().apply {
             this.code = identifier.identifier
-            this.description = dto.description
-            this.propertyAssignments = dto.propertyAssignments.map { it.toEntity().persist() }
+            this.description = description
+            this.propertyAssignments = propertyAssignments
         }
         return listOf(CreateDataSetTypesOperation(listOf(dataSetTypeCreation)))
     }
@@ -44,6 +49,7 @@ class DataSetTypeEntity(override val dto: DataSetTypeDTO) : CreatableEntity {
         val sc = DataSetTypeSearchCriteria().apply {
             this.withCode().thatEquals(identifier.identifier)
         }
+
         val res = service.searchDataSetTypes(sc, DataSetTypeFetchOptions())
         return res.totalCount > 0
     }

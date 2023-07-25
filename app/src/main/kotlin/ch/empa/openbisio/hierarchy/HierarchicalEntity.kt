@@ -17,26 +17,17 @@
 
 package ch.empa.openbisio.hierarchy
 
-import ch.empa.openbisio.interfaces.CodeHolder
-import ch.empa.openbisio.interfaces.DTO
+import ch.empa.openbisio.interfaces.CreatableEntity
+import ch.empa.openbisio.interfaces.IdentifiedEntity
 import ch.empa.openbisio.interfaces.Tree
+import ch.ethz.sis.openbis.generic.OpenBIS
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 
-interface HierarchicalDTO : DTO, CodeHolder, Tree<HierarchicalDTO> {
-    fun updateCode(code: String): HierarchicalDTO
-    override val code: String
-        get() = TODO("Not yet implemented")
+interface HierarchicalEntity: CreatableEntity, IdentifiedEntity, Tree<HierarchicalEntity> {
 
-    override fun value(): HierarchicalDTO {
-        TODO("Not yet implemented")
+    override fun create(service: OpenBIS): List<IOperation> {
+        val selfCreation = if (exists(service)) emptyList() else persist()
+        val childCreation = this.children().flatMap { it.flatMap { it.create(service) } }.flatMap { it }
+        return selfCreation.plus(childCreation)
     }
-
-    override fun hasChildren(): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    override fun children(): Collection<Tree<HierarchicalDTO>> {
-        TODO("Not yet implemented")
-    }
-
-
 }

@@ -17,8 +17,12 @@
 
 package ch.empa.openbisio.project
 
+import ch.empa.openbisio.collection.CollectionEntity
+import ch.empa.openbisio.hierarchy.HierarchicalEntity
 import ch.empa.openbisio.identifier.ConcreteIdentifier
 import ch.empa.openbisio.interfaces.CreatableEntity
+import ch.empa.openbisio.interfaces.IdentifiedEntity
+import ch.empa.openbisio.interfaces.Tree
 import ch.ethz.sis.openbis.generic.OpenBIS
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.create.CreateProjectsOperation
@@ -30,16 +34,18 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.id.ProjectIdentifier
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.search.ProjectSearchCriteria
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.id.SpacePermId
 
-class ProjectEntity(override val dto: ProjectDTO) :
-    CreatableEntity {
-    override val identifier: ConcreteIdentifier.ProjectIdentifier =
-        ConcreteIdentifier.ProjectIdentifier(dto.code)
+data class ProjectEntity(
+    override val identifier: ConcreteIdentifier.ProjectIdentifier,
+    val description: String,
+    val collections: List<CollectionEntity>
+) :
+    HierarchicalEntity {
 
-    val collections = dto.collections.map { it.toEntity() }
+
     override fun persist(): List<IOperation> {
         val pc = ProjectCreation().apply {
             this.code = identifier.code
-            this.description = dto.description
+            this.description = this@ProjectEntity.description
             this.spaceId = SpacePermId(identifier.space().code)
             this.leaderId = null
         }
@@ -74,6 +80,18 @@ class ProjectEntity(override val dto: ProjectDTO) :
                 ProjectDeletionOptions()
             )
         )
+    }
+
+    override fun value(): HierarchicalEntity {
+        return this
+    }
+
+    override fun hasChildren(): Boolean {
+        return collections.isNotEmpty()
+    }
+
+    override fun children(): Collection<Tree<HierarchicalEntity>> {
+        return collections
     }
 
 

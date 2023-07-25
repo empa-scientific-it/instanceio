@@ -20,9 +20,8 @@ package ch.empa.openbisio.`object`
 import ch.empa.openbisio.hierarchy.HierarchicalDTO
 import ch.empa.openbisio.identifier.ConcreteIdentifier
 import ch.empa.openbisio.interfaces.CodeHolder
-import ch.empa.openbisio.interfaces.Identifier
-import ch.empa.openbisio.interfaces.RelationshipHolder
 import ch.empa.openbisio.interfaces.Tree
+import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -30,14 +29,14 @@ data class ObjectDTO(
     override val code: String,
     val type: String,
     val properties: Map<String, String> = mapOf(),
-    override val children: List<Identifier>? = listOf(),
-    override val parents: List<Identifier>? = listOf()
-) : RelationshipHolder, HierarchicalDTO, Tree<HierarchicalDTO>, CodeHolder {
-    override fun getChild(name: String): CodeHolder? {
+    @EncodeDefault(EncodeDefault.Mode.ALWAYS) val children: List<String> = listOf(),
+    @EncodeDefault(EncodeDefault.Mode.ALWAYS) val parents: List<String> = listOf()
+) : HierarchicalDTO, Tree<HierarchicalDTO>, CodeHolder {
+    fun getChild(name: String): CodeHolder? {
         TODO("Not yet implemented")
     }
 
-    override fun getParent(name: String): CodeHolder? {
+    fun getParent(name: String): CodeHolder? {
         TODO("Not yet implemented")
     }
 
@@ -58,8 +57,14 @@ data class ObjectDTO(
     }
 
 
-    override fun toEntity(): ObjectEntity {
-        return ObjectEntity(this, ConcreteIdentifier.SampleIdentifier(this.code))
+    fun toEntity(): ObjectEntity {
+        return ObjectEntity(
+            ConcreteIdentifier.SampleIdentifier(code),
+            type,
+            properties,
+            //children.map { ConcreteIdentifier.SampleIdentifier(it) } ?: listOf(),
+            //parents.map { ConcreteIdentifier.SampleIdentifier(it) } ?: listOf()
+        )
     }
 
 

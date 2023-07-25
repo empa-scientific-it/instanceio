@@ -17,37 +17,22 @@
 
 package ch.empa.openbisio
 
-
-import ch.empa.openbisio.instance.InstanceDeserializer
-import ch.empa.openbisio.instance.InstanceEntity
+import ch.empa.openbisio.instance.InstanceDTO
 import ch.empa.openbisio.instance.InstanceMapper
 import ch.ethz.sis.openbis.generic.OpenBIS
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
-
-class DTOTest {
-    //private val configFile = javaClass.getResource("/test.json").readText()
-    //private val inst = readInstance(configFile)
-    val js = Json { prettyPrint = true }
-
-//    @Test
-//    fun assertSpace() {
-//        assert(inst.getSpace("YOUR_SPACE_CODE")?.code == "YOUR_SPACE_CODE")
-//    }
-//
-//    @Test
-//    fun testString(){
-//
-//        println(js.encodeToString(inst))
-//    }
+class CreationTest {
+    val configFile = javaClass.getResource("/simple_instance.json")
+    val json = Json { prettyPrint = true }
+    val config = configFile.readText()
+    val instanceDTO = json.decodeFromString<InstanceDTO>(config)
+    val instanceMapper = InstanceMapper(instanceDTO)
 
     @Test
-    fun dumpTest() {
+    fun testCreate() {
         val inst = OpenBIS("https://localhost:8443").apply { login("admin", "changeit") }
-        val dumped = InstanceDeserializer().dumpInstance(inst)
-        val instanceEntity = InstanceMapper(dumped).mapToEntity()
-        println(instanceEntity.pprint())
-        //println(dumped.collectionTypes)
-        //println(js.encodeToString(updatedCodes))
+        val creations = instanceMapper.mapToEntity().create(inst)
+        println(creations)
     }
 }

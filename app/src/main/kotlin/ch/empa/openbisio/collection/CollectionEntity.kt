@@ -17,8 +17,12 @@
 
 package ch.empa.openbisio.collection
 
+import ch.empa.openbisio.hierarchy.HierarchicalEntity
 import ch.empa.openbisio.identifier.ConcreteIdentifier
 import ch.empa.openbisio.interfaces.CreatableEntity
+import ch.empa.openbisio.interfaces.IdentifiedEntity
+import ch.empa.openbisio.interfaces.Tree
+import ch.empa.openbisio.`object`.ObjectEntity
 import ch.ethz.sis.openbis.generic.OpenBIS
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.entitytype.EntityKind
@@ -32,20 +36,20 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.id.ExperimentIdentifi
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.search.ExperimentSearchCriteria
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.id.ProjectIdentifier
 
-class CollectionEntity(override val dto: CollectionDTO) : CreatableEntity {
+data class CollectionEntity(
+    override val identifier: ConcreteIdentifier.CollectionIdentifier,
+    val properties: Map<String, String>,
+    val objects: List<ObjectEntity>,
+    val type: String
+) : HierarchicalEntity {
 
-    override val identifier: ConcreteIdentifier.CollectionIdentifier =
-        ConcreteIdentifier.CollectionIdentifier(dto.code)
-    val properties = dto.properties
-    val objects = dto.objects?.map { it.toEntity() }
-    //val children = dto.children()?.map { it.toEntity() }
 
     override fun persist(): List<IOperation> {
         val cr = ExperimentCreation().apply {
             this.code = identifier.code
             this.projectId = ProjectIdentifier(identifier.project().identifier)
-            this.properties = dto.properties.ifEmpty { null }
-            this.typeId = EntityTypePermId(dto.type, EntityKind.EXPERIMENT)
+            this.properties = this@CollectionEntity.properties.ifEmpty { null }
+            this.typeId = EntityTypePermId(type, EntityKind.EXPERIMENT)
         }
 
         return listOf(CreateExperimentsOperation(listOf(cr)))
@@ -60,16 +64,8 @@ class CollectionEntity(override val dto: CollectionDTO) : CreatableEntity {
         return res.totalCount > 0
     }
 
-    override fun create(service: OpenBIS): List<IOperation> {
-        val pc = if(exists(service)) {
-            listOf()
-        }else
-        {
-            persist()
-        }
-        val childCreation = objects?.flatMap { it.create(service) }
-        return pc.plus(childCreation ?: listOf())
-    }
+
+
     override fun delete(service: OpenBIS): List<IOperation> {
         return listOf(
             DeleteExperimentsOperation(
@@ -77,6 +73,18 @@ class CollectionEntity(override val dto: CollectionDTO) : CreatableEntity {
                 ExperimentDeletionOptions()
             )
         )
+    }
+
+    override fun value(): HierarchicalEntity {
+        return this
+    }
+
+    override fun hasChildren(): Boolean {
+        return objects.isNotEmpty()
+    }
+
+    override fun children(): Collection<Tree<HierarchicalEntity>> {
+        return objects
     }
 
 }

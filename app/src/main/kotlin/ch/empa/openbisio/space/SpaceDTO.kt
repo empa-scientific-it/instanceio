@@ -48,10 +48,6 @@ data class SpaceDTO(
         return this.copy(code = code)
     }
 
-    override fun toEntity(): SpaceEntity {
-        return SpaceEntity(this)
-    }
-
 
     fun withProject(projects: ProjectDTO): SpaceDTO {
         return this.copy(projects = this.projects + projects)

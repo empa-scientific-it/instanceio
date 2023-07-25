@@ -106,3 +106,12 @@ class PathTest {
     }
 }
 
+class FlatMapTest{
+    val testTree = TreeFactory()
+
+    @Test
+    fun testFlatMap(){
+        val tr1 = testTree.flatMap { it.name }
+        assertEquals(tr1, listOf("root", "a", "b", "c", "d", "e", "f", "g", "h"))
+    }
+}

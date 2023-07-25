@@ -19,8 +19,7 @@ package ch.empa.openbisio.propertytype
 
 import ch.empa.openbisio.datatype.DataTypeDTO
 import ch.empa.openbisio.interfaces.CreatableEntity
-import ch.empa.openbisio.interfaces.Identifier
-import ch.empa.openbisio.vocabulary.VocabularyIdentifier
+import ch.empa.openbisio.interfaces.IdentifiedEntity
 import ch.ethz.sis.openbis.generic.OpenBIS
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.create.CreatePropertyTypesOperation
@@ -30,19 +29,26 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.delete.PropertyTypeDele
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.fetchoptions.PropertyTypeFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.id.PropertyTypePermId
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.search.PropertyTypeSearchCriteria
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.vocabulary.id.IVocabularyId
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.vocabulary.id.VocabularyPermId
 
-class PropertyTypeEntity(override val dto: PropertyTypeDTO) : CreatableEntity {
-    override val identifier: Identifier = PropertyTypeIdentifier(dto.code)
+data class PropertyTypeEntity(
+    override val identifier: PropertyTypeIdentifier,
+    val description: String,
+    val label: String,
+    val dataType: DataTypeDTO,
+    val vocabularyId: String = ""
+) : IdentifiedEntity, CreatableEntity {
 
     override fun persist(): List<IOperation> {
         val propertyTypeCreation = PropertyTypeCreation().apply {
-            this.code = dto.code
-            this.label = dto.label
-            this.description = dto.description
-            this.dataType = dto.dataType.toOpenBISDataType()
-            this.vocabularyId = if(dto.vocabularyId != null && dto.dataType == DataTypeDTO.CONTROLLEDVOCABULARY) VocabularyPermId(dto.vocabularyId) else null
+            this.code = identifier.identifier
+            this.label = label
+            this.description = description
+            this.dataType = this@PropertyTypeEntity.dataType.toOpenBISDataType()
+            this.vocabularyId =
+                if (this@PropertyTypeEntity.vocabularyId != "" && this@PropertyTypeEntity.dataType == DataTypeDTO.CONTROLLEDVOCABULARY) VocabularyPermId(
+                    this@PropertyTypeEntity.vocabularyId
+                ) else null
         }
         return listOf(CreatePropertyTypesOperation(listOf(propertyTypeCreation)))
     }

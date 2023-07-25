@@ -18,6 +18,7 @@
 package ch.empa.openbisio.vocabulary
 
 import ch.empa.openbisio.interfaces.CreatableEntity
+import ch.empa.openbisio.interfaces.IdentifiedEntity
 import ch.ethz.sis.openbis.generic.OpenBIS
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.vocabulary.create.CreateVocabulariesOperation
@@ -28,14 +29,17 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.vocabulary.fetchoptions.Vocabula
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.vocabulary.id.VocabularyPermId
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.vocabulary.search.VocabularySearchCriteria
 
-class VocabularyEntity(override val dto: VocabularyDTO) : CreatableEntity {
-    override val identifier: VocabularyIdentifier = VocabularyIdentifier(dto.code)
+data class VocabularyEntity(
+    override val identifier: VocabularyIdentifier,
+    val description: String,
+    val terms: List<VocabularyTermEntity> = listOf()
+) : CreatableEntity, IdentifiedEntity {
 
     override fun persist(): List<IOperation> {
         val vc = VocabularyCreation().apply {
-            this.code = dto.code
-            this.description = dto.description
-            this.terms = dto.terms.map { it.toEntity().persist() }
+            this.code = identifier.identifier
+            this.description = this@VocabularyEntity.description
+            this.terms = this@VocabularyEntity.terms.map { it.persist() }
         }
         return listOf(CreateVocabulariesOperation(listOf(vc)))
     }

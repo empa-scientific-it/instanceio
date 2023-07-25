@@ -19,5 +19,5 @@ package ch.empa.openbisio.vocabulary
 
 import ch.empa.openbisio.interfaces.Identifier
 
-@JvmInline
-value class VocabularyTermIdentifier(override val identifier: String) : Identifier
+
+data class VocabularyTermIdentifier(override val identifier: String) : Identifier

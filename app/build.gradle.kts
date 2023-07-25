@@ -16,12 +16,9 @@ plugins {
     //Serialisation
     alias(libs.plugins.kotlin.serialization)
 
-    //Spring boot application
-    //alias(libs.plugins.spring.boot)
-    //alias(libs.plugins.spring)
+    //Kapt
+    alias(libs.plugins.kotlin.kapt)
 
-    //Spring dependency management
-    //alias(libs.plugins.dependency.management)
 
     // Apply the application plugin to add support for building a CLI application in Java.
     application
@@ -66,11 +63,7 @@ application {
 }
 
 dependencies {
-    //Spring boot
-    //(libs.spring.boot.starter)
-    //implementation(libs.spring.boot.autoconfigure)
-    //implementation(libs.spring.boot.web)
-    //implementation(libs.spring.shell)
+
 
     // Align versions of all Kotlin components
     implementation(libs.kotlin.bom)
@@ -87,25 +80,17 @@ dependencies {
 
     implementation(libs.kotlinx.serialization)
 
-    //Jackson
-    //implementation(libs.jackson.databind)
-    //implementation(libs.jackson.kotlin)
+    //Mapping
+    implementation(libs.mapstruct)
+    annotationProcessor(libs.mapstruct.processor)
+    kapt(libs.mapstruct.processor)
 
-    //Email validation
-    //implementation(libs.jakarta.mail)
-
-    //Command line
+    //Command line parsing
     implementation(libs.kotlinx.cli)
 
-    //Junit
-    //implementation(libs.junit)
-
-    //Logging
-    //implementation(libs.slf4j.api)
-    //implementation(libs.logback.core)
-    //implementation(libs.logback.classic)
 
 
+    //Testcontainer for integration tests
     testImplementation(libs.testcontainer)
 
 

@@ -19,6 +19,7 @@ package ch.empa.openbisio
 
 import ch.empa.openbisio.identifier.ConcreteIdentifier
 import ch.empa.openbisio.instance.InstanceDTO
+import ch.empa.openbisio.instance.InstanceMapper
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -27,7 +28,7 @@ class EntityIdentifierTest {
     val json = Json { prettyPrint = true }
     val config = javaClass.getResource("/simple_instance.json").readText()
     val instanceDTO = json.decodeFromString<InstanceDTO>(config)
-    val instance = instanceDTO.toEntityWithCodes()
+    val instance = InstanceMapper(instanceDTO).mapToEntity()
 
     @Test
     fun testInstanceIdentifier() {

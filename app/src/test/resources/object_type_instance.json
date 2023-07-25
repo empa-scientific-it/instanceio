@@ -1,0 +1,74 @@
+{
+  "spaces": [
+    {
+      "code": "YOUR_SPACE_CODE",
+      "projects": [
+        {
+          "code": "YOUR_FIRST_PROJECT_CODE",
+          "collections": [
+            {
+              "code": "YOUR_FIRST_COLLECTION_CODE",
+              "type": "COLLECTION",
+              "objects": [
+                {
+                  "code": "FP1",
+                  "type": "FOT",
+                  "properties": {
+                    "formula": "some formula"
+                  }
+                },
+                {
+                  "code": "SP2",
+                  "type": "SOT",
+                  "properties": {
+                    "formula": "some formula"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "object_types": [
+    {
+      "code": "FOT",
+      "description": "Reference substance",
+      "prefix": "FP",
+      "generate_code": false,
+      "properties": [
+        {
+          "section": "General",
+          "mandatory": false,
+          "property_type": "FORMULA"
+        }
+      ]
+    },
+    {
+      "code": "SOT",
+      "description": "Reference substance",
+      "prefix": "SP",
+      "generate_code": true,
+      "properties": [
+        {
+          "section": "General",
+          "mandatory": false,
+          "property_type": "FORMULA"
+        }
+      ]
+    }
+  ],
+  "property_types": [
+    {
+      "code": "FORMULA",
+      "label": "Formula",
+      "description": "Formula",
+      "data_type": "VARCHAR"
+    }
+  ]
+}
+
+
+
+

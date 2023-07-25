@@ -19,7 +19,7 @@ package ch.empa.openbisio.propertyassignment
 
 import ch.empa.openbisio.interfaces.Identifier
 
-@JvmInline
-value class PropertyAssingmentIdentifier(override val identifier: String) : Identifier
+
+data class PropertyAssignmentIdentifier(override val identifier: String) : Identifier
 
 

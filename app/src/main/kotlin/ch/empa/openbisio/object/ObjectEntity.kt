@@ -17,13 +17,16 @@
 
 package ch.empa.openbisio.`object`
 
+import ch.empa.openbisio.hierarchy.HierarchicalEntity
 import ch.empa.openbisio.identifier.ConcreteIdentifier
 import ch.empa.openbisio.interfaces.CreatableEntity
-import ch.empa.openbisio.objectype.ObjectTypeDTO
+import ch.empa.openbisio.interfaces.IdentifiedEntity
+import ch.empa.openbisio.interfaces.Tree
 import ch.ethz.sis.openbis.generic.OpenBIS
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.entitytype.id.EntityTypePermId
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.id.ExperimentIdentifier
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.id.ProjectIdentifier
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.id.ProjectPermId
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.create.CreateSamplesOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.create.SampleCreation
@@ -34,18 +37,23 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.id.SampleIdentifier
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.search.SampleSearchCriteria
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.id.SpacePermId
 
-class ObjectEntity(override val dto: ObjectDTO, val objectTypeDTO: ObjectTypeDTO, override val identifier: ConcreteIdentifier.SampleIdentifier) :
-    CreatableEntity {
+data class ObjectEntity(
+    override val identifier: ConcreteIdentifier.SampleIdentifier,
+    val type: String,
+    val properties: Map<String, String>,
+    //val children: List<ConcreteIdentifier.SampleIdentifier> = listOf(),
+    //val parents: List<ConcreteIdentifier.SampleIdentifier> = listOf()
+) : HierarchicalEntity {
 
 
     override fun persist(): List<IOperation> {
         val sc = SampleCreation().apply {
             code = identifier.code
-            experimentId = ExperimentIdentifier(identifier.getAncestor().code)
-            spaceId = SpacePermId(identifier.space()!!.identifier)
-            projectId = ProjectPermId(identifier.project().identifier)
-            typeId = EntityTypePermId(dto.type)
-            properties = dto.properties.mapValues { it.toString() }
+            experimentId = ExperimentIdentifier(identifier.getAncestor().identifier)
+            spaceId = SpacePermId(identifier.space().identifier)
+            projectId = ProjectIdentifier(identifier.project().identifier)
+            typeId = EntityTypePermId(type)
+            properties = this@ObjectEntity.properties
         }
         return listOf(CreateSamplesOperation(listOf(sc)))
     }
@@ -55,15 +63,29 @@ class ObjectEntity(override val dto: ObjectDTO, val objectTypeDTO: ObjectTypeDTO
             withCode().thatEquals(identifier.code)
             withExperiment().withCode().thatEquals(identifier.getAncestor().code)
             withProject().withCode().thatEquals(identifier.project().code)
-            withSpace().withCode().thatEquals(identifier.space()!!.code)
-            withType().withCode().thatEquals(dto.type)
+            withSpace().withCode().thatEquals(identifier.space().code)
+            withType().withCode().thatEquals(type)
         }
+        println(sc)
         val res = service.searchSamples(sc, SampleFetchOptions())
+        println(res)
         return res.totalCount > 0
     }
 
     override fun delete(service: OpenBIS): List<IOperation> {
         return listOf(DeleteSamplesOperation(listOf(SampleIdentifier(identifier.identifier)), SampleDeletionOptions()))
+    }
+
+    override fun value(): HierarchicalEntity {
+        return this
+    }
+
+    override fun hasChildren(): Boolean {
+        return false
+    }
+
+    override fun children(): Collection<Tree<HierarchicalEntity>> {
+        return listOf()
     }
 
 

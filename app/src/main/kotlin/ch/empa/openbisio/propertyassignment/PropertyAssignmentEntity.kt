@@ -21,14 +21,18 @@ import ch.empa.openbisio.interfaces.AssignmentEntity
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.create.PropertyAssignmentCreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.id.PropertyTypePermId
 
-class PropertyAssignmentEntity(override val dto: PropertyAssignmentDTO) : AssignmentEntity {
+class PropertyAssignmentEntity(
+    val propertyTypeCode: String,
+    val mandatory: Boolean,
+    val section: String?
+) : AssignmentEntity {
 
 
     override fun persist(): PropertyAssignmentCreation {
         val assignmentCreation = PropertyAssignmentCreation().apply {
-            this.propertyTypeId = PropertyTypePermId(dto.propertyTypeCode)
-            this.isMandatory = dto.mandatory
-            this.section = dto.section
+            this.propertyTypeId = PropertyTypePermId(propertyTypeCode)
+            this.isMandatory = mandatory
+            this.section = this@PropertyAssignmentEntity.section
         }
         return assignmentCreation
     }

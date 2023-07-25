@@ -18,8 +18,8 @@
 package ch.empa.openbisio.collection
 
 import ch.empa.openbisio.hierarchy.HierarchicalDTO
+import ch.empa.openbisio.identifier.ConcreteIdentifier
 import ch.empa.openbisio.interfaces.CodeHolder
-import ch.empa.openbisio.interfaces.CreatableEntity
 import ch.empa.openbisio.interfaces.PropertyHolder
 import ch.empa.openbisio.interfaces.Tree
 import ch.empa.openbisio.`object`.ObjectDTO
@@ -71,8 +71,13 @@ data class CollectionDTO(
         return this.copy(code = code)
     }
 
-    override fun toEntity(): CreatableEntity {
-        return CollectionEntity(this)
+    fun toEntity(): CollectionEntity {
+        return CollectionEntity(
+            ConcreteIdentifier.CollectionIdentifier(code),
+            properties,
+            objects.map { it.toEntity() },
+            type
+        )
     }
 
 }

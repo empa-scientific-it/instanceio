@@ -26,9 +26,9 @@ data class VocabularyTermDTO(
     override val code: String,
     val label: String,
     val description: String,
-    val isOfficial: Boolean
+    val official: Boolean
 ) : DTO, CodeHolder {
-    override fun toEntity(): VocabularyTermEntity {
-        return VocabularyTermEntity(this)
+    fun toEntity(): VocabularyTermEntity {
+        return VocabularyTermEntity(VocabularyTermIdentifier(code), label, official, description)
     }
 }

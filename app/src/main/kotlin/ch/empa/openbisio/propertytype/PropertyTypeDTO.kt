@@ -20,6 +20,7 @@ package ch.empa.openbisio.propertytype
 import ch.empa.openbisio.datatype.DataTypeDTO
 import ch.empa.openbisio.interfaces.CodeHolder
 import ch.empa.openbisio.interfaces.DTO
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -27,10 +28,7 @@ data class PropertyTypeDTO(
     override val code: String,
     val label: String,
     val description: String,
-    val dataType: DataTypeDTO,
-    val vocabularyId: String? = null
+    @SerialName("data_type") val dataType: DataTypeDTO,
+    @SerialName("vocabulary_id") val vocabularyId: String = ""
 ) : DTO, CodeHolder {
-    override fun toEntity(): PropertyTypeEntity {
-        return PropertyTypeEntity(this)
-    }
 }

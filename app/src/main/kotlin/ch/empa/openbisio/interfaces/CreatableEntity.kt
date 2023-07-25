@@ -26,7 +26,6 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
  * themselves but return a ICreation object that can be used to create the entity from the V3 api
  */
 interface CreatableEntity : Entity {
-    val identifier: Identifier
 
     /**
      * Returns a Creation object that can be used

@@ -19,9 +19,9 @@ package ch.empa.openbisio.project
 
 import ch.empa.openbisio.collection.CollectionDTO
 import ch.empa.openbisio.hierarchy.HierarchicalDTO
+import ch.empa.openbisio.identifier.ConcreteIdentifier
 import ch.empa.openbisio.interfaces.CodeHolder
 import ch.empa.openbisio.interfaces.Tree
-import ch.empa.openbisio.person.PersonDTO
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -29,7 +29,7 @@ data class ProjectDTO(
     override val code: String,
     val collections: List<CollectionDTO> = listOf(),
     val description: String = "",
-    val leader: PersonDTO? = null
+    //val leader: PersonDTO? = null
 ) : Tree<HierarchicalDTO>, HierarchicalDTO, CodeHolder {
     override fun value(): HierarchicalDTO {
         return this
@@ -47,8 +47,12 @@ data class ProjectDTO(
         return this.copy(code = code)
     }
 
-    override fun toEntity(): ProjectEntity {
-        return ProjectEntity(this)
+    fun toEntity(): ProjectEntity {
+        return ProjectEntity(
+            ConcreteIdentifier.ProjectIdentifier(code),
+            description,
+            collections.map { it.toEntity() }
+        )
     }
 
     fun withCollection(collection: CollectionDTO): ProjectDTO {

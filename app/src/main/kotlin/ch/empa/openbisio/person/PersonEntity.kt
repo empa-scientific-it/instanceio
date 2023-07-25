@@ -18,6 +18,7 @@
 package ch.empa.openbisio.person
 
 import ch.empa.openbisio.interfaces.CreatableEntity
+import ch.empa.openbisio.interfaces.IdentifiedEntity
 import ch.ethz.sis.openbis.generic.OpenBIS
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.person.create.CreatePersonsOperation
@@ -26,13 +27,12 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.person.fetchoptions.PersonFetchO
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.person.search.PersonSearchCriteria
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.id.SpacePermId
 
-class PersonEntity(override val dto: PersonDTO) : CreatableEntity {
-    override val identifier: PersonIdentifier = PersonIdentifier(dto.code)
+class PersonEntity(override val identifier: PersonIdentifier, val space: String) : CreatableEntity, IdentifiedEntity {
 
     override fun persist(): List<IOperation> {
         val pc = PersonCreation().apply {
-            this.userId = dto.code
-            this.spaceId = SpacePermId(dto.space)
+            this.userId = identifier.identifier
+            this.spaceId = SpacePermId(space)
         }
         return listOf(CreatePersonsOperation(listOf(pc)))
     }

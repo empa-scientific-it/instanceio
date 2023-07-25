@@ -19,5 +19,5 @@ package ch.empa.openbisio.person
 
 import ch.empa.openbisio.interfaces.Identifier
 
-@JvmInline
-value class PersonIdentifier(override val identifier: String) : Identifier
+
+data class PersonIdentifier(override val identifier: String) : Identifier

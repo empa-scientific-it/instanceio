@@ -17,11 +17,4 @@
 
 package ch.empa.openbisio.interfaces
 
-/**
- * Interface representing openBIS entities.
- * Out of simplicity, they simply wrap a DTO. So when we need to persist them, we just
- * access the fields of the DTO.
- */
-interface Entity {
-    val dto: DTO
-}
+interface Entity

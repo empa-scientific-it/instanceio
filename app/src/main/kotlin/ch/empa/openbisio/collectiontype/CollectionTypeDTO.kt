@@ -28,7 +28,4 @@ data class CollectionTypeDTO(
     val description: String?,
     val propertyAssignments: List<PropertyAssignmentDTO>
 ) : DTO, CodeHolder {
-    override fun toEntity(): CollectionTypeEntity {
-        return CollectionTypeEntity(this)
-    }
 }

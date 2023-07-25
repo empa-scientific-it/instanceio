@@ -19,8 +19,11 @@ package ch.empa.openbisio.instance
 
 import ch.empa.openbisio.collectiontype.CollectionTypeEntity
 import ch.empa.openbisio.datasettype.DataSetTypeEntity
+import ch.empa.openbisio.hierarchy.HierarchicalEntity
 import ch.empa.openbisio.identifier.ConcreteIdentifier
 import ch.empa.openbisio.interfaces.CreatableEntity
+import ch.empa.openbisio.interfaces.IdentifiedEntity
+import ch.empa.openbisio.interfaces.Tree
 import ch.empa.openbisio.objectype.ObjectTypeEntity
 import ch.empa.openbisio.propertytype.PropertyTypeEntity
 import ch.empa.openbisio.space.SpaceEntity
@@ -33,23 +36,37 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
  * It is used to create, delete and update the instance.
  * @param dto the data transfer object used to initialize the instance
  */
-class InstanceEntity(override val dto: InstanceDTO) : CreatableEntity {
+class InstanceEntity(
+    val spaces: MutableList<SpaceEntity> = mutableListOf(),
+    val propertyTypes: MutableList<PropertyTypeEntity> = mutableListOf(),
+    val objectTypes: MutableList<ObjectTypeEntity> = mutableListOf(),
+    val vocabularies: MutableList<VocabularyEntity> = mutableListOf(),
+    val collectionTypes: MutableList<CollectionTypeEntity> = mutableListOf(),
+    val dataSetTypes: MutableList<DataSetTypeEntity> = mutableListOf()
+) : HierarchicalEntity {
+
     /**
      * The identifier of the instance, in this case it is fixed to `/` because the
      * instance is the root of the tree.
      */
     override val identifier = ConcreteIdentifier.InstanceIdentifier()
+    override fun value(): HierarchicalEntity {
+        return this
+    }
+
+    override fun hasChildren(): Boolean {
+        return spaces.isNotEmpty()
+    }
+
+    override fun children(): Collection<Tree<HierarchicalEntity>> {
+        return spaces
+    }
 
     /**
      * The other attributes of the instance are taken from the instance DTO and mapped
      * to entitites
      */
-    val spaces: List<SpaceEntity> = dto.spaces?.map { it.toEntity() } ?: listOf()
-    val propertyTypes: List<PropertyTypeEntity> = dto.propertyTypes?.map { it.toEntity() } ?: listOf()
-    val objectTypes: List<ObjectTypeEntity> = dto.objectTypes?.map { it.toEntity() } ?: listOf()
-    val vocabularies: List<VocabularyEntity> = dto.vocabularies?.map { it.toEntity() } ?: listOf()
-    val collectionTypes: List<CollectionTypeEntity> = dto.collectionTypes?.map { it.toEntity() } ?: listOf()
-    val dataSetTypes: List<DataSetTypeEntity> = dto.dataSetTypes?.map { it.toEntity() } ?: listOf()
+
     override fun persist(): List<IOperation> {
         TODO("Not yet implemented")
     }
@@ -95,8 +112,6 @@ class InstanceEntity(override val dto: InstanceDTO) : CreatableEntity {
     override fun delete(service: OpenBIS): List<IOperation> {
         return performOperations(op = CreatableEntity::delete, service)
     }
-
-
 
 
 }

@@ -23,13 +23,10 @@ import ch.empa.openbisio.propertyassignment.PropertyAssignmentDTO
 import kotlinx.serialization.Serializable
 
 @Serializable
-class DataSetTypeDTO(
+data class DataSetTypeDTO(
     override val code: String,
     val description: String?,
     val propertyAssignments: List<PropertyAssignmentDTO>
 ) :
     DTO, CodeHolder {
-    override fun toEntity(): DataSetTypeEntity {
-        return DataSetTypeEntity(this)
-    }
 }

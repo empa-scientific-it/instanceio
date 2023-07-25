@@ -18,7 +18,6 @@
 package ch.empa.openbisio.person
 
 import ch.empa.openbisio.interfaces.CodeHolder
-import ch.empa.openbisio.interfaces.CreatableEntity
 import ch.empa.openbisio.interfaces.DTO
 import kotlinx.serialization.Serializable
 
@@ -30,7 +29,4 @@ class PersonDTO(
     val firstName: String,
     val lastName: String
 ) : DTO, CodeHolder {
-    override fun toEntity(): CreatableEntity {
-        TODO("Not yet implemented")
-    }
 }

@@ -17,8 +17,11 @@
 
 package ch.empa.openbisio.space
 
+import ch.empa.openbisio.hierarchy.HierarchicalEntity
 import ch.empa.openbisio.identifier.ConcreteIdentifier
 import ch.empa.openbisio.interfaces.CreatableEntity
+import ch.empa.openbisio.interfaces.IdentifiedEntity
+import ch.empa.openbisio.interfaces.Tree
 import ch.empa.openbisio.project.ProjectEntity
 import ch.ethz.sis.openbis.generic.OpenBIS
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
@@ -30,15 +33,17 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.fetchoptions.SpaceFetchOpt
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.id.SpacePermId
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.search.SpaceSearchCriteria
 
-class SpaceEntity(override val dto: SpaceDTO) : CreatableEntity {
+data class SpaceEntity(
+    override val identifier: ConcreteIdentifier.SpaceIdentifier,
+    val description: String,
+    val projects: List<ProjectEntity> = listOf()
+) : HierarchicalEntity{
 
-
-    override val identifier: ConcreteIdentifier.SpaceIdentifier = ConcreteIdentifier.SpaceIdentifier(dto.code)
 
     override fun persist(): List<IOperation> {
         val sc = SpaceCreation().apply {
             this.code = identifier.code
-            this.description = dto.description
+            this.description = description
         }
         return listOf(CreateSpacesOperation(listOf(sc)))
     }
@@ -52,19 +57,22 @@ class SpaceEntity(override val dto: SpaceDTO) : CreatableEntity {
     }
 
 
-    override fun create(service: OpenBIS): List<IOperation> {
-        val pc = projects.flatMap { it.create(service) }
-        if (exists(service)) {
-            return pc
-        } else {
-            return persist().plus(pc)
-        }
-    }
 
     override fun delete(service: OpenBIS): List<IOperation> {
         return listOf(DeleteSpacesOperation(listOf(SpacePermId(identifier.code)), SpaceDeletionOptions()))
     }
 
-    val projects: List<ProjectEntity> = dto.projects.map { it.toEntity() }
+    override fun value(): HierarchicalEntity {
+        return this
+    }
+
+    override fun hasChildren(): Boolean {
+        return this.projects.isNotEmpty()
+    }
+
+    override fun children(): Collection<Tree<HierarchicalEntity>> {
+        return this.projects
+    }
+
 
 }

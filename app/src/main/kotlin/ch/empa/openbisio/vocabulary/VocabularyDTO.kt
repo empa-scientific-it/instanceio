@@ -24,7 +24,4 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class VocabularyDTO(override val code: String, val description: String, val terms: List<VocabularyTermDTO>) : DTO,
     CodeHolder {
-    override fun toEntity(): VocabularyEntity {
-        return VocabularyEntity(this)
-    }
 }

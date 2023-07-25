@@ -15,9 +15,8 @@
  *
  */
 
-package ch.empa.openbisio.propertytype
+package ch.empa.openbisio.collectiontype
 
 import ch.empa.openbisio.interfaces.Identifier
 
-
-data class PropertyTypeIdentifier(override val identifier: String) : Identifier
+data class CollectionTypeIdentifier(override val identifier: String) : Identifier
