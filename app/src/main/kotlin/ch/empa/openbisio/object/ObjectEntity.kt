@@ -19,6 +19,7 @@ package ch.empa.openbisio.`object`
 
 import ch.empa.openbisio.identifier.ConcreteIdentifier
 import ch.empa.openbisio.interfaces.CreatableEntity
+import ch.empa.openbisio.objectype.ObjectTypeDTO
 import ch.ethz.sis.openbis.generic.OpenBIS
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.entitytype.id.EntityTypePermId
@@ -33,13 +34,13 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.id.SampleIdentifier
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.search.SampleSearchCriteria
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.id.SpacePermId
 
-class ObjectEntity(override val dto: ObjectDTO, override val identifier: ConcreteIdentifier.SampleIdentifier) :
+class ObjectEntity(override val dto: ObjectDTO, val objectTypeDTO: ObjectTypeDTO, override val identifier: ConcreteIdentifier.SampleIdentifier) :
     CreatableEntity {
 
 
     override fun persist(): List<IOperation> {
         val sc = SampleCreation().apply {
-            code = dto.code
+            code = identifier.code
             experimentId = ExperimentIdentifier(identifier.getAncestor().code)
             spaceId = SpacePermId(identifier.space()!!.identifier)
             projectId = ProjectPermId(identifier.project().identifier)
@@ -51,7 +52,7 @@ class ObjectEntity(override val dto: ObjectDTO, override val identifier: Concret
 
     override fun exists(service: OpenBIS): Boolean {
         val sc = SampleSearchCriteria().apply {
-            withCode().thatEquals(dto.code)
+            withCode().thatEquals(identifier.code)
             withExperiment().withCode().thatEquals(identifier.getAncestor().code)
             withProject().withCode().thatEquals(identifier.project().code)
             withSpace().withCode().thatEquals(identifier.space()!!.code)

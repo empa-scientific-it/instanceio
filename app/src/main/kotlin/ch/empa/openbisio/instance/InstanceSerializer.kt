@@ -22,15 +22,15 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.operation.IOperationExecutionRes
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.operation.SynchronousOperationExecutionOptions
 
 class InstanceSerializer(val openBIS: OpenBIS) {
-    fun persist(entity: InstanceEntity): IOperationExecutionResults {
+    fun persist(entity: InstanceEntity): IOperationExecutionResults? {
         val operations = entity.create(openBIS)
         val options = SynchronousOperationExecutionOptions().apply {
             isExecuteInOrder = true
+
+
         }
-
-
-        val res = openBIS.executeOperations(openBIS.sessionToken, operations, options)
-
+        val res =
+            if (operations.size > 0) openBIS.executeOperations(openBIS.sessionToken, operations, options) else null
         return res
     }
 }

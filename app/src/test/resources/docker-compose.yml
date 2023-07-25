@@ -18,6 +18,8 @@ services:
         limits:
           cpus: "4.0"
           memory: 2048M
+    ports:
+      - "8443:433"
     volumes:
       #Openbis state
       - openbis-state:/home/openbis/openbis_state/

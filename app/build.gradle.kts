@@ -24,7 +24,8 @@ plugins {
     //alias(libs.plugins.dependency.management)
 
     // Apply the application plugin to add support for building a CLI application in Java.
-    //application
+    application
+    java
 
     id("maven-publish")
 }
@@ -60,7 +61,9 @@ repositories {
 
 }
 
-
+application {
+    mainClass.set("ch.empa.openbisio.App")
+}
 
 dependencies {
     //Spring boot
@@ -70,8 +73,8 @@ dependencies {
     //implementation(libs.spring.shell)
 
     // Align versions of all Kotlin components
-    //implementation(libs.kotlin.bom)
-    // Use the Kotlin JDK 8 standard library.
+    implementation(libs.kotlin.bom)
+    // Use the Kotlin JDK  standard library.
     implementation(libs.kotlin.stdlib)
 
     // Use the Kotlin test library.
@@ -103,7 +106,6 @@ dependencies {
     //implementation(libs.logback.classic)
 
 
-
     testImplementation(libs.testcontainer)
 
 
@@ -112,12 +114,13 @@ dependencies {
 
 
 
-kotlin{
+kotlin {
     jvmToolchain {
         languageVersion.set(JavaLanguageVersion.of(17))
 
     }
 }
+
 
 
 
@@ -185,6 +188,20 @@ tasks.named("check") {
 }
 
 
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = "ch.empa.openbisio.AppKt"
+    }
+    sourceSets {
+        getByName("main") {
+            kotlin {
+                srcDirs("src/main/kotlin")
+            }
+        }
+    }
+    from({ configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) } })
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
 
 
 

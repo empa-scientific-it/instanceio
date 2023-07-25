@@ -28,6 +28,7 @@ data class ObjectTypeDTO(
     override val code: String,
     val description: String?,
     @SerialName("prefix") val generatedCodePrefix: String,
+    @SerialName("generate_code") val autoGenerateCode: Boolean,
     @SerialName("properties") val propertyAssignments: List<PropertyAssignmentDTO>
 ) : DTO, CodeHolder {
     override fun toEntity(): ObjectTypeEntity {

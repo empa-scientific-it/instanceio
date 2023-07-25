@@ -61,7 +61,6 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.vocabulary.Vocabulary
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.vocabulary.VocabularyTerm
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.vocabulary.fetchoptions.VocabularyFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.vocabulary.search.VocabularySearchCriteria
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 
@@ -214,7 +213,7 @@ fun DataSetType.toDTO(): DataSetTypeDTO {
 }
 
 fun PropertyType.toDTO(): PropertyTypeDTO {
-    return PropertyTypeDTO(this.code, this.label, this.description, this.dataType.toDTO())
+    return PropertyTypeDTO(this.code, this.label, this.description, this.dataType.toDTO(), this.vocabulary?.code)
 }
 
 fun PropertyAssignment.toDTO(): PropertyAssignmentDTO {
@@ -231,7 +230,7 @@ fun SampleType.toDTO(): ObjectTypeDTO {
 
 
 data class InstanceDeserializer(
-    val withSamples: Boolean = false,
+    val withSamples: Boolean = true,
     val withProjects: Boolean = true,
     val withSpaces: Boolean = true,
     val withVocabularies: Boolean = true,
@@ -245,10 +244,9 @@ data class InstanceDeserializer(
         val spaceSearchCriteria = SpaceSearchCriteria().withAndOperator()
         val spaceFetchConf = spaceFecthConfig(withSamples)
         val spaces = service.searchSpaces(spaceSearchCriteria, spaceFetchConf).objects
-        println(spaces)
         // Get property types
         val propertyTypeSearchCriteria = PropertyTypeSearchCriteria().withAndOperator()
-        val propertyTypeFecthOptions = PropertyTypeFetchOptions()
+        val propertyTypeFecthOptions = PropertyTypeFetchOptions().apply { this.withVocabulary() }
         propertyTypeFecthOptions.withRegistrator()
         val props = service.searchPropertyTypes(propertyTypeSearchCriteria, propertyTypeFecthOptions).objects
         // Get object types
@@ -266,7 +264,7 @@ data class InstanceDeserializer(
         //Put everything together
         val spRep = InstanceDTO(
             spaces = spaces.map { it.toDTO() },
-            propertyTypes = listOf(),
+            propertyTypes = props.map { it.toDTO() },
             objectTypes = sampleTypes.map { it.toDTO() },
             collectionTypes = col.map { it.toDTO() },
             vocabularies = voc.map { it.toDTO() },

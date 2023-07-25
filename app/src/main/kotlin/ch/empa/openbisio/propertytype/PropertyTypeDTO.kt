@@ -27,7 +27,8 @@ data class PropertyTypeDTO(
     override val code: String,
     val label: String,
     val description: String,
-    val dataType: DataTypeDTO
+    val dataType: DataTypeDTO,
+    val vocabularyId: String? = null
 ) : DTO, CodeHolder {
     override fun toEntity(): PropertyTypeEntity {
         return PropertyTypeEntity(this)

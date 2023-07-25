@@ -17,8 +17,10 @@
 
 package ch.empa.openbisio.propertytype
 
+import ch.empa.openbisio.datatype.DataTypeDTO
 import ch.empa.openbisio.interfaces.CreatableEntity
 import ch.empa.openbisio.interfaces.Identifier
+import ch.empa.openbisio.vocabulary.VocabularyIdentifier
 import ch.ethz.sis.openbis.generic.OpenBIS
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.create.CreatePropertyTypesOperation
@@ -28,6 +30,8 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.delete.PropertyTypeDele
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.fetchoptions.PropertyTypeFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.id.PropertyTypePermId
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.search.PropertyTypeSearchCriteria
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.vocabulary.id.IVocabularyId
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.vocabulary.id.VocabularyPermId
 
 class PropertyTypeEntity(override val dto: PropertyTypeDTO) : CreatableEntity {
     override val identifier: Identifier = PropertyTypeIdentifier(dto.code)
@@ -38,6 +42,7 @@ class PropertyTypeEntity(override val dto: PropertyTypeDTO) : CreatableEntity {
             this.label = dto.label
             this.description = dto.description
             this.dataType = dto.dataType.toOpenBISDataType()
+            this.vocabularyId = if(dto.vocabularyId != null && dto.dataType == DataTypeDTO.CONTROLLEDVOCABULARY) VocabularyPermId(dto.vocabularyId) else null
         }
         return listOf(CreatePropertyTypesOperation(listOf(propertyTypeCreation)))
     }
@@ -45,7 +50,9 @@ class PropertyTypeEntity(override val dto: PropertyTypeDTO) : CreatableEntity {
     override fun exists(service: OpenBIS): Boolean {
         val sc = PropertyTypeSearchCriteria().apply {
             this.withCode().thatEquals(identifier.identifier)
+
         }
+        println(sc)
         val res = service.searchPropertyTypes(sc, PropertyTypeFetchOptions())
         return res.totalCount > 0
     }

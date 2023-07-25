@@ -21,7 +21,6 @@ import ch.empa.openbisio.instance.InstanceDTO
 import ch.empa.openbisio.instance.InstanceDeserializer
 import ch.empa.openbisio.instance.InstanceSerializer
 import ch.ethz.sis.openbis.generic.OpenBIS
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

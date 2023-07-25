@@ -39,6 +39,17 @@ class InstanceEntity(override val dto: InstanceDTO) : CreatableEntity {
      * instance is the root of the tree.
      */
     override val identifier = ConcreteIdentifier.InstanceIdentifier()
+
+    /**
+     * The other attributes of the instance are taken from the instance DTO and mapped
+     * to entitites
+     */
+    val spaces: List<SpaceEntity> = dto.spaces?.map { it.toEntity() } ?: listOf()
+    val propertyTypes: List<PropertyTypeEntity> = dto.propertyTypes?.map { it.toEntity() } ?: listOf()
+    val objectTypes: List<ObjectTypeEntity> = dto.objectTypes?.map { it.toEntity() } ?: listOf()
+    val vocabularies: List<VocabularyEntity> = dto.vocabularies?.map { it.toEntity() } ?: listOf()
+    val collectionTypes: List<CollectionTypeEntity> = dto.collectionTypes?.map { it.toEntity() } ?: listOf()
+    val dataSetTypes: List<DataSetTypeEntity> = dto.dataSetTypes?.map { it.toEntity() } ?: listOf()
     override fun persist(): List<IOperation> {
         TODO("Not yet implemented")
     }
@@ -46,6 +57,7 @@ class InstanceEntity(override val dto: InstanceDTO) : CreatableEntity {
     override fun exists(service: OpenBIS): Boolean {
         TODO("Not yet implemented")
     }
+
     /**
      * Performs an operation on all the entities of the instance. This is assuming that all
      * the operations return a list of `IOperation` because they potentially act on multiple
@@ -71,7 +83,7 @@ class InstanceEntity(override val dto: InstanceDTO) : CreatableEntity {
         val dataSetTypeCreations = dataSetTypes.flatMap { op(it, service) }
         val collectionTypeCreations = collectionTypes.flatMap { op(it, service) }
         val spaceCreations = spaces.flatMap { op(it, service) }
-        return propertyTypeCreations.asSequence().plus(objectTypeCreations).plus(vocabularyCreations)
+        return vocabularyCreations.asSequence().plus(propertyTypeCreations).plus(objectTypeCreations)
             .plus(dataSetTypeCreations)
             .plus(collectionTypeCreations).plus(spaceCreations).toList()
     }
@@ -84,12 +96,7 @@ class InstanceEntity(override val dto: InstanceDTO) : CreatableEntity {
         return performOperations(op = CreatableEntity::delete, service)
     }
 
-    val spaces: List<SpaceEntity> = dto.spaces?.map { it.toEntity() } ?: listOf()
-    val propertyTypes: List<PropertyTypeEntity> = dto.propertyTypes?.map { it.toEntity() } ?: listOf()
-    val objectTypes: List<ObjectTypeEntity> = dto.objectTypes?.map { it.toEntity() } ?: listOf()
-    val vocabularies: List<VocabularyEntity> = dto.vocabularies?.map { it.toEntity() } ?: listOf()
-    val collectionTypes: List<CollectionTypeEntity> = dto.collectionTypes?.map { it.toEntity() } ?: listOf()
-    val dataSetTypes: List<DataSetTypeEntity> = dto.dataSetTypes?.map { it.toEntity() } ?: listOf()
+
 
 
 }

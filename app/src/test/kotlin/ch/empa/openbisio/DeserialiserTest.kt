@@ -21,7 +21,6 @@ import ch.empa.openbisio.collection.CollectionDTO
 import ch.empa.openbisio.instance.InstanceDTO
 import ch.empa.openbisio.project.ProjectDTO
 import ch.empa.openbisio.space.SpaceDTO
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals

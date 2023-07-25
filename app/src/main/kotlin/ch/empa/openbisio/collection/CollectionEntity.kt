@@ -37,6 +37,7 @@ class CollectionEntity(override val dto: CollectionDTO) : CreatableEntity {
     override val identifier: ConcreteIdentifier.CollectionIdentifier =
         ConcreteIdentifier.CollectionIdentifier(dto.code)
     val properties = dto.properties
+    val objects = dto.objects?.map { it.toEntity() }
     //val children = dto.children()?.map { it.toEntity() }
 
     override fun persist(): List<IOperation> {
@@ -46,6 +47,7 @@ class CollectionEntity(override val dto: CollectionDTO) : CreatableEntity {
             this.properties = dto.properties.ifEmpty { null }
             this.typeId = EntityTypePermId(dto.type, EntityKind.EXPERIMENT)
         }
+
         return listOf(CreateExperimentsOperation(listOf(cr)))
     }
 
@@ -58,6 +60,16 @@ class CollectionEntity(override val dto: CollectionDTO) : CreatableEntity {
         return res.totalCount > 0
     }
 
+    override fun create(service: OpenBIS): List<IOperation> {
+        val pc = if(exists(service)) {
+            listOf()
+        }else
+        {
+            persist()
+        }
+        val childCreation = objects?.flatMap { it.create(service) }
+        return pc.plus(childCreation ?: listOf())
+    }
     override fun delete(service: OpenBIS): List<IOperation> {
         return listOf(
             DeleteExperimentsOperation(

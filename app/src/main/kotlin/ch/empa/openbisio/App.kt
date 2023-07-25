@@ -24,7 +24,9 @@ import ch.empa.openbisio.instance.InstanceDTO
 import ch.empa.openbisio.instance.InstanceDeserializer
 import ch.empa.openbisio.instance.InstanceSerializer
 import ch.ethz.sis.openbis.generic.OpenBIS
-import kotlinx.cli.*
+import kotlinx.cli.ArgParser
+import kotlinx.cli.ArgType
+import kotlinx.cli.Subcommand
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import java.io.File
@@ -109,31 +111,53 @@ enum class Mode {
     dump,
     load
 }
+
+@kotlinx.serialization.ExperimentalSerializationApi
+
+@OptIn(kotlinx.cli.ExperimentalCli::class)
 fun main(args: Array<String>) {
 
-    val parser = ArgParser("example")
-    val openbisURL by (parser.argument(ArgType.String))
-    val username by parser.argument(ArgType.String)
-    val password by parser.argument(ArgType.String)
-    val mode by parser.argument(ArgType.Choice<Mode>())
-    val ioFile by parser.option(ArgType.String)
-    parser.parse(args)
-    val service = OpenBIS(openbisURL)
-    val token = service.login(username, password)
-    val configFile = File(ioFile ?: "./test.json")
-    val format = Json { prettyPrint = true }
-    when (mode) {
-        Mode.dump -> {
-            val inst = InstanceDeserializer().dumpInstance(service)
 
+    val format = Json { prettyPrint = true }
+
+    abstract class Common(name: String, description: String) : Subcommand(name, description) {
+        val openbisURL by argument(ArgType.String)
+        val username by argument(ArgType.String)
+        val password by argument(ArgType.String)
+        val ioFile by argument(ArgType.String)
+    }
+
+    class Dump() : Common("dump", "Dump the instance to a file") {
+
+        override fun execute() {
+            val configFile = File(ioFile)
+            val service = OpenBIS(openbisURL, 60000)
+            service.login(username, password)
+            val inst = InstanceDeserializer().dumpInstance(service)
             val res = format.encodeToString(InstanceDTO.serializer(), inst)
             configFile.writeText(res)
         }
-        Mode.load -> {
+
+    }
+
+    class Load() : Common("load", "Load the instance from a file") {
+
+        override fun execute() {
+            val configFile = File(ioFile)
+            val service = OpenBIS(openbisURL,60000)
+            service.login(username, password)
             val serialiser = InstanceSerializer(service)
             val inst = Json.decodeFromStream(InstanceDTO.serializer(), configFile.inputStream())
             serialiser.persist(inst.toEntityWithCodes())
         }
     }
+
+    val parser = ArgParser("example")
+
+    val summary = Dump()
+    val multiple = Load()
+    parser.subcommands(summary, multiple)
+    parser.parse(args)
+
 }
 

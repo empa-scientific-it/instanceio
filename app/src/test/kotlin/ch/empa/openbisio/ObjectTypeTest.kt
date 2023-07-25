@@ -20,7 +20,6 @@ package ch.empa.openbisio
 import ch.empa.openbisio.datatype.DataTypeDTO
 import ch.empa.openbisio.objectype.ObjectTypeDTO
 import ch.empa.openbisio.propertytype.PropertyTypeDTO
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlin.test.Test

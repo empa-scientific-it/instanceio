@@ -21,7 +21,6 @@ import ch.empa.openbisio.identifier.ConcreteIdentifier
 import ch.empa.openbisio.interfaces.CreatableEntity
 import ch.ethz.sis.openbis.generic.OpenBIS
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.person.id.PersonPermId
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.create.CreateProjectsOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.create.ProjectCreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.delete.DeleteProjectsOperation
@@ -54,7 +53,7 @@ class ProjectEntity(override val dto: ProjectDTO) :
         }
         val res = service.searchProjects(sc, ProjectFetchOptions())
         if (res.totalCount > 0) {
-            println("Project ${res.objects[0].identifier} already exists")
+            println("Project ${res.objects[0].identifier} already exists: ${identifier.identifier}")
         }
         return res.totalCount > 0
     }

@@ -127,7 +127,7 @@ sealed class ConcreteIdentifier(val members: Collection<String>, val maxSize: In
         }
     }
 
-    data class SampleIdentifier(override val identifier: String) : HierarchyIdentifier(splitIdentifier(identifier), 4) {
+    data class SampleIdentifier(override val identifier: String) : HierarchyIdentifier(splitIdentifier(identifier), 5) {
         override fun getAncestor(): CollectionIdentifier {
             return CollectionIdentifier(removeComponent(identifier))
         }

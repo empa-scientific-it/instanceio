@@ -19,7 +19,6 @@ package ch.empa.openbisio
 
 import ch.empa.openbisio.identifier.ConcreteIdentifier
 import ch.empa.openbisio.instance.InstanceDTO
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
