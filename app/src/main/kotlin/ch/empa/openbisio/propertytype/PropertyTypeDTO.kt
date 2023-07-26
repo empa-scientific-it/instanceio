@@ -30,5 +30,4 @@ data class PropertyTypeDTO(
     val description: String,
     @SerialName("data_type") val dataType: DataTypeDTO,
     @SerialName("vocabulary_id") val vocabularyId: String = ""
-) : DTO, CodeHolder {
-}
+) : DTO, CodeHolder

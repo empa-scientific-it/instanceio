@@ -19,8 +19,6 @@ package ch.empa.openbisio.collection
 
 import ch.empa.openbisio.hierarchy.HierarchicalEntity
 import ch.empa.openbisio.identifier.ConcreteIdentifier
-import ch.empa.openbisio.interfaces.CreatableEntity
-import ch.empa.openbisio.interfaces.IdentifiedEntity
 import ch.empa.openbisio.interfaces.Tree
 import ch.empa.openbisio.`object`.ObjectEntity
 import ch.ethz.sis.openbis.generic.OpenBIS
@@ -63,7 +61,6 @@ data class CollectionEntity(
         val res = service.searchExperiments(sc, ExperimentFetchOptions())
         return res.totalCount > 0
     }
-
 
 
     override fun delete(service: OpenBIS): List<IOperation> {

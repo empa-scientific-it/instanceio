@@ -27,5 +27,4 @@ data class CollectionTypeDTO(
     override val code: String,
     val description: String?,
     val propertyAssignments: List<PropertyAssignmentDTO>
-) : DTO, CodeHolder {
-}
+) : DTO, CodeHolder

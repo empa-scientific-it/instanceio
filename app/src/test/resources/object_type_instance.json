@@ -11,14 +11,16 @@
               "type": "COLLECTION",
               "objects": [
                 {
-                  "code": "FP1",
+                  "code": "FP145",
                   "type": "FOT",
+                  "generate_code": false,
                   "properties": {
                     "formula": "some formula"
                   }
                 },
                 {
                   "code": "SP2",
+                  "generate_code": true,
                   "type": "SOT",
                   "properties": {
                     "formula": "some formula"

@@ -28,5 +28,4 @@ data class DataSetTypeDTO(
     val description: String?,
     val propertyAssignments: List<PropertyAssignmentDTO>
 ) :
-    DTO, CodeHolder {
-}
+    DTO, CodeHolder

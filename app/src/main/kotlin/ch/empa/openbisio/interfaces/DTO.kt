@@ -23,5 +23,4 @@ package ch.empa.openbisio.interfaces
  * and deserializing all sorts of openBIS data. The only method they should
  * support is toEntity(), which converts them to an entity, which in turn can be stored to openBIS.
  */
-interface DTO {
-}
+interface DTO

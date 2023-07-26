@@ -22,7 +22,6 @@ import ch.empa.openbisio.datasettype.DataSetTypeEntity
 import ch.empa.openbisio.hierarchy.HierarchicalEntity
 import ch.empa.openbisio.identifier.ConcreteIdentifier
 import ch.empa.openbisio.interfaces.CreatableEntity
-import ch.empa.openbisio.interfaces.IdentifiedEntity
 import ch.empa.openbisio.interfaces.Tree
 import ch.empa.openbisio.objectype.ObjectTypeEntity
 import ch.empa.openbisio.propertytype.PropertyTypeEntity

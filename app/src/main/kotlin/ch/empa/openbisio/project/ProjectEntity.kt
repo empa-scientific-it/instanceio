@@ -20,8 +20,6 @@ package ch.empa.openbisio.project
 import ch.empa.openbisio.collection.CollectionEntity
 import ch.empa.openbisio.hierarchy.HierarchicalEntity
 import ch.empa.openbisio.identifier.ConcreteIdentifier
-import ch.empa.openbisio.interfaces.CreatableEntity
-import ch.empa.openbisio.interfaces.IdentifiedEntity
 import ch.empa.openbisio.interfaces.Tree
 import ch.ethz.sis.openbis.generic.OpenBIS
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation

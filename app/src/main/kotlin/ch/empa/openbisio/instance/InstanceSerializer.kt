@@ -20,8 +20,19 @@ package ch.empa.openbisio.instance
 import ch.ethz.sis.openbis.generic.OpenBIS
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.operation.SynchronousOperationExecutionOptions
 
+/**
+ * This class is responsible for serializing an [InstanceEntity] into a list of [IOperation]s
+ * and persisting them into openBIS.
+ * @param openBIS an instance of [OpenBIS] that is used to communicate with the openBIS server
+ */
 class InstanceSerializer(val openBIS: OpenBIS) {
-    fun persist(entity: InstanceEntity, oneByOne: Boolean = false): Unit {
+    /** Serializes and persists an [InstanceEntity] into openBIS.
+     * @param entity the [InstanceEntity] to be serialized and persisted
+     * @param oneByOne if true, the operations are executed one by one and the current operation is printed to the shell,
+     * otherwise they are executed all at once. This is useful for debugging purposes. In production, it is recommended
+     * to execute all operations at once for transactional behavior.
+     */
+    fun persist(entity: InstanceEntity, oneByOne: Boolean = false) {
         val operations = entity.create(openBIS)
         val options = SynchronousOperationExecutionOptions().apply {
             isExecuteInOrder = true

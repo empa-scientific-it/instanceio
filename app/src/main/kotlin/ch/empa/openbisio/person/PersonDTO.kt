@@ -28,5 +28,4 @@ class PersonDTO(
     val email: String,
     val firstName: String,
     val lastName: String
-) : DTO, CodeHolder {
-}
+) : DTO, CodeHolder
