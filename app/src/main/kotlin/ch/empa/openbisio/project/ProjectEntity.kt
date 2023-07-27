@@ -20,7 +20,6 @@ package ch.empa.openbisio.project
 import ch.empa.openbisio.collection.CollectionEntity
 import ch.empa.openbisio.hierarchy.HierarchicalEntity
 import ch.empa.openbisio.identifier.ConcreteIdentifier
-import ch.empa.openbisio.interfaces.Tree
 import ch.ethz.sis.openbis.generic.OpenBIS
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.create.CreateProjectsOperation
@@ -40,7 +39,7 @@ data class ProjectEntity(
     HierarchicalEntity {
 
 
-    override fun persist(): List<IOperation> {
+    override fun persist(): List<CreateProjectsOperation> {
         val pc = ProjectCreation().apply {
             this.code = identifier.code
             this.description = this@ProjectEntity.description
@@ -56,22 +55,11 @@ data class ProjectEntity(
             this.withSpace().withCode().thatEquals(identifier.space().code)
         }
         val res = service.searchProjects(sc, ProjectFetchOptions())
-        if (res.totalCount > 0) {
-            println("Project ${res.objects[0].identifier} already exists: ${identifier.identifier}")
-        }
         return res.totalCount > 0
     }
 
-    override fun create(service: OpenBIS): List<IOperation> {
-        val sc = collections.flatMap { it.create(service) }
-        if (exists(service)) {
-            return sc
-        } else {
-            return persist().plus(sc)
-        }
-    }
 
-    override fun delete(service: OpenBIS): List<IOperation> {
+    override fun remove(): List<IOperation> {
         return listOf(
             DeleteProjectsOperation(
                 listOf(ProjectIdentifier(identifier.identifier)),
@@ -80,7 +68,7 @@ data class ProjectEntity(
         )
     }
 
-    override fun value(): HierarchicalEntity {
+    override fun value(): ProjectEntity {
         return this
     }
 
@@ -88,7 +76,7 @@ data class ProjectEntity(
         return collections.isNotEmpty()
     }
 
-    override fun children(): Collection<Tree<HierarchicalEntity>> {
+    override fun children(): Collection<CollectionEntity> {
         return collections
     }
 

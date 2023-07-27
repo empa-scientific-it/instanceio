@@ -17,22 +17,13 @@
 
 package ch.empa.openbisio.identifier
 
-abstract class HierarchyIdentifier(val members: Collection<String>, val maxSize: Int) : HierarchicalIdentifier {
-    init {
-        if (members.size > maxSize) {
-            throw IllegalArgumentException("This identifier ${this::class} can only have $maxSize components")
-        }
+import ch.empa.openbisio.interfaces.Identifier
 
-    }
-
-    private val components = members.map { it.replace("/", "") }
-
-    override val identifier = components.joinToString(separator = "/", prefix = "", postfix = "")
-
-
-    override val code: String
-        get() {
-            return members.last()
-        }
-
+interface HierarchicalIdentifier : Identifier {
+    val code: String
+    fun getAncestor(): HierarchicalIdentifier?
+    fun space(): HierarchicalIdentifier?
+    fun project(): HierarchicalIdentifier?
+    fun collection(): HierarchicalIdentifier?
+    fun sample(): HierarchicalIdentifier?
 }

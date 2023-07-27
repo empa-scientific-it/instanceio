@@ -33,6 +33,7 @@ spring-boot-starter = { module = "org.springframework.boot:spring-boot-starter",
 spring-boot-autoconfigure = { module = "org.springframework.boot:spring-boot-autoconfigure", version.ref = "spring" }
 spring-boot-web = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "spring" }
 spring-shell = { module = "org.springframework.shell:spring-shell-starter", version.ref = "spring" }
+mockk = { module = "io.mockk:mockk", version = "1.13.5" }
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }

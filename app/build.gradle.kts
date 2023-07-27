@@ -92,6 +92,8 @@ dependencies {
 
     //Testcontainer for integration tests
     testImplementation(libs.testcontainer)
+    //Mocking
+    testImplementation(libs.mockk)
 
 
 }

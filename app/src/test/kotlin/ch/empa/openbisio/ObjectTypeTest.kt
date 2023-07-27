@@ -29,7 +29,7 @@ class ObjectTypeTest {
     @Test
     fun testSerialize() {
         val DT = PropertyTypeDTO("TEST", "A", "D", DataTypeDTO.BOOLEAN)
-        val OT = ObjectTypeDTO("TEST", "A", "A",false, listOf())
+        val OT = ObjectTypeDTO("TEST", "A", "A", false, listOf())
         val encoded = Json.encodeToString(OT)
         val decoded = Json.decodeFromString<ObjectTypeDTO>(encoded)
         assert(OT == decoded)

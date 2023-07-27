@@ -22,17 +22,14 @@ import ch.empa.openbisio.instance.InstanceMapper
 import ch.ethz.sis.openbis.generic.OpenBIS
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
-class CreationTest {
-    val configFile = javaClass.getResource("/simple_instance.json")
-    val json = Json { prettyPrint = true }
-    val config = configFile.readText()
-    val instanceDTO = json.decodeFromString<InstanceDTO>(config)
+
+class CreationTest: OpenBisContainerTest("simple_instance.json") {
+
     val instanceMapper = InstanceMapper(instanceDTO)
 
     @Test
     fun testCreate() {
-        val inst = OpenBIS("https://localhost:8443").apply { login("admin", "changeit") }
-        val creations = instanceMapper.mapToEntity().create(inst)
+        val creations = instanceMapper.mapToEntity().create(openBIS)
         println(creations)
     }
 }

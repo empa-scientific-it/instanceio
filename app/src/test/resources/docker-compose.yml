@@ -1,6 +1,4 @@
 version: '3'
-volumes:
-  openbis-state:
 networks:
   local:
     driver: bridge
@@ -12,18 +10,6 @@ services:
     environment:
       - SERVER_HOST_PORT=localhost:443
       - GROUP_ID=1000
-      - CORE_PLUGINS=enabled-modules = dataset-uploader, dataset-file-search, xls-import, eln-lims, openbis-ng-ui, search-store, user-management-maintenance
-    deploy:
-      resources:
-        limits:
-          cpus: "4.0"
-          memory: 2048M
-    ports:
-      - "8443:433"
-    volumes:
-      #Openbis state
-      - openbis-state:/home/openbis/openbis_state/
-    networks:
       - local
     hostname: openbis
 

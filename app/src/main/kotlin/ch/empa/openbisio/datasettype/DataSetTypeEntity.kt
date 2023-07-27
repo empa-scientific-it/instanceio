@@ -36,7 +36,7 @@ data class DataSetTypeEntity(
     val propertyAssignments: List<PropertyAssignmentEntity> = listOf()
 ) : CreatableEntity, IdentifiedEntity {
 
-    override fun persist(): List<IOperation> {
+    override fun persist(): List<CreateDataSetTypesOperation> {
         val dataSetTypeCreation = DataSetTypeCreation().apply {
             this.code = identifier.identifier
             this.description = description
@@ -54,7 +54,7 @@ data class DataSetTypeEntity(
         return res.totalCount > 0
     }
 
-    override fun delete(service: OpenBIS): List<IOperation> {
+    override fun remove(): List<IOperation> {
         return listOf(
             DeleteDataSetTypesOperation(
                 listOf(

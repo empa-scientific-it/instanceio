@@ -35,7 +35,7 @@ data class VocabularyEntity(
     val terms: List<VocabularyTermEntity> = listOf()
 ) : CreatableEntity, IdentifiedEntity {
 
-    override fun persist(): List<IOperation> {
+    override fun persist(): List<CreateVocabulariesOperation> {
         val vc = VocabularyCreation().apply {
             this.code = identifier.identifier
             this.description = this@VocabularyEntity.description
@@ -52,7 +52,7 @@ data class VocabularyEntity(
         return res.totalCount > 0
     }
 
-    override fun delete(service: OpenBIS): List<IOperation> {
+    override fun remove(): List<IOperation> {
         return listOf(
             DeleteVocabulariesOperation(
                 listOf(VocabularyPermId(identifier.identifier)),

@@ -15,13 +15,18 @@
  *
  */
 
-package ch.empa.openbisio.interfaces
+package ch.empa.openbisio
 
-interface HierarchicalIdentifier : Identifier {
-    val code: String
-    fun getAncestor(): HierarchicalIdentifier?
-    fun space(): HierarchicalIdentifier?
-    fun project(): HierarchicalIdentifier?
-    fun collection(): HierarchicalIdentifier?
-    fun sample(): HierarchicalIdentifier?
+import kotlin.test.Test
+
+class MockCreationTest: MockOpenBISTest("simple_instance.json") {
+
+
+
+    @Test
+    fun testChildren() {
+        val res = instanceEntity.create(service)
+        val msg = res.flatMap {  it.creations}
+    }
+
 }

@@ -37,7 +37,7 @@ data class CollectionTypeEntity(
 ) : CreatableEntity, IdentifiedEntity {
 
 
-    override fun persist(): List<IOperation> {
+    override fun persist(): List<CreateExperimentTypesOperation> {
         val experimentTypeCreation = ExperimentTypeCreation().apply {
             this.code = identifier.identifier
             this.description = this@CollectionTypeEntity.description
@@ -54,7 +54,7 @@ data class CollectionTypeEntity(
         return res.totalCount > 0
     }
 
-    override fun delete(service: OpenBIS): List<IOperation> {
+    override fun remove(): List<IOperation> {
         return listOf(
             DeleteExperimentTypesOperation(
                 listOf(EntityTypePermId(identifier.identifier)),

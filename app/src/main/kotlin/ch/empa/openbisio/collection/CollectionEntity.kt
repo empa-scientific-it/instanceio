@@ -19,7 +19,6 @@ package ch.empa.openbisio.collection
 
 import ch.empa.openbisio.hierarchy.HierarchicalEntity
 import ch.empa.openbisio.identifier.ConcreteIdentifier
-import ch.empa.openbisio.interfaces.Tree
 import ch.empa.openbisio.`object`.ObjectEntity
 import ch.ethz.sis.openbis.generic.OpenBIS
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
@@ -42,7 +41,7 @@ data class CollectionEntity(
 ) : HierarchicalEntity {
 
 
-    override fun persist(): List<IOperation> {
+    override fun persist(): List<CreateExperimentsOperation> {
         val cr = ExperimentCreation().apply {
             this.code = identifier.code
             this.projectId = ProjectIdentifier(identifier.project().identifier)
@@ -56,14 +55,16 @@ data class CollectionEntity(
     override fun exists(service: OpenBIS): Boolean {
         val sc = ExperimentSearchCriteria().apply {
             this.withCode().thatEquals(identifier.code)
-            this.withProject().withCode().thatEquals(identifier.project().code)
+            this.withIdentifier().thatEquals(identifier.identifier)
+            //this.withType().withId().thatEquals(EntityTypePermId(type, EntityKind.EXPERIMENT))
+            //this.withProject().withId().thatEquals(ProjectIdentifier(identifier.project().identifier))
         }
         val res = service.searchExperiments(sc, ExperimentFetchOptions())
         return res.totalCount > 0
     }
 
 
-    override fun delete(service: OpenBIS): List<IOperation> {
+    override fun remove(): List<IOperation> {
         return listOf(
             DeleteExperimentsOperation(
                 mutableListOf(ExperimentIdentifier(identifier.identifier)),
@@ -72,7 +73,7 @@ data class CollectionEntity(
         )
     }
 
-    override fun value(): HierarchicalEntity {
+    override fun value(): CollectionEntity {
         return this
     }
 
@@ -80,7 +81,7 @@ data class CollectionEntity(
         return objects.isNotEmpty()
     }
 
-    override fun children(): Collection<Tree<HierarchicalEntity>> {
+    override fun children(): Collection<ObjectEntity> {
         return objects
     }
 

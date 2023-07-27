@@ -29,7 +29,7 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.id.SpacePermId
 
 class PersonEntity(override val identifier: PersonIdentifier, val space: String) : CreatableEntity, IdentifiedEntity {
 
-    override fun persist(): List<IOperation> {
+    override fun persist(): List<CreatePersonsOperation> {
         val pc = PersonCreation().apply {
             this.userId = identifier.identifier
             this.spaceId = SpacePermId(space)
@@ -47,7 +47,7 @@ class PersonEntity(override val identifier: PersonIdentifier, val space: String)
         return res.totalCount > 0
     }
 
-    override fun delete(service: OpenBIS): List<IOperation> {
+    override fun remove(): List<IOperation> {
         return listOf()
     }
 }

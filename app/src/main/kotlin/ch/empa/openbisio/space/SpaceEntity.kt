@@ -19,7 +19,6 @@ package ch.empa.openbisio.space
 
 import ch.empa.openbisio.hierarchy.HierarchicalEntity
 import ch.empa.openbisio.identifier.ConcreteIdentifier
-import ch.empa.openbisio.interfaces.Tree
 import ch.empa.openbisio.project.ProjectEntity
 import ch.ethz.sis.openbis.generic.OpenBIS
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
@@ -38,7 +37,7 @@ data class SpaceEntity(
 ) : HierarchicalEntity {
 
 
-    override fun persist(): List<IOperation> {
+    override fun persist(): List<CreateSpacesOperation> {
         val sc = SpaceCreation().apply {
             this.code = identifier.code
             this.description = description
@@ -55,7 +54,7 @@ data class SpaceEntity(
     }
 
 
-    override fun delete(service: OpenBIS): List<IOperation> {
+    override fun remove(): List<IOperation> {
         return listOf(DeleteSpacesOperation(listOf(SpacePermId(identifier.code)), SpaceDeletionOptions()))
     }
 
@@ -64,11 +63,11 @@ data class SpaceEntity(
     }
 
     override fun hasChildren(): Boolean {
-        return this.projects.isNotEmpty()
+        return projects.isNotEmpty()
     }
 
-    override fun children(): Collection<Tree<HierarchicalEntity>> {
-        return this.projects
+    override fun children(): List<ProjectEntity> {
+        return projects
     }
 
 

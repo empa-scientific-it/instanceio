@@ -18,6 +18,7 @@
 package ch.empa.openbisio.interfaces
 
 import ch.ethz.sis.openbis.generic.OpenBIS
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.CreateObjectsOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 
 /**
@@ -25,35 +26,34 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
  * The interface is quite "monadic" as they do not perform the operation
  * themselves but return a ICreation object that can be used to create the entity from the V3 api
  */
-interface CreatableEntity : Entity {
+interface CreatableEntity : Entity, CheckableEntity, IdentifiedEntity {
+
+    private fun <E : IOperation> runIfNeeded(service: OpenBIS, operation: () -> List<E>): List<E> {
+        return if (!exists(service)) {
+            operation()
+        } else {
+            // Entity already exists, return an empty list of operations
+            emptyList()
+        }
+    }
+
 
     /**
-     * Returns a Creation object that can be used
+     * Returns a Ioperation object that can be used
      * to create the openBIS entity
      */
-    fun persist(): List<IOperation>
+    fun persist(): List<CreateObjectsOperation<*>>
 
-    /**
-     *  Checks if the entity exists in openBIS. This is needed
-     *  by persist() to decide if the entity should be created or not
-     */
-    fun exists(service: OpenBIS): Boolean
 
-    fun create(service: OpenBIS): List<IOperation> {
-        if (!exists(service)) {
-            return persist()
-        } else {
-            return emptyList()
-        }
+    fun remove(): List<IOperation>
+
+    fun create(service: OpenBIS): List<CreateObjectsOperation<*>> {
+        return runIfNeeded(service, this::persist)
     }
 
-    fun delete(service: OpenBIS): List<IOperation>
-
-    fun remove(service: OpenBIS): List<IOperation> {
-        if (exists(service)) {
-            return delete(service)
-        } else {
-            return emptyList()
-        }
+    fun delete(service: OpenBIS): List<IOperation> {
+        return runIfNeeded(service, this::remove)
     }
+
+
 }

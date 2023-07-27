@@ -19,13 +19,12 @@ package ch.empa.openbisio
 
 
 import ch.empa.openbisio.instance.InstanceDeserializer
-import ch.empa.openbisio.instance.InstanceEntity
 import ch.empa.openbisio.instance.InstanceMapper
 import ch.ethz.sis.openbis.generic.OpenBIS
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
 
-class DTOTest {
+class DTOTest: OpenBisContainerTest("simple_instance.json") {
     //private val configFile = javaClass.getResource("/test.json").readText()
     //private val inst = readInstance(configFile)
     val js = Json { prettyPrint = true }
@@ -43,8 +42,7 @@ class DTOTest {
 
     @Test
     fun dumpTest() {
-        val inst = OpenBIS("https://localhost:8443").apply { login("admin", "changeit") }
-        val dumped = InstanceDeserializer().dumpInstance(inst)
+        val dumped = InstanceDeserializer().dumpInstance(openBIS)
         val instanceEntity = InstanceMapper(dumped).mapToEntity()
         println(instanceEntity.pprint())
         //println(dumped.collectionTypes)

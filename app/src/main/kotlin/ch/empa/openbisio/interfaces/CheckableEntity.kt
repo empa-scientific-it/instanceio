@@ -15,24 +15,14 @@
  *
  */
 
-package ch.empa.openbisio.identifier
+package ch.empa.openbisio.interfaces
 
-abstract class HierarchyIdentifier(val members: Collection<String>, val maxSize: Int) : HierarchicalIdentifier {
-    init {
-        if (members.size > maxSize) {
-            throw IllegalArgumentException("This identifier ${this::class} can only have $maxSize components")
-        }
+import ch.ethz.sis.openbis.generic.OpenBIS
 
-    }
-
-    private val components = members.map { it.replace("/", "") }
-
-    override val identifier = components.joinToString(separator = "/", prefix = "", postfix = "")
-
-
-    override val code: String
-        get() {
-            return members.last()
-        }
-
+interface CheckableEntity {
+    /**
+     *  Checks if the entity exists in openBIS. This is needed
+     *  by persist() to decide if the entity should be created or not
+     */
+    fun exists(service: OpenBIS): Boolean
 }

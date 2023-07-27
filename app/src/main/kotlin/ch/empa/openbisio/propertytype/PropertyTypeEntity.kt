@@ -19,7 +19,6 @@ package ch.empa.openbisio.propertytype
 
 import ch.empa.openbisio.datatype.DataTypeDTO
 import ch.empa.openbisio.interfaces.CreatableEntity
-import ch.empa.openbisio.interfaces.IdentifiedEntity
 import ch.ethz.sis.openbis.generic.OpenBIS
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.property.create.CreatePropertyTypesOperation
@@ -37,9 +36,9 @@ data class PropertyTypeEntity(
     val label: String,
     val dataType: DataTypeDTO,
     val vocabularyId: String = ""
-) : IdentifiedEntity, CreatableEntity {
+) : CreatableEntity {
 
-    override fun persist(): List<IOperation> {
+    override fun persist(): List<CreatePropertyTypesOperation> {
         val propertyTypeCreation = PropertyTypeCreation().apply {
             this.code = identifier.identifier
             this.label = label
@@ -58,12 +57,11 @@ data class PropertyTypeEntity(
             this.withCode().thatEquals(identifier.identifier)
 
         }
-        println(sc)
         val res = service.searchPropertyTypes(sc, PropertyTypeFetchOptions())
         return res.totalCount > 0
     }
 
-    override fun delete(service: OpenBIS): List<IOperation> {
+    override fun remove(): List<IOperation> {
         return listOf(
             DeletePropertyTypesOperation(
                 listOf(PropertyTypePermId(identifier.identifier)),

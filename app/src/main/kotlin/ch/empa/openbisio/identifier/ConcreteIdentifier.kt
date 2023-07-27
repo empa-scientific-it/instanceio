@@ -17,8 +17,6 @@
 
 package ch.empa.openbisio.identifier
 
-import ch.empa.openbisio.interfaces.HierarchicalIdentifier
-
 
 fun splitIdentifier(identifier: String): List<String> {
     return identifier.split("/")

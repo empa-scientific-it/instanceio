@@ -28,7 +28,9 @@ import ch.empa.openbisio.propertytype.PropertyTypeEntity
 import ch.empa.openbisio.space.SpaceEntity
 import ch.empa.openbisio.vocabulary.VocabularyEntity
 import ch.ethz.sis.openbis.generic.OpenBIS
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.CreateObjectsOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.create.CreateSpacesOperation
 
 /**
  * This class represents an instance of openBIS.
@@ -49,6 +51,10 @@ class InstanceEntity(
      * instance is the root of the tree.
      */
     override val identifier = ConcreteIdentifier.InstanceIdentifier()
+
+    val flatEntities: List<CreatableEntity> =
+        listOf(propertyTypes, vocabularies, collectionTypes, dataSetTypes).flatten()
+
     override fun value(): HierarchicalEntity {
         return this
     }
@@ -57,21 +63,13 @@ class InstanceEntity(
         return spaces.isNotEmpty()
     }
 
-    override fun children(): Collection<Tree<HierarchicalEntity>> {
+    override fun children(): List<HierarchicalEntity> {
         return spaces
     }
 
-    /**
-     * The other attributes of the instance are taken from the instance DTO and mapped
-     * to entitites
-     */
-
-    override fun persist(): List<IOperation> {
-        TODO("Not yet implemented")
-    }
 
     override fun exists(service: OpenBIS): Boolean {
-        TODO("Not yet implemented")
+        return false
     }
 
     /**
@@ -91,26 +89,58 @@ class InstanceEntity(
      * @return a list of operations that can be used to perform the operation
      */
 
-    //TODO: check if the order is correct for deletions
-    fun performOperations(op: (CreatableEntity, OpenBIS) -> Iterable<IOperation>, service: OpenBIS): List<IOperation> {
-        val propertyTypeCreations = propertyTypes.flatMap { op(it, service) }
-        val objectTypeCreations = objectTypes.flatMap { op(it, service) }
-        val vocabularyCreations = vocabularies.flatMap { op(it, service) }
-        val dataSetTypeCreations = dataSetTypes.flatMap { op(it, service) }
-        val collectionTypeCreations = collectionTypes.flatMap { op(it, service) }
-        val spaceCreations = spaces.flatMap { op(it, service) }
-        return vocabularyCreations.asSequence().plus(propertyTypeCreations).plus(objectTypeCreations)
-            .plus(dataSetTypeCreations)
-            .plus(collectionTypeCreations).plus(spaceCreations).toList()
+    private fun <E : IOperation> performHierarchicalOperations(
+        entities: List<Tree<HierarchicalEntity>>,
+        service: OpenBIS,
+        operation: (CreatableEntity) -> List<E>
+    ): List<E> {
+        return entities.flatMap { entity ->
+            when (entity) {
+                is CreatableEntity -> {
+                    if (!entity.exists(service)) {
+                        val entityOps = operation(entity)
+                        val childrenOps =
+                            performHierarchicalOperations(entity.children().toList(), service, operation)
+                        entityOps + childrenOps
+                    } else {
+                        performHierarchicalOperations(entity.children().toList(), service, operation)
+                    }
+                }
+
+                else -> emptyList()
+            }
+        }
     }
 
-    override fun create(service: OpenBIS): List<IOperation> {
-        return performOperations(op = CreatableEntity::create, service)
+    private fun <E : IOperation> performFlatOperations(
+        entities: List<CreatableEntity>,
+        service: OpenBIS,
+        operation: (CreatableEntity) -> List<E>
+    ): List<E> {
+        return entities.flatMap { entity -> if (entity.exists(service)) operation(entity) else emptyList() }
+    }
+
+
+    override fun create(service: OpenBIS): List<CreateObjectsOperation<*>> {
+
+        return performHierarchicalOperations(spaces, service) { it.create(service) } + performFlatOperations(
+            flatEntities,
+            service
+        ) { it.create(service) }
     }
 
     override fun delete(service: OpenBIS): List<IOperation> {
-        return performOperations(op = CreatableEntity::delete, service)
+
+        return performHierarchicalOperations(spaces, service) { it.delete(service) } +
+                performFlatOperations(flatEntities, service) { emptyList() }
     }
 
+    override fun persist(): List<CreateSpacesOperation> {
+        return listOf()
+    }
+
+    override fun remove(): List<IOperation> {
+        return listOf()
+    }
 
 }
