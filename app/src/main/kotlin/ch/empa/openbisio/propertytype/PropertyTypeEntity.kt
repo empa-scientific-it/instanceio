@@ -41,8 +41,8 @@ data class PropertyTypeEntity(
     override fun persist(): List<CreatePropertyTypesOperation> {
         val propertyTypeCreation = PropertyTypeCreation().apply {
             this.code = identifier.identifier
-            this.label = label
-            this.description = description
+            this.label = this@PropertyTypeEntity.label
+            this.description = this@PropertyTypeEntity.description
             this.dataType = this@PropertyTypeEntity.dataType.toOpenBISDataType()
             this.vocabularyId =
                 if (this@PropertyTypeEntity.vocabularyId != "" && this@PropertyTypeEntity.dataType == DataTypeDTO.CONTROLLEDVOCABULARY) VocabularyPermId(

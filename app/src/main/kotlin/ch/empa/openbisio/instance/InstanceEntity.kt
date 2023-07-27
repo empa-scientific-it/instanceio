@@ -39,11 +39,11 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.create.CreateSpacesOperati
  */
 class InstanceEntity(
     val spaces: MutableList<SpaceEntity> = mutableListOf(),
-    val propertyTypes: MutableList<PropertyTypeEntity> = mutableListOf(),
-    val objectTypes: MutableList<ObjectTypeEntity> = mutableListOf(),
-    val vocabularies: MutableList<VocabularyEntity> = mutableListOf(),
-    val collectionTypes: MutableList<CollectionTypeEntity> = mutableListOf(),
-    val dataSetTypes: MutableList<DataSetTypeEntity> = mutableListOf()
+    val propertyTypes: MutableList<PropertyTypeEntity>?,
+    val objectTypes: MutableList<ObjectTypeEntity>?,
+    val vocabularies: MutableList<VocabularyEntity>?,
+    val collectionTypes: MutableList<CollectionTypeEntity>?,
+    val dataSetTypes: MutableList<DataSetTypeEntity>?
 ) : HierarchicalEntity {
 
     /**
@@ -52,19 +52,18 @@ class InstanceEntity(
      */
     override val identifier = ConcreteIdentifier.InstanceIdentifier()
 
-    val flatEntities: List<CreatableEntity> =
-        listOf(propertyTypes, vocabularies, collectionTypes, dataSetTypes).flatten()
+    val flatEntities: List<CreatableEntity> = listOf(vocabularies, propertyTypes, collectionTypes, objectTypes, dataSetTypes).filterNotNull().flatten()
 
-    override fun value(): HierarchicalEntity {
+    override fun value(): InstanceEntity {
         return this
     }
 
     override fun hasChildren(): Boolean {
-        return spaces.isNotEmpty()
+        return spaces?.isNotEmpty() ?: false
     }
 
     override fun children(): List<HierarchicalEntity> {
-        return spaces
+        return spaces ?: listOf()
     }
 
 
@@ -97,19 +96,32 @@ class InstanceEntity(
         return entities.flatMap { entity ->
             when (entity) {
                 is CreatableEntity -> {
+                    val childrenOps = performHierarchicalOperations(entity.children().toList(), service, operation)
                     if (!entity.exists(service)) {
                         val entityOps = operation(entity)
-                        val childrenOps =
-                            performHierarchicalOperations(entity.children().toList(), service, operation)
                         entityOps + childrenOps
                     } else {
-                        performHierarchicalOperations(entity.children().toList(), service, operation)
+                        childrenOps
                     }
                 }
 
-                else -> emptyList()
+                else -> {
+                    emptyList()
+                }
             }
         }
+    }
+
+    private fun <E : IOperation> performOperations(
+        service: OpenBIS,
+        operation: (CreatableEntity) -> List<E>
+    ): List<E> {
+        return performFlatOperations(flatEntities, service, operation) + performHierarchicalOperations(
+            spaces,
+            service,
+            operation
+        )
+
     }
 
     private fun <E : IOperation> performFlatOperations(
@@ -117,22 +129,18 @@ class InstanceEntity(
         service: OpenBIS,
         operation: (CreatableEntity) -> List<E>
     ): List<E> {
-        return entities.flatMap { entity -> if (entity.exists(service)) operation(entity) else emptyList() }
+        return entities.flatMap { entity -> println(entity); if (!entity.exists(service)) operation(entity) else emptyList() }
     }
 
 
     override fun create(service: OpenBIS): List<CreateObjectsOperation<*>> {
 
-        return performHierarchicalOperations(spaces, service) { it.create(service) } + performFlatOperations(
-            flatEntities,
-            service
-        ) { it.create(service) }
+        return performOperations(service) { it.create(service) }
     }
 
     override fun delete(service: OpenBIS): List<IOperation> {
 
-        return performHierarchicalOperations(spaces, service) { it.delete(service) } +
-                performFlatOperations(flatEntities, service) { emptyList() }
+        return performOperations(service) { it.delete(service) }
     }
 
     override fun persist(): List<CreateSpacesOperation> {

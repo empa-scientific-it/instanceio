@@ -32,6 +32,7 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.fetchoptions.Experime
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.id.ExperimentIdentifier
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.search.ExperimentSearchCriteria
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.id.ProjectIdentifier
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.tag.search.TagSearchCriteria
 
 data class CollectionEntity(
     override val identifier: ConcreteIdentifier.CollectionIdentifier,

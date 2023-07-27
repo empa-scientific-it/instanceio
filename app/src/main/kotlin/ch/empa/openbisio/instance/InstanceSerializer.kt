@@ -18,6 +18,7 @@
 package ch.empa.openbisio.instance
 
 import ch.ethz.sis.openbis.generic.OpenBIS
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.operation.AsynchronousOperationExecutionOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.operation.SynchronousOperationExecutionOptions
 
 /**
@@ -39,11 +40,15 @@ class InstanceSerializer(val openBIS: OpenBIS) {
         }
         val res = if (oneByOne) {
             operations.map {
-                println("Executing operation $it")
                 openBIS.executeOperations(openBIS.sessionToken, listOf(it), options)
             }
         } else {
-            if (operations.isNotEmpty()) openBIS.executeOperations(openBIS.sessionToken, operations, options) else null
+            val results = if (operations.isNotEmpty()) openBIS.executeOperations(
+                openBIS.sessionToken,
+                operations,
+                options
+            ) else null
+            listOf(results)
         }
     }
 }

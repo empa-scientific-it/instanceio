@@ -26,6 +26,7 @@ import kotlinx.serialization.Serializable
 data class PropertyAssignmentDTO(
     val section: String?,
     val mandatory: Boolean,
+
     @SerialName("property_type") val propertyTypeCode: String
 ) : DTO {
     fun toEntity(): PropertyAssignmentEntity {

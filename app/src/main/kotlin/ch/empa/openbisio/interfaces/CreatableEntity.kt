@@ -20,6 +20,7 @@ package ch.empa.openbisio.interfaces
 import ch.ethz.sis.openbis.generic.OpenBIS
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.create.CreateObjectsOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.search.SearchObjectsOperation
 
 /**
  * Interface representing openBIS entities that can be created.
@@ -37,6 +38,7 @@ interface CreatableEntity : Entity, CheckableEntity, IdentifiedEntity {
         }
     }
 
+    //fun search(): List<SearchObjectsOperation<*, *>>
 
     /**
      * Returns a Ioperation object that can be used

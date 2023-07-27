@@ -186,6 +186,7 @@ tasks.jar {
             }
         }
     }
+    archiveFileName.set("${project.name}.jar")
     from({ configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) } })
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

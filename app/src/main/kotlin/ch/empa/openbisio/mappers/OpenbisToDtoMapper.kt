@@ -58,6 +58,7 @@ interface OpenbisToDtoMapper {
 
     @Mapping(target = "type", source = "type.code")
     @Mapping(target = "objects", source = "samples")
+    @Mapping(target = "properties", source = "properties")
     fun experimentToCollectionDTO(experiment: Experiment): CollectionDTO
 
     @Mapping(target = "type", source = "type.code")
@@ -96,6 +97,7 @@ interface OpenbisToDtoMapper {
     fun dataTypeToDataTypeDTO(dataType: ch.ethz.sis.openbis.generic.asapi.v3.dto.property.DataType): ch.empa.openbisio.datatype.DataTypeDTO
 
     @Mapping(target = "vocabularyId", source = "vocabulary.code", defaultValue = "")
+    @Mapping(target = "label", source = "label", defaultValue = "")
     fun propertyTypeToPropertyTypeDTO(propertyType: PropertyType): PropertyTypeDTO
     fun propertyTypeListToPropertyTypeDTOList(propertyTypes: List<PropertyType>): List<PropertyTypeDTO>
 

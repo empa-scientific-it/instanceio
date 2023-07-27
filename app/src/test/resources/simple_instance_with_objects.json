@@ -1,0 +1,52 @@
+{"spaces": [
+    {
+      "code": "YOUR_SPACE_CODE",
+      "projects": [
+        {
+          "code": "YOUR_FIRST_PROJECT_CODE",
+          "collections": [
+            {
+              "code": "YOUR_FIRST_COLLECTION_CODE",
+              "type": "COLLECTION",
+              "objects": [
+                {
+                  "code": "FP145",
+                  "type": "FOT",
+                  "generate_code": false,
+                  "properties": {
+                    "formula": "some formula"
+                  }
+                },
+                {
+                  "code": "FP146",
+                  "type": "FOT",
+                  "generate_code": false,
+                  "properties": {
+                    "formula": "some formula"
+                  }
+                }]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "object_types": [
+    {
+      "code": "FOT",
+      "description": "Reference substance",
+      "prefix": "FP",
+      "generate_code": false,
+      "properties": [
+        {
+          "section": "General",
+          "mandatory": false,
+          "property_type": "FORMULA"
+        }
+      ]
+    }]
+}
+
+
+
+

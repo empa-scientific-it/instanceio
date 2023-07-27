@@ -17,16 +17,21 @@
 
 package ch.empa.openbisio
 
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.search.SearchResult
+import io.mockk.every
 import kotlin.test.Test
 
-class MockCreationTest: MockOpenBISTest("simple_instance.json") {
+class MockCreationTest: MockOpenBISTest("simple_instance_with_objects.json") {
 
 
 
     @Test
     fun testChildren() {
+        every { service.searchSamples(any(), any()) } returns SearchResult(listOf(), 0)
+        every { service.searchSampleTypes(any(), any()) } returns SearchResult(listOf(), 0)
         val res = instanceEntity.create(service)
         val msg = res.flatMap {  it.creations}
+        println(msg)
     }
 
 }

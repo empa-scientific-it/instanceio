@@ -28,10 +28,8 @@ class PersistenceTest : OpenBisContainerTest("simple_instance.json") {
 
     @Test
     fun assertSame() {
-        println(instanceDTO.spaces)
         val res = InstanceSerializer(openBIS).persist(mapper.mapToEntity())
         readInstance = InstanceDeserializer().dumpInstance(openBIS)
-        println(openBIS.serverPublicInformation)
         logger.info("Starting test")
         assertContains(readInstance.spaces!!.map { it.code }, "YOUR_SPACE_CODE")
         assertEquals(
