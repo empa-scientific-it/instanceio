@@ -44,10 +44,10 @@ repositories {
     maven {
         val gitLabPrivateToken: String? by project
         val ciToken: String? = System.getenv("CI_JOB_TOKEN")
-        url = uri("https://gitlab.empa.ch/api/v4/groups/openbis-tools/packages/maven")
+        url = uri("https://gitlab.empa.ch/api/v4/projects/1553/-/packages/maven/")
         name = "Empa Gitlab"
         credentials(HttpHeaderCredentials::class) {
-            name = "Private-Token"
+            name = "Push"
             value = gitLabPrivateToken ?: ciToken
         }
         authentication {
@@ -146,11 +146,11 @@ publishing {
             val gitLabPrivateToken: String? by project
             val ciToken: String? = System.getenv("CI_JOB_TOKEN")
             println(gitLabPrivateToken)
-            url = uri("https://gitlab.empa.ch/api/v4/projects/1644/packages/maven/")
+            url = uri("https://gitlab.empa.ch/api/v4/projects/1553/packages/maven/")
             name = "EmpaGitlab"
             credentials(HttpHeaderCredentials::class) {
-                name = "Private-Token"
-                value = gitLabPrivateToken
+                name = "PRIVATE-TOKEN"
+                value = gitLabPrivateToken ?: ciToken
             }
             authentication {
                 create<HttpHeaderAuthentication>("header")
