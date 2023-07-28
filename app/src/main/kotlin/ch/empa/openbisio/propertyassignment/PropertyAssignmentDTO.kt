@@ -28,14 +28,8 @@ data class PropertyAssignmentDTO(
     val mandatory: Boolean,
 
     @SerialName("property_type") val propertyTypeCode: String
-) : DTO {
-    fun toEntity(): PropertyAssignmentEntity {
-        return PropertyAssignmentEntity(
-            propertyTypeCode,
-            mandatory,
-            section ?: ""
-        )
-    }
+) : DTO
 
-}
+
+
 

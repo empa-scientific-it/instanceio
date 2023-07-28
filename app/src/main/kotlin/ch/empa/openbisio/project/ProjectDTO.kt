@@ -47,13 +47,7 @@ data class ProjectDTO(
         return this.copy(code = code)
     }
 
-    fun toEntity(): ProjectEntity {
-        return ProjectEntity(
-            ConcreteIdentifier.ProjectIdentifier(code),
-            description,
-            collections.map { it.toEntity() }
-        )
-    }
+
 
     fun withCollection(collection: CollectionDTO): ProjectDTO {
         return this.copy(collections = this.collections + collection)

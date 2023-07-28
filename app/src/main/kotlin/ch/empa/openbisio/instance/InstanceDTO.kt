@@ -116,9 +116,7 @@ data class InstanceDTO(
         return newCode as InstanceDTO
     }
 
-    fun toEntityWithCodes(): InstanceEntity {
-        return this.updateCodes().toEntity()
-    }
+
 
 
 }

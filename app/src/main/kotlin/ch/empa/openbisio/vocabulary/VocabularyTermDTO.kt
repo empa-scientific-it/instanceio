@@ -28,7 +28,5 @@ data class VocabularyTermDTO(
     val description: String,
     val official: Boolean
 ) : DTO, CodeHolder {
-    fun toEntity(): VocabularyTermEntity {
-        return VocabularyTermEntity(VocabularyTermIdentifier(code), label, official, description)
-    }
+
 }

@@ -41,7 +41,7 @@ interface CreatableEntity : Entity, CheckableEntity, IdentifiedEntity {
     //fun search(): List<SearchObjectsOperation<*, *>>
 
     /**
-     * Returns a Ioperation object that can be used
+     * Returns an Ioperation object that can be used
      * to create the openBIS entity
      */
     fun persist(): List<CreateObjectsOperation<*>>

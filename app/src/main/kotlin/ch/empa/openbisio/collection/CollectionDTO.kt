@@ -26,7 +26,7 @@ import ch.empa.openbisio.`object`.ObjectDTO
 import kotlinx.serialization.Serializable
 
 /**
- * DTO representing a collection. It is a data class, therefore it is immutablen, any change returns a copy.
+ * DTO representing a collection. It is a data class, therefore it is immutable, any change returns a copy.
  * It is a tree, so it can have children that represents the objects contained in the collection.
  */
 @Serializable

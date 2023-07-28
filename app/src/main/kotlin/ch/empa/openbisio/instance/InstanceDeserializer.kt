@@ -181,9 +181,7 @@ data class InstanceDeserializer(
 }
 
 
-fun readInstance(config: String): InstanceDTO {
-    return Json.decodeFromString<InstanceDTO>(config)
-}
+
 
 
 
