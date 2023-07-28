@@ -31,10 +31,11 @@ import java.net.URL
 import java.time.Duration
 import kotlin.test.BeforeTest
 
-open class OpenBisContainerTest(configName: String) {
+open class OpenBisContainerTest(configName: String, local: Boolean = true) {
     val logger: Logger = LoggerFactory.getLogger(PersistenceTest::class.java)
     val configFile: URL = javaClass.getResource("/${configName}")
     val logConsumer = Slf4jLogConsumer(logger)
+    val local = local
     val openBISContainer = GenericContainer(DockerImageName.parse("openbis/debian-openbis:latest"))
         .withExposedPorts(443)
         .withStartupTimeout(Duration.ofSeconds(90))
@@ -52,12 +53,15 @@ open class OpenBisContainerTest(configName: String) {
 
     @BeforeTest
     fun setup() {
-        logger.info("$configFile")
-//        openBISContainer.start()
-//        url = "https://" + openBISContainer.getHost() + ":" + openBISContainer.getMappedPort(
-//            443
-//        )
-        openBIS = OpenBIS("https://localhost:8443")
+        url = if (local) {
+            "https://localhost:8443"
+        } else {
+            openBISContainer.start()
+            "https://" + openBISContainer.host + ":" + openBISContainer.getMappedPort(
+                443
+            )
+        }
+        openBIS = OpenBIS(url)
         val log = openBIS.login("admin", "changeit")
     }
 }

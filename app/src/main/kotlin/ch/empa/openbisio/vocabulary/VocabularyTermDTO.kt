@@ -27,6 +27,4 @@ data class VocabularyTermDTO(
     val label: String,
     val description: String,
     val official: Boolean
-) : DTO, CodeHolder {
-
-}
+) : DTO, CodeHolder

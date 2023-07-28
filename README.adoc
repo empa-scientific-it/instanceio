@@ -1,51 +1,53 @@
-= OpenBIS Instance Initialiser
+= OpenBIS Instance Initializer
 
 == What is it
 
-This repository contains an _experimental_ tool written in Kotlin which can export and import the schema (*master data*) from openBIS instances using JSON files.
+This repository contains an _experimental_ tool written in Kotlin which can export and import the schema (*master data*) and the metadata from openBIS instances using JSON files.
 This software is in a very preliminary state, please feel free to open an issue or a PR if you find any problems.
+
+== Who is it for
+The tool is primarily aimed at openBIS app developers who need to set up a test instance with a certain schema and want to automate this process as part of their CI/CD pipeline.
+It is also useful for users who want to migrate their openBIS instance to a new version or to a new server.
 
 == How to build the project
 
 If you want to easily manage various Java versions, I recommend to use SDKMAN as a package manager.
 Because of dependency issues, the project requires Java 17 or higher.
 
-=== Setup envrionment
+=== Setup environment
 
 Follow these steps:
+
 1. Install SDKMAN following the guide https://sdkman.io/install[here]
+
 2. Install java:
++
+[source,shell]
+----
+   sdk install java 17.0.1-open
+----
 
-`shell
-   sdk install java 19.0.1-open
-`
 3. Install Gradle:
-
-`shell
++
+[source,shell]
+----
    sdk install gradle 8.0
-`
-4. Install Kotlin: 
+----
 
-`shell
+4. Install Kotlin: 
++
+[source,shell]
+----
    sdk install kotlin
-`
+----
 
 === Build and run
 
-==== Using the Kotlin Application Plugin
-
-To build the project, use gradle with the `installDist` task. This will create a local installation:
-
-[source,shell]
-----
-gradle installDist
-----
-
-The installation is in `app/build/install/app/bin/app`
+The project uses gradle as a build tool.
 
 ==== Building a fatJar
 
-If you prefer, you can use the `jar` gradle task to build a _fat Jar_, this is a java archive which bundles all dependencies in one file that you can deploy anywhere.
+If you want to run the app almost _anywhere_, you can use the `jar` gradle task to build a _fat Jar_, this is a java archive which bundles all dependencies in one file that you can deploy anywhere.
 To do so, use
 
 [source,shell]
@@ -54,6 +56,14 @@ gradle jar
 ----
 
 The result is in `app/build/libs/app.jar`
+
+To run the jar properly, you need java 17 or higher. You can run it with
+
+[source,shell]
+----
+java -jar app/build/libs/app.jar
+----
+
 
 == How to use the tool
 
@@ -65,10 +75,10 @@ To export the schema (*master data*) from an openBIS instance, run the following
 
 [source,shell]
 ----
-java -jar app.jar <openBIS URL> <username> <password> dump --ioFile <output file>
+java -jar app.jar dump <openBIS URL> <username> <password>  <output file>
 ----
 
-where `&lt;openBIS URL&gt;` is the URL of your openBIS instance, `&lt;username&gt;` is the username, `&lt;password&gt;` the password and `&lt;output file&gt;` is the path of a JSON file
+where `<openBIS URL>` is the URL of your openBIS instance, `<username>` is the username, `<password>` the password and `<output file>` is the path of a JSON file
 where the metadata will be dumped to.
 
 === Import Schema
@@ -77,43 +87,265 @@ To import the schema, run
 
 [source,shell]
 ----
-java -jar app.jar <openBIS URL> <username> <password> load --ioFile <input file>
+java -jar app.jar load <openBIS URL> <username> <password>   <input file>
 ----
 
-where all arguments are the same and `&lt;input file&gt;` is the JSON file with the desired master data structure.
+where all arguments are the same and `<input file>` is the JSON file with the desired master data structure.
+
+
+=== Validate Schema
+The tool can be used to validate an openBIS schema. To do so, run:
+
+[source,shell]
+----
+java -jar app.jar validate  <input file>
+----
 
 === Schema Definition with JSON
 
 The metadata of an instance is defined hierarchically using a single JSON file. +
 This file contains the following sections (indentation indicates nesting):
-- Spaces
- - Projects
- - Collections
-- Property types
-- Object types
-- Vocabulary types
-- Dataset types
 
-The file should have the following structure:
+* Spaces
+    ** Projects
+        *** Collections
+            **** Objects
+* Property types
+* Object types
+* Vocabulary types
+* Dataset types
 
+The order of these sections is not important, each of the sections (or subsections) can be left out. The following sections explain how to define each of these sections.
+
+The all reference to the following JSON structure. As an example we will use a project for baking bread.
 [source,JSON]
 ----
 {
   "spaces": [
     {
-      "code": "YOUR_SPACE_CODE",
-      "description": "Your Description",
+      "code": "COOKING",
+      "description": "A space for my cooking projects",
       "projects": [
         {
-          "code": "YOUR_FIRST_PROJECT_CODE",
-          "description": "Your project in the space",
+          "code": "BREAD",
+          "description": "A project for bread cooking",
           "collections": [
             {
-              "code": "YOUR_FIRST_COLLECTION_CODE",
-              "description": "This is an example collection",
-              "type": "COLLECTION"
+              "code": "SPECIAL_BREAD",
+              "description": "A collection for my special bread recipes",
+              "type": "COLLECTION",
+              "objects": [
+                {
+                  "code": "BR1",
+                  "type": "BREAD_RECIPE",
+                  "generate_code": true,
+                  "properties": {
+                    "$NAME": "Bread 1",
+                    "BREAD_STARTER": "SOURDOUGH",
+                    "BREAD_HYDRATION": 70,
+                    "BREAD_FLOUR": "FL1"
+                  },
+                  "children": [],
+                  "parents": []
+                },
+                {
+                  "code": "BR2",
+                  "type": "BREAD_RECIPE",
+                  "generate_code": true,
+                  "properties": {
+                    "$NAME": "Bread 2",
+                    "BREAD_STARTER": "YEAST",
+                    "BREAD_HYDRATION": 70,
+                    "BREAD_FLOUR": "FL2"
+                  },
+                  "children": [],
+                  "parents": []
+                }
+              ]
+            },
+            {
+              "code": "INGREDIENTS",
+              "description": "A collection for my ingredients",
+              "type": "COLLECTION",
+              "objects": [
+                {
+                  "code": "FL1",
+                  "type": "FLOUR",
+                  "generate_code": true,
+                  "properties": {
+                    "$NAME": "Flour 1",
+                    "FLOUR_TYPE": "T1",
+                    "FLOUR_MILLING": "T1",
+                    "FLOUR_PROTEIN": 12.5,
+                    "FLOUR_MANUFACTURER": "Molino 1"
+                  },
+                  "children": [],
+                  "parents": []
+                },
+                {
+                  "code": "FL2",
+                  "type": "FLOUR",
+                  "generate_code": true,
+                  "properties": {
+                    "$NAME": "Flour 2",
+                    "FLOUR_TYPE": "T2",
+                    "FLOUR_MILLING": "T2",
+                    "FLOUR_PROTEIN": 11.5,
+                    "FLOUR_MANUFACTURER": "Molino 2"
+                  },
+                  "children": [],
+                  "parents": []
+                }
+              ]
             }
           ]
+        }
+      ]
+    }
+  ],
+  "vocabularies": [
+    {
+      "code": "STARTER.TYPE",
+      "description": "Bread starter type",
+      "terms": [
+        {
+          "code": "SOURDOUGH",
+          "label": "Sourdough starter",
+          "official": true
+        },
+        {
+          "code": "YEAST",
+          "label": "Yeast starter",
+          "official": true
+        }
+      ]
+    },
+    {
+      "code": "MILLING_GRADE",
+      "description": "Milling grade",
+      "terms": [
+        {
+          "code": "T1",
+          "label": "Tipo 1",
+          "official": true
+        },
+        {
+          "code": "T2",
+          "label": "Tipo 2",
+          "official": true
+        },
+        {
+          "code": "T0",
+          "label": "Tipo 0",
+          "official": true
+        },
+        {
+          "code": "T00",
+          "label": "Tipo 00",
+          "official": true
+        },
+        {
+          "code": "WW",
+          "label": "Whole wheat",
+          "official": true
+        }
+      ]
+    }
+  ],
+  "property_types": [
+    {
+      "code": "BREAD_STARTER",
+      "label": "Bread starter",
+      "description": "What type of bread starter is used",
+      "type": "CONTROLLEDVOCABULARY",
+      "vocabulary_id": "STARTER.TYPE"
+    },
+    {
+      "code": "BREAD_HYDRATION",
+      "label": "Hydration",
+      "description": "Percentage of water in the bread",
+      "type": "REAL"
+    },
+    {
+      "code": "BREAD_FLOUR",
+      "label": "Flour type",
+      "description": "Flour type",
+      "type": "OBJECT"
+    },
+    {
+      "code": "FLOUR_TYPE",
+      "label": "Flour type",
+      "description": "Flour type",
+      "type": "VARCHAR"
+    },
+    {
+      "code": "FLOUR_MILLING",
+      "label": "Milling",
+      "description": "Milling",
+      "type": "CONTROLLEDVOCABULARY",
+      "vocabulary_id": "MILLING_GRADE"
+    },
+    {
+      "code": "FLOUR_PROTEIN",
+      "label": "Protein",
+      "description": "Protein",
+      "type": "REAL"
+    },
+    {
+      "code": "FLOUR_MANUFACTURER",
+      "label": "Manufacturer",
+      "description": "Manufacturer",
+      "type": "VARCHAR"
+    }
+  ],
+  "object_types": [
+    {
+      "code": "BREAD_RECIPE",
+      "prefix": "BR",
+      "label": "Bread recipe",
+      "description": "A bread recipe",
+      "properties": [
+        {
+          "type": "BREAD_STARTER",
+          "section": "ingredients",
+          "mandatory": true
+        },
+        {
+          "type": "BREAD_FLOUR",
+          "section": "ingredients",
+          "mandatory": true
+        },
+        {
+          "type": "BREAD_HYDRATION",
+          "section": "ingredients",
+          "mandatory": true
+        }
+      ]
+    },
+    {
+      "code": "FLOUR",
+      "prefix": "FL",
+      "description": "Flour",
+      "properties": [
+        {
+          "type": "FLOUR_TYPE",
+          "section": "general",
+          "mandatory": true
+        },
+        {
+          "type": "FLOUR_MILLING",
+          "section": "general",
+          "mandatory": true
+        },
+        {
+          "type": "FLOUR_PROTEIN",
+          "section": "general",
+          "mandatory": true
+        },
+        {
+          "type": "FLOUR_MANUFACTURER",
+          "section": "general",
+          "mandatory": true
         }
       ]
     }
@@ -121,16 +353,48 @@ The file should have the following structure:
 }
 ----
 
-==== Hierarchical Structure
+==== Spaces and hierarchy structure
 
-Consider the `spaces` key in the JSON above. Here we define all our spaces as a list of JSON object.
+Here is an example JSON file:
+
+
+Consider the `spaces` object in the JSON above. Here we define all our spaces as a list of JSON object.
+
 Each space object must have a `code` and a `description`. All projects belonging to this space go into the `projects` list of JSON objects.
 The member of this list have the following attributes: `code`, `description` and `collections`. In the `collections` attribute, you can define collections belonging to this project.
 This is done in the same way as for the projects, but additionally you must provide a `type` attribute, which should be the *valid* name of a collection type.
 
+==== Vocabulary Types
+In this section, we can define custom vocabulary types and terms. The `code` attribute is the code of the vocabulary type, the `description` is a human-readable description of the vocabulary type.
+
 ==== Property Types
 
-The second key of the JSON is `property_types`
+The second key of the JSON is `property_types`. In this section, we define all the property types that we want to create in the openBIS instance.
+
+The `data_type` attribute can be one of the following values:
+
+* `BOOLEAN`
+* `INTEGER`
+* `REAL`
+* `DATE`
+* `TIMESTAMP`
+* `OBJECT`
+* `VARCHAR`
+* `MULTILINE_VARCHAR`
+* `HYPERLINK`
+* `XML`
+* `CONTROLLEDVOCABULARY`
+
+The meanings are the same as in the openBIS documentation https://openbis.ch/index.php/docs/admin-documentation/new-entity-type-registration/[here].
+
+`CONTROLLEDVOCABULARY` is a special case: it requires a `vocabulary_id` attribute, which must be the code of a vocabulary type defined in the `vocabulary_types` section or a pre-existing vocabulary in your instance.
+
+==== Collection types
+In this section, we define collection types. The `code` attribute is the code of the collection type, the `description` is a human-readable description of the collection type. We can assign properties to a collection using the `properties` attribute, which is a list of property types defined in the `property_types` section.
+
+==== Object Types
+In this section, we define object types and assign property types to them.
+The `generate_code` property can be set to `true` if the code of the object should be generated automatically by openBIS. If it is set to `false`, the code must be provided in the `code` attribute in the objects listed in a collection.
 
 == Limitations
 
@@ -139,17 +403,27 @@ Currently, the tool is limited in its abilities as it is still under development
 === Supported Entities
 
 Only the following openBIS entities/structures are supported for creation and export:
+
 - Spaces
 - Projects
 - Collections
+- Objects/Samples
 - Object types
 - Property types
 - Vocabulary types
 - Dataset types
 
+=== Relationships
+The tool is currently not able to create parent-children relationships between entities. This is a planned feature.
+
 === Authentication
 
-The tool only supports authentication of openBIS users that are registered with file-based or LDAP-based authentication. It does not work with users whose authentication is handled by Switch AAI / eduID.
+The tool only supports authentication of openBIS users that are registered with file-based or LDAP-based authentication. It does not work with users whose authentication is handled by Switch AAI / eduID which require a redirect.
+
+=== Large Collections
+Internally the tools uses the openBIS V3 API, particularly the method `executeOperations`. To execute all the operations (e.g to create all existing objects) in a single transaction. During the transaction execution there will be no response from the openBIS API, which can trigger a timeout error in the client. A later version will fix it by using asynchronous operations.
+
+
 
 == Architecture
 

@@ -23,7 +23,7 @@ import ch.ethz.sis.openbis.generic.OpenBIS
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
 
-class CreationTest: OpenBisContainerTest("simple_instance.json") {
+class CreationTest : MockOpenBISTest("simple_instance.json") {
 
     val instanceMapper = InstanceMapper(instanceDTO)
 

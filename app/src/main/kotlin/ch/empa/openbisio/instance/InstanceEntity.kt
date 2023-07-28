@@ -52,18 +52,19 @@ class InstanceEntity(
      */
     override val identifier = ConcreteIdentifier.InstanceIdentifier()
 
-    val flatEntities: List<CreatableEntity> = listOf(vocabularies, propertyTypes, collectionTypes, objectTypes, dataSetTypes).filterNotNull().flatten()
+    val flatEntities: List<CreatableEntity> =
+        listOf(vocabularies, propertyTypes, collectionTypes, objectTypes, dataSetTypes).filterNotNull().flatten()
 
     override fun value(): InstanceEntity {
         return this
     }
 
     override fun hasChildren(): Boolean {
-        return spaces?.isNotEmpty() ?: false
+        return spaces.isNotEmpty()
     }
 
     override fun children(): List<HierarchicalEntity> {
-        return spaces ?: listOf()
+        return spaces
     }
 
 

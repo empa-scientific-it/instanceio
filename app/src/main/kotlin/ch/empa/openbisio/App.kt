@@ -40,11 +40,14 @@ fun main(args: Array<String>) {
 
     val format = Json { prettyPrint = true }
 
-    abstract class Common(name: String, description: String) : Subcommand(name, description) {
+    abstract class Base(name: String, description: String) : Subcommand(name, description) {
+        val ioFile by argument(ArgType.String)
+    }
+
+    abstract class Common(name: String, description: String) : Base(name, description) {
         val openbisURL by argument(ArgType.String)
         val username by argument(ArgType.String)
         val password by argument(ArgType.String)
-        val ioFile by argument(ArgType.String)
     }
 
     class Dump : Common("dump", "Dump the instance to a file") {
@@ -72,11 +75,21 @@ fun main(args: Array<String>) {
         }
     }
 
+    class Validate : Base("validate", "Validate a schema file") {
+
+        override fun execute() {
+            val configFile = File(ioFile)
+            val inst = Json.decodeFromStream(InstanceDTO.serializer(), configFile.inputStream())
+        }
+
+    }
+
     val parser = ArgParser("example")
 
-    val summary = Dump()
-    val multiple = Load()
-    parser.subcommands(summary, multiple)
+    val dump = Dump()
+    val load = Load()
+    val validate = Validate()
+    parser.subcommands(dump, load, validate)
     parser.parse(args)
 
 }

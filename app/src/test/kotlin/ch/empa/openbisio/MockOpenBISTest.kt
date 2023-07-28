@@ -44,17 +44,15 @@ open class MockOpenBISTest(configName: String) {
 
     val instanceDTO = json.decodeFromString<InstanceDTO>(config)
     val instanceEntity = InstanceMapper(instanceDTO).mapToEntity()
-    lateinit var service: OpenBIS
+    lateinit var openBIS: OpenBIS
+
     @BeforeTest
-    fun setup(){
-        println(config)
-        service = mockk<OpenBIS>()
-        every { service.searchSpaces(any(), any()) } returns SearchResult(listOf(), 0)
-        every { service.searchExperiments(any(), any()) } returns SearchResult(listOf(), 0)
-        every { service.searchProjects(any(), any()) } returns SearchResult(listOf(), 0)
-        }
-
-
+    fun setup() {
+        openBIS = mockk<OpenBIS>()
+        every { openBIS.searchSpaces(any(), any()) } returns SearchResult(listOf(), 0)
+        every { openBIS.searchExperiments(any(), any()) } returns SearchResult(listOf(), 0)
+        every { openBIS.searchProjects(any(), any()) } returns SearchResult(listOf(), 0)
+    }
 
 
 }

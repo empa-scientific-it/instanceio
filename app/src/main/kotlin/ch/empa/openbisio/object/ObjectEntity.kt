@@ -60,7 +60,7 @@ data class ObjectEntity(
 
     override fun exists(service: OpenBIS): Boolean {
         val sc = SampleSearchCriteria().apply {
-            withCode().thatEquals(identifier?.code)
+            withCode().thatEquals(identifier.code)
             withExperiment().withCode().thatEquals(identifier.getAncestor().code)
             withProject().withCode().thatEquals(identifier.project().code)
             withSpace().withCode().thatEquals(identifier.space().code)

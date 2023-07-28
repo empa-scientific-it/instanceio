@@ -1,4 +1,5 @@
-{"spaces": [
+{
+  "spaces": [
     {
       "code": "YOUR_SPACE_CODE",
       "projects": [
@@ -24,7 +25,8 @@
                   "properties": {
                     "formula": "some formula"
                   }
-                }]
+                }
+              ]
             }
           ]
         }
@@ -44,7 +46,8 @@
           "property_type": "FORMULA"
         }
       ]
-    }]
+    }
+  ]
 }
 
 

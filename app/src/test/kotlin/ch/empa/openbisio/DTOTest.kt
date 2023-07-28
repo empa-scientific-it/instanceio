@@ -24,7 +24,7 @@ import ch.ethz.sis.openbis.generic.OpenBIS
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
 
-class DTOTest: OpenBisContainerTest("simple_instance.json") {
+class DTOTest : OpenBisContainerTest("simple_instance.json") {
     //private val configFile = javaClass.getResource("/test.json").readText()
     //private val inst = readInstance(configFile)
     val js = Json { prettyPrint = true }

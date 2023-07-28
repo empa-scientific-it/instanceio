@@ -48,7 +48,6 @@ data class ProjectDTO(
     }
 
 
-
     fun withCollection(collection: CollectionDTO): ProjectDTO {
         return this.copy(collections = this.collections + collection)
     }
