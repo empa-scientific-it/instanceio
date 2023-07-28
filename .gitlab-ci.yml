@@ -7,9 +7,6 @@ stages:
   - publish
 
 
-default:
-  tags:
-    - openbis
 
 
 services:
