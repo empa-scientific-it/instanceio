@@ -4,11 +4,8 @@ stages:
   - setup
   - build
   - test
-  - deploy
+  - publish
 
-
-variables:
-  - LOCAL_BUILD: 0
 
 default:
   tags:
@@ -43,7 +40,17 @@ check_openbis:
 
 build:
   stage: build
-  script: gradle --build-cache buildFatJar
+  script: gradle --build-cache jar
+  cache:
+    key: "$CI_COMMIT_REF_NAME"
+    policy: push
+    paths:
+      - build
+      - .gradle
+
+publish:
+  stage: publish
+  script: gradle --build-cache publish
   cache:
     key: "$CI_COMMIT_REF_NAME"
     policy: push
