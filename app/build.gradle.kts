@@ -149,8 +149,8 @@ publishing {
             url = uri("https://gitlab.empa.ch/api/v4/projects/1553/packages/maven/")
             name = "EmpaGitlab"
             credentials(HttpHeaderCredentials::class) {
-                name = "PRIVATE-TOKEN"
-                value = gitLabPrivateToken ?: ciToken
+                name = if(ciToken == null) "PRIVATE-TOKEN" else "Job-Token"
+                value = if(ciToken == null) gitLabPrivateToken else  ciToken
             }
             authentication {
                 create<HttpHeaderAuthentication>("header")
