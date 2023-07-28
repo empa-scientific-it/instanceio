@@ -36,8 +36,7 @@ jobs:
         gradle-version: '8.0'
     - name: Create gradle wrapper
       uses: gradle/gradle-build-action@v2.7.0 # v2.6.0
-      with:
-        arguments: wrapper
+      run: gradle wrapper
     - name: Run chmod to make gradlew executable
       run: chmod +x ./gradlew
     - name: Build with Gradle

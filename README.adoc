@@ -416,6 +416,9 @@ Only the following openBIS entities/structures are supported for creation and ex
 === Relationships
 The tool is currently not able to create parent-children relationships between entities. This is a planned feature.
 
+=== Semantic Annotations
+The tool currently does not support semantic annotations. This is a planned feature.
+
 === Authentication
 
 The tool only supports authentication of openBIS users that are registered with file-based or LDAP-based authentication. It does not work with users whose authentication is handled by Switch AAI / eduID which require a redirect.
@@ -429,7 +432,7 @@ Internally the tools uses the openBIS V3 API, particularly the method `executeOp
 
 === Motivation
 
-This section documents the architecture of the system and explains the main decisions behind the its design. It follows the arc42 template for software architecture documentation.
+This section documents the architecture of the system and explains the main decisions behind its design. It follows the arc42 template for software architecture documentation.
 
 === Introduction and Goals
 
