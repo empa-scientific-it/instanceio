@@ -1,7 +1,7 @@
 
 
 stages:
-  - setup
+  #- setup
   - build
   - test
   - publish
@@ -9,14 +9,14 @@ stages:
 
 
 
-services:
-  - name: hub.docker.com/openbis/debian-openbis:20.10.7
-    alias: openbis
-    variables:
-      SERVER_HOST_PORT: openbis:443
-      GROUP_ID: 1000
-      #CORE_PLUGINS: enabled-modules =
-    pull_policy: if-not-present
+#services:
+#  - name: hub.docker.com/openbis/debian-openbis:20.10.7
+#    alias: openbis
+#    variables:
+#      SERVER_HOST_PORT: openbis:443
+#      GROUP_ID: 1000
+#      #CORE_PLUGINS: enabled-modules =
+#    pull_policy: if-not-present
 
 
 image: gradle:alpine
@@ -28,12 +28,12 @@ before_script:
   - export OPENBIS
 
 
-check_openbis:
-  stage: setup
-  image: alpine/curl
-  script:
-    - curl -k ${OPENBIS}
-  retry: 2
+#check_openbis:
+#  stage: setup
+#  image: alpine/curl
+#  script:
+#    - curl -k ${OPENBIS}
+#  retry: 2
 
 build:
   stage: build
@@ -58,8 +58,6 @@ publish:
 test:
   stage: test
   script: gradle run --args "${OPENBIS} admin changeit"
-  services:
-    - name: openbis
   cache:
     key: "$CI_COMMIT_REF_NAME"
     policy: pull
