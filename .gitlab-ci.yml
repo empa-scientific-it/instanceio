@@ -47,7 +47,7 @@ build:
 
 publish:
   stage: publish
-  script: gradle --build-cache publish
+  script: gradle --build-cache publishAllPublicationsToEmpaGitlabRepository
   cache:
     key: "$CI_COMMIT_REF_NAME"
     policy: push

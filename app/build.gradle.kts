@@ -145,7 +145,6 @@ publishing {
         maven {
             val gitLabPrivateToken: String? by project
             val ciToken: String? = System.getenv("CI_JOB_TOKEN")
-            println(gitLabPrivateToken)
             url = uri("https://gitlab.empa.ch/api/v4/projects/1553/packages/maven/")
             name = "EmpaGitlab"
             credentials(HttpHeaderCredentials::class) {
@@ -154,6 +153,16 @@ publishing {
             }
             authentication {
                 create<HttpHeaderAuthentication>("header")
+            }
+        }
+        maven {
+            val gitLabPrivateToken: String? by project
+            val ciToken: String? = System.getenv("CI_JOB_TOKEN")
+            url = uri("https://maven.pkg.github.com/empa-scientific-it/instanceio/")
+            name = "EmpaGithub"
+            credentials {
+                username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
+                password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
             }
         }
     }
