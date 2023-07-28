@@ -57,7 +57,7 @@ publish:
 
 test:
   stage: test
-  script: gradle run --args "${OPENBIS} admin changeit"
+  script: gradle run --build-cache
   cache:
     key: "$CI_COMMIT_REF_NAME"
     policy: pull
