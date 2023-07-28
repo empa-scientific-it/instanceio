@@ -22,8 +22,11 @@ import ch.empa.openbisio.instance.InstanceDeserializer
 import ch.empa.openbisio.instance.InstanceMapper
 import ch.ethz.sis.openbis.generic.OpenBIS
 import kotlinx.serialization.json.Json
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Tags
 import kotlin.test.Test
-
+@Tags
+@Tag("IntegrationTest")
 class DTOTest : OpenBisContainerTest("simple_instance.json") {
     //private val configFile = javaClass.getResource("/test.json").readText()
     //private val inst = readInstance(configFile)

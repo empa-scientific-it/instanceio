@@ -19,10 +19,13 @@ package ch.empa.openbisio
 
 import ch.empa.openbisio.instance.InstanceDeserializer
 import ch.empa.openbisio.instance.InstanceSerializer
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Tags
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
-
+@Tags
+@Tag("IntegrationTest")
 class PersistenceTest : OpenBisContainerTest("simple_instance.json") {
 
 

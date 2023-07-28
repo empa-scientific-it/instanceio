@@ -111,7 +111,6 @@ kotlin {
 
 
 
-
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
@@ -170,9 +169,6 @@ val integrationTestImplementation: Configuration by configurations.getting {
     extendsFrom(configurations.testImplementation.get())
 }
 
-tasks.named("check") {
-    dependsOn(testing.suites.named("integrationTest"))
-}
 
 
 tasks.jar {
@@ -189,6 +185,12 @@ tasks.jar {
     archiveFileName.set("${project.name}.jar")
     from({ configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) } })
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+tasks.test{
+    useJUnitPlatform {
+        excludeTags("IntegrationTest")
+    }
 }
 
 
